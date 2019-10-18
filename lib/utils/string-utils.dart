@@ -1,4 +1,3 @@
-
 import 'object-utils.dart';
 
 bool notNulOrEmpty(String string) {
