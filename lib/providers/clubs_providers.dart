@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_go_club_app/models/club_model.dart';
-import 'package:flutter_go_club_app/preferencias_usuario/user-preferences/user_preferences.dart';
+import 'package:flutter_go_club_app/user-preferences/user_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime_type/mime_type.dart';
