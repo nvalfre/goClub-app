@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter_go_club_app/preferencias_usuario/user-preferences/user_preferences.dart';
+import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class UserProvider {

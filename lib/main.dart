@@ -3,7 +3,7 @@ import 'package:flutter_go_club_app/pages/clubs_page.dart';
 import 'package:flutter_go_club_app/pages/home_page.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
 import 'package:flutter_go_club_app/pages/register_page.dart';
-import 'package:flutter_go_club_app/preferencias_usuario/user-preferences/user_preferences.dart';
+import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/login_provider.dart';
 
 void main() async {
