@@ -27,8 +27,8 @@ class ClubModel {
     this.hourClose,
   });
 
-  factory ClubModel.fromJson(Map<String, dynamic> json) => ClubModel(
-        id         : json["id"],
+  factory ClubModel.fromJson(Map<String, dynamic> json, [String documentID]) => ClubModel(
+        id         : documentID,
         name       : json["name"],
         description: json["description"],
         available  : json["available"],

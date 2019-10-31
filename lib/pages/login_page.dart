@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_go_club_app/providers/login_provider.dart';
-import 'package:flutter_go_club_app/providers/users_providers.dart';
+import 'package:flutter_go_club_app/bloc/login_bloc.dart';
+import 'package:flutter_go_club_app/services/login_bloc_provider.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   final String APP_NAME = 'goClub';
@@ -15,7 +17,7 @@ class LoginPage extends StatelessWidget {
   final String PASSWORD_HINT_TEXT = 'Insert your password';
   final String PASSWORD_LABEL_TEXT = 'Password';
 
-  final usuarioProvider = new UserProvider();
+  LoginBloc _authProvider;
 
   @override
   Widget build(BuildContext context) {
@@ -229,15 +231,15 @@ class LoginPage extends StatelessWidget {
         color: Color.fromRGBO(0, 153, 51, 0.8),
         textColor: Color.fromRGBO(204, 255, 200, 1),
         elevation: 0.1,
-        onPressed: snapshot.hasData ? () => _login(loginBloc, context) : null);
+        onPressed: snapshot.hasData ? () => _login(context) : null);
   }
 
-  _login(LoginBloc loginBloc, BuildContext context) async {
-    Map info = await usuarioProvider.logIn(loginBloc.email, loginBloc.password);
-    if(info['ok']){
+  _login(BuildContext context) async {
+    FirebaseUser info = await _authProvider.logIn();
+    if (info != null) {
       Navigator.pushReplacementNamed(context, 'home');
     } else {
-      utils.showAlert(context, info['message']);
+      utils.showAlert(context, 'error message');
     }
   }
 

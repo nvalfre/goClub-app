@@ -4,7 +4,8 @@ import 'package:flutter_go_club_app/pages/home_page.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
 import 'package:flutter_go_club_app/pages/register_page.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
-import 'package:flutter_go_club_app/providers/login_provider.dart';
+import 'package:flutter_go_club_app/routes.dart';
+import 'package:flutter_go_club_app/services/login_bloc_provider.dart';
 
 void main() async {
   final prefs = new UserPreferences();
@@ -21,17 +22,12 @@ class MyApp extends StatelessWidget {
 
     print('Token= '+ prefs.token);
 
-    return Provider(
+    return LoginBlocProvider(
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'goClub app',
           initialRoute: 'login',
-          routes: {
-            'login': (BuildContext context) => LoginPage(),
-            'home' : (BuildContext context) => HomePage(),
-            'register': (BuildContext context) => RegisterPage(),
-            'clubs': (BuildContext context) => ClubsPage(),
-          },
+          onGenerateRoute: Router.generateRoute,
           theme: ThemeData(
             primaryColor: Colors.green
           ),

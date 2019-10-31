@@ -1,6 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_go_club_app/providers/login_provider.dart';
-import 'package:flutter_go_club_app/providers/users_providers.dart';
+import 'package:flutter_go_club_app/bloc/login_bloc.dart';
+import 'package:flutter_go_club_app/services/login_bloc_provider.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 
 class RegisterPage extends StatelessWidget {
@@ -15,10 +16,11 @@ class RegisterPage extends StatelessWidget {
   final String PASSWORD_HINT_TEXT = 'Insert your password';
   final String PASSWORD_LABEL_TEXT = 'Password';
 
-  final userProvider = new UserProvider();
+  LoginBloc loginBloc;
 
   @override
   Widget build(BuildContext context) {
+    loginBloc = LoginBlocProvider.of(context);
     // TODO: implement build
     return Scaffold(
         body: Stack(
@@ -91,15 +93,13 @@ class RegisterPage extends StatelessWidget {
       TextStyle(color: Colors.white, fontSize: size);
 
   SingleChildScrollView _loginForm(BuildContext context) {
-    final bloc = Provider.of(context);
     final size = MediaQuery.of(context).size;
 
-    return getLoginBox(size, bloc, context);
+    return getLoginBox(size, context);
   }
 
   SingleChildScrollView getLoginBox(
     Size size,
-    LoginBloc loginBloc,
     BuildContext context,
   ) {
     return SingleChildScrollView(
@@ -222,17 +222,17 @@ class RegisterPage extends StatelessWidget {
         color: Color.fromRGBO(0, 153, 51, 0.8),
         textColor: Color.fromRGBO(204, 255, 200, 1),
         elevation: 0.1,
-        onPressed: snapshot.hasData ? () => _register(loginBloc, context) : null);
+        onPressed: snapshot.hasData ? () => _register(context) : null);
   }
 
-  _register(LoginBloc loginBloc, BuildContext context) async {
+  _register(BuildContext context) async {
 //    print('Email: ${loginBloc.email}');
 //    print('Password: ${loginBloc.password}');
-    Map info = await userProvider.newUser(loginBloc.email, loginBloc.password);
-    if(info['ok']){
+    FirebaseUser info = await loginBloc.registerUser();
+    if(info != null){
       Navigator.pushReplacementNamed(context, 'home');
     } else {
-      utils.showAlert(context, info['message']);
+      utils.showAlert(context, 'error');
     }
     Navigator.pushNamed(context, 'home');
   }

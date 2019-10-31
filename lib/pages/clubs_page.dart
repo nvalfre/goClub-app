@@ -1,10 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_go_club_app/bloc/user_clubs_bloc.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
-import 'package:flutter_go_club_app/providers/clubs_providers.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class ClubsPage extends StatefulWidget {
   @override
@@ -17,7 +18,7 @@ class _ClubPageState extends State<ClubsPage> {
   final formKey = GlobalKey<FormState>();
 
   ClubModel club = new ClubModel();
-  final clubProvider = new ClubsProvider();
+  var clubProvider;
 
   bool _saving = false;
   File _photo;
@@ -25,6 +26,7 @@ class _ClubPageState extends State<ClubsPage> {
   @override
   Widget build(BuildContext context) {
     validateAndLoadArguments(context);
+    clubProvider = Provider.of<UserClubsBloc>(context);
 
     return Scaffold(
       key: scaffoldKey,

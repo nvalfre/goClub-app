@@ -1,14 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_go_club_app/bloc/clubs_bloc.dart';
+import 'package:flutter_go_club_app/bloc/user_clubs_bloc.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
-import 'package:flutter_go_club_app/providers/clubs_providers.dart';
-import 'package:flutter_go_club_app/providers/login_provider.dart';
+import 'package:flutter_go_club_app/services/club_bloc_provider.dart';
+import 'package:flutter_go_club_app/services/user_bloc_provider.dart';
 
 class HomePage extends StatelessWidget {
-  final clubProvider = new ClubsProvider();
-
+  UserClubsBloc _userProvider;
   @override
   Widget build(BuildContext context) {
-    final clubsBloc = Provider.clubsBloc(context);
+    _userProvider = UserBlocProvider.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -28,18 +30,19 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _getListOfClubs() {
-//    return StreamBuilder(
-//      stream: clubsBloc.clubStream,
-//      builder: (BuildContext context, AsyncSnapshot<List<ClubModel>> snapshot) {
-//        return _getListOffClubBuilder(context, clubsBloc, snapshot);
-//      },
-//    );
-    return FutureBuilder(
-      future: clubProvider.getClubs(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
+    return StreamBuilder(
+      stream: _userProvider.loadingClubsForUser(),
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         return _getListOffClubBuilder(context, snapshot);
       },
     );
+//    return FutureBuilder(
+//      future: clubProvider.getAllData(),
+//      builder: (BuildContext context, AsyncSnapshot snapshot) {
+//        return _getListOffClubBuilder(context, snapshot);
+//      },
+//    );
   }
 
   Widget _getListOffClubBuilder(BuildContext context, AsyncSnapshot snapshot) {
@@ -61,7 +64,7 @@ class HomePage extends StatelessWidget {
         color: Colors.redAccent,
       ),
       onDismissed: (direction) {
-        clubProvider.deleteClub(club.id);
+        _userProvider.deleteClub(club.id);
       },
       child: _getDescriptionContainer(context, club),
     );
