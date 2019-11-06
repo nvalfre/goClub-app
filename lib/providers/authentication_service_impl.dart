@@ -31,6 +31,7 @@ class AuthenticationServiceImpl {
   }
 
   Future<FirebaseUser> registerFirebase(String email, String password) async {
+    //TODO Add new user with personal data and basic role to current user id, admin via firebase and club admind via admin club page.
     FirebaseUser createUserWithEmailAndPassword = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password
