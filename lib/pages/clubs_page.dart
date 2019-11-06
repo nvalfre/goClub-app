@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_go_club_app/bloc/user_clubs_bloc.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
+import 'package:flutter_go_club_app/providers/club_service_impl.dart';
+import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 
 class ClubsPage extends StatefulWidget {
   @override
@@ -16,17 +16,17 @@ class _ClubPageState extends State<ClubsPage> {
   static final String CLUB_HEADER = 'Club';
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
-
-  ClubModel club = new ClubModel();
-  var clubProvider;
+  ClubsBloc _bloc;
+  ClubModel _club = new ClubModel();
 
   bool _saving = false;
   File _photo;
 
   @override
   Widget build(BuildContext context) {
+    _bloc = Provider.clubsBloc(context);
+
     validateAndLoadArguments(context);
-    clubProvider = Provider.of<UserClubsBloc>(context);
 
     return Scaffold(
       key: scaffoldKey,
@@ -62,24 +62,25 @@ class _ClubPageState extends State<ClubsPage> {
     );
   }
 
-  void validateAndLoadArguments(BuildContext context) {
+  void validateAndLoadArguments(BuildContext context) async{
+
     final ClubModel clubModelDataArg = ModalRoute.of(context)
         .settings
         .arguments; //tambien se puede recibir por constructor.
 
     if (clubModelDataArg != null) {
-      club = clubModelDataArg;
+      _club = clubModelDataArg;
     }
   }
 
   TextFormField _getClubName() {
     var type = 'Club name';
     return TextFormField(
-      initialValue: club.name,
+      initialValue: _club.name,
       decoration: InputDecoration(labelText: type),
       textCapitalization: TextCapitalization.words,
       keyboardType: TextInputType.text,
-      onSaved: (value) => club.name = value,
+      onSaved: (value) => _club.name = value,
       validator: (value) {
         return _validateLenghtOf(value, type, 6);
       },
@@ -89,11 +90,11 @@ class _ClubPageState extends State<ClubsPage> {
   TextFormField _getDescription() {
     var type = 'Club description';
     return TextFormField(
-      initialValue: club.description,
+      initialValue: _club.description,
       decoration: InputDecoration(labelText: type),
       textCapitalization: TextCapitalization.sentences,
       keyboardType: TextInputType.text,
-      onSaved: (value) => club.description = value,
+      onSaved: (value) => _club.description = value,
       validator: (value) {
         return _validateLenghtOf(value, type, 12);
       },
@@ -109,10 +110,10 @@ class _ClubPageState extends State<ClubsPage> {
 
   SwitchListTile _getAvailable() {
     return SwitchListTile(
-      value: club.available,
+      value: _club.available,
       title: Text('Disponible'),
       onChanged: (value) => setState(() {
-        club.available = value;
+        _club.available = value;
       }),
     );
   }
@@ -137,7 +138,7 @@ class _ClubPageState extends State<ClubsPage> {
     });
 
     if(_photo != null){
-      club.logoUrl = await clubProvider.uploadImage(_photo);
+      _club.logoUrl = await _bloc.uploadPhoto(_photo);
     }
 
     _saveForID();
@@ -145,16 +146,16 @@ class _ClubPageState extends State<ClubsPage> {
   }
 
   void _saveForID() {
-    print(club.logoUrl);
+    print(_club.logoUrl);
 
-    if (club.id == null) {
-      clubProvider.postClub(club);
+    if (_club.id == null) {
+      _bloc.addClub(_club);
       setState(() {
         _saving = false;
       });
       _showSnackbar('New register saved successfull');
     } else {
-      clubProvider.putClub(club);
+      _bloc.editClub(_club);
       setState(() {
         _saving = false;
       });
@@ -185,7 +186,7 @@ class _ClubPageState extends State<ClubsPage> {
       setState(() {});
     });
     if(_photo == null){
-      club.logoUrl = null;
+      _club.logoUrl = null;
     }
   }
 
@@ -197,7 +198,7 @@ class _ClubPageState extends State<ClubsPage> {
         fit: BoxFit.cover,
       );
     }
-    if (club.logoUrl != null) {
+    if (_club.logoUrl != null) {
       return _fadeInImageFromNetworkWithJarHolder();
     } else {
       return Image(
@@ -211,7 +212,7 @@ class _ClubPageState extends State<ClubsPage> {
 
   FadeInImage _fadeInImageFromNetworkWithJarHolder() {
     return FadeInImage(
-      image: NetworkImage(club.logoUrl),
+      image: NetworkImage(_club.logoUrl),
       placeholder: AssetImage('assets/images/jar-loading.gif'),
       height: 300.0,
       width: double.infinity,

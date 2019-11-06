@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 ClubModel clubModelFromJson(String str) => ClubModel.fromJson(json.decode(str));
 
 String clubModelToJson(ClubModel data) => json.encode(data.toJson());
@@ -38,7 +40,7 @@ class ClubModel {
       );
 
   Map<String, dynamic> toJson() => {
-//        "id"         : id,
+        "id"         : id,
         "name"       : name,
         "description": description,
         "available"  : available,
@@ -46,4 +48,14 @@ class ClubModel {
         "hour-open"  : hourOpen,
         "hour-close" : hourClose,
       };
+
+  factory ClubModel.fromSnapshot(DocumentSnapshot snap) => ClubModel(
+    id         : snap.documentID,
+    name       : snap.data['name'],
+    description: snap.data["description"],
+    available  : snap.data["available"],
+    logoUrl    : snap.data["logoUrl"],
+    hourOpen   : snap.data["hour-open"],
+    hourClose  : snap.data["hour-close"],
+  );
 }

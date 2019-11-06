@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_go_club_app/bloc/login_bloc.dart';
-import 'package:flutter_go_club_app/services/login_bloc_provider.dart';
+import 'package:flutter_go_club_app/providers/provider_impl.dart';
+import 'package:flutter_go_club_app/providers/authentication_service_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 
 class RegisterPage extends StatelessWidget {
@@ -16,11 +16,8 @@ class RegisterPage extends StatelessWidget {
   final String PASSWORD_HINT_TEXT = 'Insert your password';
   final String PASSWORD_LABEL_TEXT = 'Password';
 
-  LoginBloc loginBloc;
-
   @override
   Widget build(BuildContext context) {
-    loginBloc = LoginBlocProvider.of(context);
     // TODO: implement build
     return Scaffold(
         body: Stack(
@@ -93,13 +90,15 @@ class RegisterPage extends StatelessWidget {
       TextStyle(color: Colors.white, fontSize: size);
 
   SingleChildScrollView _loginForm(BuildContext context) {
+    final bloc = Provider.authBloc(context);
     final size = MediaQuery.of(context).size;
 
-    return getLoginBox(size, context);
+    return getLoginBox(size, bloc, context);
   }
 
   SingleChildScrollView getLoginBox(
     Size size,
+    AuthBloc loginBloc,
     BuildContext context,
   ) {
     return SingleChildScrollView(
@@ -150,7 +149,7 @@ class RegisterPage extends StatelessWidget {
     );
   }
 
-  StreamBuilder _getEmailBox(LoginBloc loginBloc) {
+  StreamBuilder _getEmailBox(AuthBloc loginBloc) {
     return StreamBuilder(
       stream: loginBloc.emailStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -159,7 +158,7 @@ class RegisterPage extends StatelessWidget {
     );
   }
 
-  Container _getEmailContainer(LoginBloc loginBloc, AsyncSnapshot snapshot) {
+  Container _getEmailContainer(AuthBloc loginBloc, AsyncSnapshot snapshot) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 5.0),
       child: TextField(
@@ -169,7 +168,7 @@ class RegisterPage extends StatelessWidget {
           icon: Icon(Icons.alternate_email, color: Colors.green),
           hintText: EMAIL_HINT_TEXT,
           labelText: EMAIL_LABEL_TEXT,
-          counterText: snapshot.data,
+//          counterText: snapshot.data,
           errorText: snapshot.error,
         ),
         onChanged: loginBloc.changeEmail,
@@ -177,7 +176,7 @@ class RegisterPage extends StatelessWidget {
     );
   }
 
-  StreamBuilder _getPasswordBox(LoginBloc loginBloc) {
+  StreamBuilder _getPasswordBox(AuthBloc loginBloc) {
     return StreamBuilder(
       stream: loginBloc.passwordStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -186,7 +185,7 @@ class RegisterPage extends StatelessWidget {
     );
   }
 
-  Container _getPasswordContainer(LoginBloc loginBloc, AsyncSnapshot snapshot) {
+  Container _getPasswordContainer(AuthBloc loginBloc, AsyncSnapshot snapshot) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 5.0),
       child: TextField(
@@ -196,14 +195,14 @@ class RegisterPage extends StatelessWidget {
             icon: Icon(Icons.lock_outline, color: Colors.green),
             hintText: PASSWORD_HINT_TEXT,
             labelText: PASSWORD_LABEL_TEXT,
-            counterText: snapshot.data,
+//            counterText: snapshot.data,
             errorText: snapshot.error),
         onChanged: loginBloc.changePassword,
       ),
     );
   }
 
-  StreamBuilder _getLoginButton(LoginBloc loginBloc, BuildContext context) {
+  StreamBuilder _getLoginButton(AuthBloc loginBloc, BuildContext context) {
     return StreamBuilder(
       stream: loginBloc.isValidFormStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -213,27 +212,32 @@ class RegisterPage extends StatelessWidget {
   }
 
   RaisedButton _getLoginRaissedButton(
-      LoginBloc loginBloc, AsyncSnapshot snapshot, BuildContext context) {
+      AuthBloc loginBloc, AsyncSnapshot snapshot, BuildContext context) {
     return RaisedButton(
         child: Container(
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-            child: Text('Ingresar al sistema')),
+            child: Text('Registrarse')),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2.5)),
         color: Color.fromRGBO(0, 153, 51, 0.8),
         textColor: Color.fromRGBO(204, 255, 200, 1),
         elevation: 0.1,
-        onPressed: snapshot.hasData ? () => _register(context) : null);
+        onPressed:
+            snapshot.hasData ? () => _register(loginBloc, context) : null);
   }
 
-  _register(BuildContext context) async {
+  _register(AuthBloc authBloc, BuildContext context) async {
 //    print('Email: ${loginBloc.email}');
 //    print('Password: ${loginBloc.password}');
-    FirebaseUser info = await loginBloc.registerUser();
-    if(info != null){
-      Navigator.pushReplacementNamed(context, 'home');
-    } else {
-      utils.showAlert(context, 'error');
+    try {
+      FirebaseUser info =
+          await authBloc.registerFirebase(authBloc.email, authBloc.password);
+      if (info != null) {
+        Navigator.pushReplacementNamed(context, 'login');
+      }
+    } catch (e) {
+      utils.showAlert(context, 'Error al registrarse, ${e.code}');
+
+      print(e);
     }
-    Navigator.pushNamed(context, 'home');
   }
 }
