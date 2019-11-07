@@ -31,6 +31,9 @@ class AuthBloc with PasswordValidator, EmailValidator {
   Future<FirebaseUser> logIn(String email, String password) async{
     return await _authProvider.logIn(email, password);
   }
+  Future<void> logOut() async{
+    return await _authProvider.signOut();
+  }
 
   Future<FirebaseUser> registerFirebase(String email, String password) async{
     return await _authProvider.registerFirebase(email, password);

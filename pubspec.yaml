@@ -38,7 +38,11 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-
+flutter_icons:
+  ios: true
+  android: true
+  image_path_ios: "assets/launcher/no-image.png"
+  image_path_android: "assets/launcher/no-image.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

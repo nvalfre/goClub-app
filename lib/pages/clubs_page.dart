@@ -206,7 +206,6 @@ class _ClubPageState extends State<ClubsPage> {
         height: 300.0,
         fit: BoxFit.cover,
       );
-//      return (_photo == null) ? _imageNoImage() : Image.file(_photo, height: 300.0, fit: BoxFit.cover);
     }
   }
 

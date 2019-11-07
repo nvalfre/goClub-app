@@ -4,6 +4,8 @@ import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
+import 'draw/draw_widget_user.dart';
+
 class HomePage extends StatelessWidget {
   final prefs = new UserPreferences();
 
@@ -14,12 +16,16 @@ class HomePage extends StatelessWidget {
     ClubsBloc clubsBloc = Provider.clubsBloc(context);
     clubsBloc.loadClubs();
 
+    return buildScaffold(clubsBloc, context);
+  }
+
+  Scaffold buildScaffold(ClubsBloc clubsBloc, BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home Page'),
-        leading: new Container(),
       ),
       body: _getListOfClubs(clubsBloc),
+      drawer: UserDrawer(),
       floatingActionButton: _getClubsFloattingActionButton(context),
     );
   }
@@ -40,19 +46,22 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _getListOffClubBuilder(BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot, ClubsBloc clubsBloc) {
+  Widget _getListOffClubBuilder(BuildContext context,
+      AsyncSnapshot<QuerySnapshot> snapshot, ClubsBloc clubsBloc) {
     if (snapshot.hasData) {
       final clubs = snapshot.data;
       return ListView.builder(
         itemCount: clubs.documents.length,
-        itemBuilder: (context, i) => _createClub(context, clubs.documents[i], clubsBloc),
+        itemBuilder: (context, i) =>
+            _createClub(context, clubs.documents[i], clubsBloc),
       );
     } else {
       return Center(child: CircularProgressIndicator());
     }
   }
 
-  Widget _createClub(BuildContext context, DocumentSnapshot documentSnapshot, ClubsBloc clubsBloc) {
+  Widget _createClub(BuildContext context, DocumentSnapshot documentSnapshot,
+      ClubsBloc clubsBloc) {
     var club = ClubModel.fromSnapshot(documentSnapshot);
     return Dismissible(
       key: UniqueKey(),

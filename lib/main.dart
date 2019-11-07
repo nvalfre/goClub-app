@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/pages/clubs_page.dart';
-import 'package:flutter_go_club_app/pages/home_user_page.dart';
+import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
+import 'package:flutter_go_club_app/pages/home_user_page_backup.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
+import 'package:flutter_go_club_app/pages/pendent/perfil/perfil_user_page.dart';
 import 'package:flutter_go_club_app/pages/register_page.dart';
 import 'package:flutter_go_club_app/pages/splash_page.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
@@ -28,7 +30,17 @@ class MyApp extends StatelessWidget {
             'login': (BuildContext context) => LoginPage(),
             'home' : (BuildContext context) => HomePage(),
             'register': (BuildContext context) => RegisterPage(),
+            'search': (BuildContext context) => ClubsPage(),
             'clubs': (BuildContext context) => ClubsPage(),
+            'clubsAdmin': (BuildContext context) => ClubsPage(),
+            'reservations': (BuildContext context) => ClubsPage(),
+            'reservationsAdmin': (BuildContext context) => ClubsPage(),
+            'class': (BuildContext context) => ClubsPage(),
+            'classAdmin': (BuildContext context) => ClubsPage(),
+            'profileUser': (BuildContext context) => ProfileUser(),
+            'profileAdmin': (BuildContext context) => ClubsPage(),
+            'profileClub': (BuildContext context) => ClubsPage(),
+            'prestacion': (BuildContext context) => ClubsPage(),
           },
           theme: ThemeData(
             primaryColor: Colors.green
