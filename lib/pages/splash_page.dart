@@ -3,31 +3,37 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/models/auth_status_model.dart';
-import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
-import 'package:flutter_go_club_app/pages/root_nav_bar_admin.dart';
+import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/authentication_service_impl.dart';
 
-class RootPage extends StatefulWidget {
-  RootPage();
+import 'home_user_page.dart';
+
+class SplashRootPage extends StatefulWidget {
+  SplashRootPage();
 
   @override
-  State<StatefulWidget> createState() => new _RootPageState();
+  State<StatefulWidget> createState() => new _SplashRootPageState();
 }
 
-class _RootPageState extends State<RootPage> {
+class _SplashRootPageState extends State<SplashRootPage> {
   final _authProvider = AuthenticationServiceImpl.getState();
   AuthStatus authStatus = AuthStatus.NOT_DETERMINED;
   final int splashDuration = 2;
   String _userId = "";
-  final String APP_NAME = 'goClub';
 
   @override
   void initState() {
     super.initState();
-    currentUser();
+    new Future.delayed(
+        const Duration(milliseconds: 2500),
+        () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => switchStatement()),
+            ));
   }
+
 
   void currentUser() async {
     await _authProvider.getCurrentUser().then((user) {
@@ -59,12 +65,12 @@ class _RootPageState extends State<RootPage> {
     });
   }
 
-  Scaffold backgroundStack() {
+  Scaffold backgroundStack( ) {
     return Scaffold(
         body: Stack(
-          children: <Widget>[
-            _getBackground(context),
-            logoContainer(),
+      children: <Widget>[
+        _getBackground(context),
+        logoContainer(),
       ],
     ));
   }
@@ -84,12 +90,11 @@ class _RootPageState extends State<RootPage> {
             width: 275,
           ),
           SizedBox(width: double.infinity),
-          Text(APP_NAME, style: buildTextStyleForHeader(42)),
           SizedBox(
-            height: 30,
+            height: 25,
           ),
           Container(
-              alignment: Alignment.center, child: CircularProgressIndicator())
+              alignment: Alignment.center, child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.greenAccent)))
         ],
       ),
     );
@@ -117,10 +122,12 @@ class _RootPageState extends State<RootPage> {
 
   @override
   Widget build(BuildContext context) {
+    currentUser();
     return Container(
-        child: Center(
-      child: switchStatement(),
-    ));
+      child: Center(
+        child: backgroundStack(),
+      ),
+    );
   }
 
   Widget switchStatement() {
@@ -130,17 +137,13 @@ class _RootPageState extends State<RootPage> {
         break;
       case AuthStatus.NOT_LOGGED_IN:
         new Future.delayed(const Duration(seconds: 4));
-        return new LoginPage();
+        return LoginPage();
         break;
       case AuthStatus.LOGGED_IN:
-
         if (_userId.length > 0 && _userId != null) {
-          new Future.delayed(const Duration(seconds: 4));
-
           final prefs = new UserPreferences();
           prefs.uuid = _userId;
-          return new HomeUser();
-//          return new HomePage();
+          return HomePage();
         } else
           return backgroundStack();
         break;

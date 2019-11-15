@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/pages/clubs_page.dart';
-import 'package:flutter_go_club_app/pages/home_user_page_backup.dart';
+import 'package:flutter_go_club_app/pages/home_user_page.dart';
 
 import '../place_holder_widget.dart';
-import 'draw/draw_widget_user.dart';
 
 class Home extends StatefulWidget {
   @override

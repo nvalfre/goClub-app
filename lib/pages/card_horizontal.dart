@@ -49,7 +49,7 @@ class ClubHorizontal extends StatelessWidget {
               borderRadius: BorderRadius.circular(20.0),
               child: FadeInImage(
                 image: NetworkImage(clubs.logoUrl),
-                placeholder: AssetImage('assets/imgages/no-image.jpg'),
+                placeholder: AssetImage('assets/images/no-image.jpg'),
                 fit: BoxFit.cover,
                 height: 110.0,
               ),
@@ -84,7 +84,7 @@ class ClubHorizontal extends StatelessWidget {
               borderRadius: BorderRadius.circular(20.0),
               child: FadeInImage(
                 image: NetworkImage(clubDoc.logoUrl),
-                placeholder: AssetImage('assets/imgages/no-image.jpg'),
+                placeholder: AssetImage('assets/images/no-image.jpg'),
                 fit: BoxFit.cover,
                 height: 160.0,
               ),

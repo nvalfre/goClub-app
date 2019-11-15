@@ -167,7 +167,7 @@ class UserDrawer extends StatelessWidget {
   _logOut(AuthBloc authBloc, BuildContext context) async {
     try {
       await authBloc.logOut();
-      Navigator.pushReplacementNamed(context, 'login');
+      Navigator.pushReplacementNamed(context, 'root');
     } catch (e) {
       print(e);
     }

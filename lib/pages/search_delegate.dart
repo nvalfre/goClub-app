@@ -4,30 +4,9 @@ import 'package:flutter_go_club_app/bloc/club_bloc.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
 
 
-class DataSearch extends SearchDelegate {
-
+class DataSearchClubs extends SearchDelegate {
   String seleccion = '';
   final clubBloc = new ClubsBloc();
-
-  final peliculas = [
-    'Spiderman',
-    'Aquaman',
-    'Batman',
-    'Shazam!',
-    'Ironman',
-    'Capitan America',
-    'Superman',
-    'Ironman 2',
-    'Ironman 3',
-    'Ironman 4',
-    'Ironman 5',
-  ];
-
-  final peliculasRecientes = [
-    'Spiderman',
-    'Capitan America'
-  ];
-
 
   @override
   List<Widget> buildActions(BuildContext context) {

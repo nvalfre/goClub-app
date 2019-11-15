@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_go_club_app/pages/home_user_page_backup.dart';
+import 'package:flutter_go_club_app/pages/home_user_page.dart';
 import 'package:flutter_go_club_app/pages/search_delegate.dart';
 
 import '../place_holder_widget.dart';
-import 'home_swipper.dart';
+import 'empty_widget_page.dart';
+import 'home_swipper_page.dart';
 
-class HomeUser extends StatefulWidget {
+class RootHomeNavBar extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _HomeUserState();
+    return _RootHomeNavBarState();
   }
 }
 
-class _HomeUserState extends State<HomeUser> {
+class _RootHomeNavBarState extends State<RootHomeNavBar> {
   int _currentIndex = 0;
   final List<Widget> _childrenRoutes = [
     PlaceholderWidget(HomePage()),
-    PlaceholderWidget(HomePageSwipper()),
+    PlaceholderWidget(EmptyPage()), // should target DataSearch search delegate.
     PlaceholderWidget(HomePageSwipper())
   ];
 
@@ -49,7 +50,7 @@ class _HomeUserState extends State<HomeUser> {
                 onPressed: () {
                   showSearch(
                     context: context,
-                    delegate: DataSearch(),
+                    delegate: DataSearchClubs(),
                     // query: 'Hola'
                   );
                 },

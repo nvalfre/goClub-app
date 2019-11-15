@@ -28,7 +28,7 @@ class HomePageSwipper extends StatelessWidget {
               onPressed: () {
                 showSearch(
                   context: context,
-                  delegate: DataSearch(),
+                  delegate: DataSearchClubs(),
                   // query: 'Hola'
                 );
               },

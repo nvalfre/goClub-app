@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/pages/clubs_page.dart';
 import 'package:flutter_go_club_app/pages/home_admin_club_page.dart';
 import 'package:flutter_go_club_app/pages/home_admin_page.dart';
+import 'package:flutter_go_club_app/pages/home_user_page.dart';
 import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
@@ -25,14 +26,17 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'goClub app',
-          initialRoute: 'profileUser',
+          initialRoute: 'splash',
           routes: {
-            'root': (BuildContext context) => RootPage(),
+            'splash': (BuildContext context) => SplashRootPage(),
+            'root': (BuildContext context) => RootHomeNavBar(),
             'login': (BuildContext context) => LoginPage(),
-            'home' : (BuildContext context) => HomeUser(),
+            'register': (BuildContext context) => RegisterPage(),
+
+            'home' : (BuildContext context) => RootHomeNavBar(),
+            'homeUser' : (BuildContext context) => HomePage(), //TODO LAS HOME PAGE DEBERIAN ESTAR VINCULADAS EN LA ROOTPAGE Y VALIDADAS POR ROL. SE DEBERIAN BORRAR DE ACA.
             'homeAdmin' : (BuildContext context) => HomePageAdmin(),
             'homeAdminClub' : (BuildContext context) => HomePageAdminClub(),
-            'register': (BuildContext context) => RegisterPage(),
             'search': (BuildContext context) => ClubsPage(),
             'clubs': (BuildContext context) => ClubsPage(),
             'clubsAdmin': (BuildContext context) => ClubsPage(),
