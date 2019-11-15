@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 class AuthenticationService {
   final String _firebaseToken = 'AIzaSyDLU2iaMaNLzM6h0bt5pHF3s3z0AjVyDww';
   final String _firebaseAuthUrl = 'https://identitytoolkit.googleapis.com/v1/accounts:';
-  final _userService = new UserService();
+  final _userService = new UserServiceImpl();
 
   final _prefs = new UserPreferences();
 
@@ -21,7 +21,7 @@ class AuthenticationService {
         'avatar': 'avatar'
       };
       UserModel userModel = UserModel.fromJson(userData);
-      _userService.postUser(userModel);
+      _userService.createData(userModel);
     }
     return map;
   }

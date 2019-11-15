@@ -1,27 +1,34 @@
-
-
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/src/widgets/async.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/providers/club_service_impl.dart';
-import 'package:flutter_go_club_app/providers/photo_service_impl.dart';
 import 'package:rxdart/rxdart.dart';
 
-class ClubsBloc{
+class ClubsBloc {
   final _clubsController = new BehaviorSubject<List<ClubModel>>();
   final _loadingController = new BehaviorSubject<bool>();
 
   final _clubsProvider = new ClubServiceImpl();
 
   Stream<List<ClubModel>> get clubStream => _clubsController.stream;
+
   Stream<bool> get loadingStream => _loadingController.stream;
 
-  Stream<QuerySnapshot> loadClubs() {
-     return _clubsProvider.loadClubs();
+  Future<List<ClubModel>> loadClubs() async{
+    _loadingController.sink.add(true);
+    var querySnapshot = await _clubsProvider.loadClubs();
+    _loadingController.sink.add(false);
+
+    return querySnapshot;
   }
 
-  void addClub(ClubModel clubModel) async{
+  Stream<List<ClubModel>> loadClubsSnap() {
+    return _clubsProvider.loadClubsSnap();
+  }
+
+  void addClub(ClubModel clubModel) async {
     _loadingController.sink.add(true);
     await _clubsProvider.createData(clubModel);
     _loadingController.sink.add(false);
@@ -33,11 +40,11 @@ class ClubsBloc{
     _loadingController.sink.add(false);
   }
 
-  void deleteClub(String id) async{
-    await _clubsProvider.deleteData(id);
+  void deleteClub(String id) {
+    _clubsProvider.deleteData(id);
   }
 
-  Future<String> uploadPhoto(File photo) async{
+  Future<String> uploadPhoto(File photo) async {
     _loadingController.sink.add(true);
     final _photoUrl = await _clubsProvider.uploadImage(photo);
     _loadingController.sink.add(false);
@@ -45,9 +52,25 @@ class ClubsBloc{
     return _photoUrl;
   }
 
-  dispose(){
+  dispose() {
     _clubsController.close();
     _loadingController.close();
   }
+
+
+  List<ClubModel> filterClubsByName(AsyncSnapshot snapshot, String query) {
+    List<ClubModel> clubList= List();
+    List<ClubModel> clubDocuments = snapshot.data;
+//    List<DocumentSnapshot> clubDocuments = snapshot.data.documents;
+    clubDocuments.forEach((clubModel) {
+//      var clubModel = ClubModel.fromSnapshot(clubDocument);
+      if(clubList.length < 6 && clubModel.name.toLowerCase().substring(0, query.length) == query){
+        clubList.add(clubModel);
+      }
+    }
+    );
+    return clubList;
+  }
+
 
 }

@@ -7,6 +7,8 @@ ClubModel clubModelFromJson(String str) => ClubModel.fromJson(json.decode(str));
 String clubModelToJson(ClubModel data) => json.encode(data.toJson());
 
 class ClubModel {
+  List<ClubModel> items = new List();
+
   String id;
   String name;
   String description;
@@ -19,6 +21,8 @@ class ClubModel {
   List listImagenes = List();
   List listClubMember = List();
   List listTeachers = List();
+  String uniqueId;
+
   List listClass = List();
 
   ClubModel({
@@ -35,7 +39,9 @@ class ClubModel {
     this.listClubMember,
     this.listTeachers,
     this.listClass,
+    this.uniqueId,
   });
+
 
   factory ClubModel.fromJson(Map<String, dynamic> json, [String documentID]) =>
       ClubModel(
@@ -52,9 +58,13 @@ class ClubModel {
         listClubMember: json["list-club-member"],
         listTeachers: json["list-teacher"],
         listClass: json["list-class"],
+        uniqueId: json["uniqueId"],
       );
 
-  Map<String, dynamic> toJson() => {
+
+
+  Map<String, dynamic> toJson() =>
+      {
         "id": id,
         "name": name,
         "description": description,
@@ -68,9 +78,11 @@ class ClubModel {
         "list-club-member": listClubMember,
         "list-teacher": listTeachers,
         "list-class": listClass,
+        "uniqueId": uniqueId,
       };
 
-  factory ClubModel.fromSnapshot(DocumentSnapshot snap) => ClubModel(
+  factory ClubModel.fromSnapshot(DocumentSnapshot snap) =>
+      ClubModel(
         id: snap.documentID,
         name: snap.data['name'],
         description: snap.data["description"],
@@ -84,5 +96,6 @@ class ClubModel {
         listClubMember: snap.data["list-club-member"],
         listTeachers: snap.data["list-teacher"],
         listClass: snap.data["list-class"],
+        uniqueId: snap.data["uniqueId"],
       );
 }

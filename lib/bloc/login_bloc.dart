@@ -42,5 +42,6 @@ class AuthBloc with PasswordValidator, EmailValidator {
   dispose() {
     _emailController?.close();
     _passwordController?.close();
+    _loadingController?.close();
   }
 }

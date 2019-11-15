@@ -14,7 +14,7 @@ class HomePage extends StatelessWidget {
     String _userId = prefs.uuid;
 
     ClubsBloc clubsBloc = Provider.clubsBloc(context);
-    clubsBloc.loadClubs();
+//    clubsBloc.loadClubs();
 
     return buildScaffold(clubsBloc, context);
   }
@@ -39,30 +39,30 @@ class HomePage extends StatelessWidget {
 
   Widget _getListOfClubs(ClubsBloc clubsBloc) {
     return StreamBuilder(
-      stream: clubsBloc.loadClubs(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+      stream: clubsBloc.loadClubsSnap(),
+      builder: (BuildContext context, AsyncSnapshot<List<ClubModel>> snapshot) {
         return _getListOffClubBuilder(context, snapshot, clubsBloc);
       },
     );
   }
 
   Widget _getListOffClubBuilder(BuildContext context,
-      AsyncSnapshot<QuerySnapshot> snapshot, ClubsBloc clubsBloc) {
+      AsyncSnapshot<List<ClubModel>> snapshot, ClubsBloc clubsBloc) {
     if (snapshot.hasData) {
       final clubs = snapshot.data;
       return ListView.builder(
-        itemCount: clubs.documents.length,
+        itemCount: clubs.length,
         itemBuilder: (context, i) =>
-            _createClub(context, clubs.documents[i], clubsBloc),
+            _createClub(context, clubs[i], clubsBloc),
       );
     } else {
       return Center(child: CircularProgressIndicator());
     }
   }
 
-  Widget _createClub(BuildContext context, DocumentSnapshot documentSnapshot,
+  Widget _createClub(BuildContext context, ClubModel club,
       ClubsBloc clubsBloc) {
-    var club = ClubModel.fromSnapshot(documentSnapshot);
+//    var club = ClubModel.fromSnapshot(documentSnapshot);
     return Dismissible(
       key: UniqueKey(),
       background: Container(
@@ -106,11 +106,11 @@ class HomePage extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Image(
-                image: (club.logoUrl == null)
-                    ? AssetImage('assets/images/no-image.png')
-                    : NetworkImage(club.logoUrl),
-                height: 125,
-              ),
+                  image: (club.logoUrl == null)
+                      ? AssetImage('assets/images/no-image.png')
+                      : NetworkImage(club.logoUrl),
+                  height: 110,
+                  fit: BoxFit.contain),
             ),
           ),
           SizedBox(width: 10),

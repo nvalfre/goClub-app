@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
@@ -6,14 +7,14 @@ import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 class LoginPage extends StatelessWidget {
   final String APP_NAME = 'goClub';
 
-  final String LOGIN_DESCRIPTION = 'Iniciar Sesion';
+  final String LOGIN_DESCRIPTION = 'Iniciar Sesión';
   final String USER_NAME = 'Nicolas Valfre';
 
   final String EMAIL_HINT_TEXT = 'email@example.com';
-  final String EMAIL_LABEL_TEXT = 'Correo Electronico';
+  final String EMAIL_LABEL_TEXT = 'Correo Electrónico';
 
   final String PASSWORD_HINT_TEXT = 'Insert your password';
-  final String PASSWORD_LABEL_TEXT = 'Password';
+  final String PASSWORD_LABEL_TEXT = 'Contraseña';
 
   @override
   Widget build(BuildContext context) {
@@ -48,15 +49,6 @@ class LoginPage extends StatelessWidget {
   Stack _getBackgroudLoginItems(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Container(
-          child: Column(
-            children: <Widget>[
-              Icon(Icons.landscape, color: Colors.white, size: 100.0),
-              SizedBox(width: double.infinity),
-              Text(APP_NAME, style: buildTextStyleForHeader(26))
-            ],
-          ),
-        ),
         //pelotas de distintos deportes.
         Positioned(top: 90.0, left: 100.0, child: circle),
         Positioned(top: -40.0, left: -30.0, child: circle),
@@ -64,15 +56,19 @@ class LoginPage extends StatelessWidget {
         Positioned(bottom: -10.0, left: 30.0, child: circle),
         Positioned(bottom: -50.0, right: 10.0, child: circle),
         Container(
-          padding: EdgeInsets.only(top: 170.0),
+          padding: EdgeInsets.only(top: 10),
           child: Column(
             children: <Widget>[
-              Icon(Icons.person_pin, color: Colors.white, size: 50.0),
+              Image(
+                image: AssetImage(
+                  'assets/logo/logo-go-club.png',
+                ),
+                width: 250,
+              ),
               SizedBox(width: double.infinity),
-              Text(USER_NAME, style: buildTextStyleForHeader(18))
             ],
           ),
-        )
+        ),
       ],
     );
   }
@@ -235,6 +231,7 @@ class LoginPage extends StatelessWidget {
       FirebaseUser info =
           await authBloc.logIn(authBloc.email, authBloc.password);
       if (info != null) {
+        //TODO IMPLEMENT USER RETRIEVE.
         Navigator.pushReplacementNamed(context, 'home');
       }
     } catch (e) {

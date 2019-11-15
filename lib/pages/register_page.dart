@@ -24,7 +24,7 @@ class RegisterPage extends StatelessWidget {
       children: <Widget>[
         _getBackground(context),
         _getBackgroudLoginItems(context),
-        _loginForm(context)
+        _registerForm(context)
       ],
     ));
   }
@@ -89,16 +89,16 @@ class RegisterPage extends StatelessWidget {
   TextStyle buildTextStyleForHeader(double size) =>
       TextStyle(color: Colors.white, fontSize: size);
 
-  SingleChildScrollView _loginForm(BuildContext context) {
+  SingleChildScrollView _registerForm(BuildContext context) {
     final bloc = Provider.authBloc(context);
     final size = MediaQuery.of(context).size;
 
-    return getLoginBox(size, bloc, context);
+    return getRegisterBox(size, bloc, context);
   }
 
-  SingleChildScrollView getLoginBox(
+  SingleChildScrollView getRegisterBox(
     Size size,
-    AuthBloc loginBloc,
+    AuthBloc _bloc,
     BuildContext context,
   ) {
     return SingleChildScrollView(
@@ -126,11 +126,12 @@ class RegisterPage extends StatelessWidget {
               children: <Widget>[
                 Text(REGISTER_DESCRIPTION),
                 SizedBox(height: 50.0),
-                _getEmailBox(loginBloc),
+                _getEmailBox(_bloc),
                 SizedBox(height: 20.0),
-                _getPasswordBox(loginBloc),
+                _getPasswordBox(_bloc),
+                //TODO IMPLEMENT WHOLE FORM WITH NAME, LASTNAME, TEL.
                 SizedBox(height: 20.0),
-                _getLoginButton(loginBloc, context)
+                _getRegisterButton(_bloc, context)
               ],
             ),
           ),
@@ -202,7 +203,7 @@ class RegisterPage extends StatelessWidget {
     );
   }
 
-  StreamBuilder _getLoginButton(AuthBloc loginBloc, BuildContext context) {
+  StreamBuilder _getRegisterButton(AuthBloc loginBloc, BuildContext context) {
     return StreamBuilder(
       stream: loginBloc.isValidFormStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -232,6 +233,7 @@ class RegisterPage extends StatelessWidget {
       FirebaseUser info =
           await authBloc.registerFirebase(authBloc.email, authBloc.password);
       if (info != null) {
+        //TODO IMPLEMENT USER REGISTER
         Navigator.pushReplacementNamed(context, 'login');
       }
     } catch (e) {

@@ -3,6 +3,7 @@ import 'package:flutter_go_club_app/bloc/club_bloc.dart';
 export 'package:flutter_go_club_app/bloc/club_bloc.dart';
 
 import 'package:flutter_go_club_app/bloc/login_bloc.dart';
+import 'package:flutter_go_club_app/bloc/user_bloc.dart';
 export 'package:flutter_go_club_app/bloc/login_bloc.dart';
 
 class Provider extends InheritedWidget {
@@ -10,6 +11,7 @@ class Provider extends InheritedWidget {
   static Provider _instance;
   final _authBloc = new AuthBloc();
   final _clubsBloc = new ClubsBloc();
+  final _userBloc = new UserBloc();
 
   factory Provider( { Key key, Widget child} ){
     if(_instance == null){
@@ -33,5 +35,10 @@ class Provider extends InheritedWidget {
   static ClubsBloc clubsBloc(BuildContext context) {
     return (context.inheritFromWidgetOfExactType(Provider) as Provider)
         ._clubsBloc;
+  }
+
+  static UserBloc userBloc(BuildContext context) {
+    return (context.inheritFromWidgetOfExactType(Provider) as Provider)
+        ._userBloc;
   }
 }

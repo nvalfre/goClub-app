@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/models/auth_status_model.dart';
 import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
+import 'package:flutter_go_club_app/pages/root_nav_bar_admin.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/authentication_service_impl.dart';
 
@@ -75,7 +76,13 @@ class _RootPageState extends State<RootPage> {
           SizedBox(
             height: 50,
           ),
-          Icon(Icons.landscape, color: Colors.white, size: 200.0),
+          FadeInImage(
+            image: AssetImage('assets/logo/logo-go-club.png'),
+            placeholder: AssetImage('assets/images/no-image.jpg'),
+            fit: BoxFit.contain,
+            fadeInDuration: Duration(seconds: 1),
+            width: 275,
+          ),
           SizedBox(width: double.infinity),
           Text(APP_NAME, style: buildTextStyleForHeader(42)),
           SizedBox(
@@ -132,7 +139,7 @@ class _RootPageState extends State<RootPage> {
 
           final prefs = new UserPreferences();
           prefs.uuid = _userId;
-          return new Home();
+          return new HomeUser();
 //          return new HomePage();
         } else
           return backgroundStack();

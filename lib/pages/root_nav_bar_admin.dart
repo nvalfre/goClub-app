@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_go_club_app/pages/clubs_page.dart';
 import 'package:flutter_go_club_app/pages/home_user_page_backup.dart';
-import 'package:flutter_go_club_app/pages/search_delegate.dart';
 
 import '../place_holder_widget.dart';
-import 'home_swipper.dart';
+import 'draw/draw_widget_user.dart';
 
-class HomeUser extends StatefulWidget {
+class Home extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _HomeUserState();
+    return _HomeState();
   }
 }
 
-class _HomeUserState extends State<HomeUser> {
+class _HomeState extends State<Home> {
   int _currentIndex = 0;
   final List<Widget> _childrenRoutes = [
     PlaceholderWidget(HomePage()),
-    PlaceholderWidget(HomePageSwipper()),
-    PlaceholderWidget(HomePageSwipper())
+    PlaceholderWidget(ClubsPage()),
+    PlaceholderWidget(ClubsPage())
   ];
 
   @override
@@ -41,25 +41,13 @@ class _HomeUserState extends State<HomeUser> {
           items: [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              title: Container(height: 0.0),
+              title: Text('Home'),
             ),
             BottomNavigationBarItem(
-              icon: IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  showSearch(
-                    context: context,
-                    delegate: DataSearch(),
-                    // query: 'Hola'
-                  );
-                },
-              ),
-//              icon: Icon(Icons.search),
-              title: Container(height: 0.0),
-            ),
+                icon: Icon(Icons.search), title: Text('Reservas')),
             BottomNavigationBarItem(
               icon: Icon(Icons.collections_bookmark),
-              title: Container(height: 0.0),
+              title: Text('Serv'),
             ),
           ],
         ),

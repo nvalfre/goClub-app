@@ -19,7 +19,10 @@ class UserDrawer extends StatelessWidget {
           ListTile(
             title: Row(
               children: <Widget>[
-                Icon(Icons.home, color: Colors.green,),
+                Icon(
+                  Icons.home,
+                  color: Colors.green,
+                ),
                 Padding(
                   padding: EdgeInsets.only(left: 8.0),
                   child: Text('Inicio'),
@@ -121,40 +124,40 @@ class UserDrawer extends StatelessWidget {
         children: <Widget>[
           Positioned(
             child: Container(
-              color: Colors.green,
-              child: Row(
-
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(left: 100),
-                    child: Column(
-                      children: <Widget>[
-                        SizedBox(width: 10),
-                        Icon(Icons.landscape, color: Colors.white, size: 75.0),
-                        SizedBox(width: 10),
-                        Text(APP_NAME, style: buildTextStyleForHeader(15))
-                      ],
+                color: Colors.green,
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(left: 100, top: 25),
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(width: 10),
+                          Image(
+                            image: AssetImage(
+                              'assets/logo/logo-go-club.png',
+                            ),
+                            width: 100,
+                            height: 100,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(
-                      left: 85,
-                      right: 10,
-                      top: 10,
+                    Container(
+                      padding: EdgeInsets.only(
+                        left: 60,
+                        right: 10,
+                        top: 10,
+                      ),
+                      child: InkWell(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                    child: InkWell(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
-                    ),
-                    ),
-                  ),
-
-                ],
-              )
-
-            ),
+                  ],
+                )),
           )
         ],
       ),

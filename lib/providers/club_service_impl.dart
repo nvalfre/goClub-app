@@ -23,21 +23,26 @@ class ClubServiceImpl {
     return ref.documentID;
   }
 
-  Stream<QuerySnapshot> loadClubs() {
-    final List<ClubModel> clubList = new List();
-
-    return db.snapshots();
+  Future<List<ClubModel>> loadClubs() async{
+    QuerySnapshot snapshots = await db.getDocuments();
+    List<ClubModel> clubList = toClubList(snapshots.documents);
+    return clubList;
   }
 
-  Future forEach(List<DocumentSnapshot> documents, List<ClubModel> clubList) async{
-    return await documents.forEach((documentSnapshot) {
-    if (documentSnapshot.exists) {
-      var data = documentSnapshot.data;
-      clubList.add(ClubModel.fromJson(data));
-    }
-  });
+  Stream<List<ClubModel>> loadClubsSnap() {
+    Stream<List<ClubModel>> snapshots = db.snapshots().map((snap) => toClubList(snap.documents));
+    return snapshots;
   }
 
+
+  List<ClubModel> toClubList(List<DocumentSnapshot> documents) {
+    List<ClubModel> list = List();
+    documents.forEach((document) {
+      ClubModel clubModel = ClubModel.fromSnapshot(document);
+      list.add(clubModel);
+    });
+    return list;
+  }
   void updateData(ClubModel club) async {
     await db
         .document(club.id)

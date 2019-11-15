@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/pages/clubs_page.dart';
+import 'package:flutter_go_club_app/pages/home_admin_club_page.dart';
+import 'package:flutter_go_club_app/pages/home_admin_page.dart';
 import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
-import 'package:flutter_go_club_app/pages/home_user_page_backup.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
-import 'package:flutter_go_club_app/pages/pendent/perfil/perfil_user_page.dart';
+import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
 import 'package:flutter_go_club_app/pages/register_page.dart';
 import 'package:flutter_go_club_app/pages/splash_page.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
@@ -24,11 +25,13 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'goClub app',
-          initialRoute: 'root',
+          initialRoute: 'profileUser',
           routes: {
             'root': (BuildContext context) => RootPage(),
             'login': (BuildContext context) => LoginPage(),
-            'home' : (BuildContext context) => HomePage(),
+            'home' : (BuildContext context) => HomeUser(),
+            'homeAdmin' : (BuildContext context) => HomePageAdmin(),
+            'homeAdminClub' : (BuildContext context) => HomePageAdminClub(),
             'register': (BuildContext context) => RegisterPage(),
             'search': (BuildContext context) => ClubsPage(),
             'clubs': (BuildContext context) => ClubsPage(),

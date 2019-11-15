@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
-import 'package:flutter_go_club_app/providers/club_service_impl.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
@@ -11,9 +10,9 @@ class ClubsPage extends StatefulWidget {
   @override
   _ClubPageState createState() => _ClubPageState();
 }
+const String CLUB_HEADER = 'Club';
 
 class _ClubPageState extends State<ClubsPage> {
-  static final String CLUB_HEADER = 'Club';
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
   ClubsBloc _bloc;
@@ -62,8 +61,7 @@ class _ClubPageState extends State<ClubsPage> {
     );
   }
 
-  void validateAndLoadArguments(BuildContext context) async{
-
+  void validateAndLoadArguments(BuildContext context) async {
     final ClubModel clubModelDataArg = ModalRoute.of(context)
         .settings
         .arguments; //tambien se puede recibir por constructor.
@@ -103,7 +101,7 @@ class _ClubPageState extends State<ClubsPage> {
 
   String _validateLenghtOf(String value, String type, int lenght) {
     if (!utils.hasMoreLenghtThan(value, lenght)) {
-      return 'Should have more than ${lenght} character for ${type}.';
+      return 'Deberia tener más de ${lenght} caracteres para la ${type}.';
     }
     return null;
   }
@@ -137,7 +135,7 @@ class _ClubPageState extends State<ClubsPage> {
       _saving = true;
     });
 
-    if(_photo != null){
+    if (_photo != null) {
       _club.logoUrl = await _bloc.uploadPhoto(_photo);
     }
 
@@ -153,13 +151,13 @@ class _ClubPageState extends State<ClubsPage> {
       setState(() {
         _saving = false;
       });
-      _showSnackbar('New register saved successfull');
+      _showSnackbar('Nuevo registro guardado exitosamente.');
     } else {
       _bloc.editClub(_club);
       setState(() {
         _saving = false;
       });
-      _showSnackbar('Register updated successfull');
+      _showSnackbar('Registro actualizado correctamente.');
     }
   }
 
@@ -182,20 +180,22 @@ class _ClubPageState extends State<ClubsPage> {
   }
 
   void _processImage(ImageSource source) async {
-    _photo = await ImagePicker.pickImage(source: source).whenComplete(() {
-      setState(() {});
-    });
-    if(_photo == null){
+    File img = await ImagePicker.pickImage(source: source);
+    if (img == null) {
       _club.logoUrl = null;
     }
+    setState(() {
+      _photo = img;
+    });
   }
 
   Widget _showLogo() {
-    if(_photo != null){
-      return Image(
-        image: AssetImage(_photo.path),
-        height: 300.0,
-        fit: BoxFit.cover,
+    if (_photo != null) {
+      return FadeInImage(
+        image: FileImage(_photo),
+        placeholder: AssetImage('assets/images/no-image.jpg'),
+        fit: BoxFit.contain,
+        width: 275,
       );
     }
     if (_club.logoUrl != null) {
@@ -226,5 +226,4 @@ class _ClubPageState extends State<ClubsPage> {
       fit: BoxFit.cover,
     );
   }
-
 }
