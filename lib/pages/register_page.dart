@@ -1,24 +1,34 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
-import 'package:flutter_go_club_app/providers/authentication_service_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 
 class RegisterPage extends StatelessWidget {
   final String APP_NAME = 'goClub';
 
   final String REGISTER_DESCRIPTION = 'Registrarse';
-  final String USER_NAME = 'Nicolas Valfre';
+  final String PERSONAL_INFO = 'Información personal';
 
   final String EMAIL_HINT_TEXT = 'email@example.com';
   final String EMAIL_LABEL_TEXT = 'Correo Electronico';
 
-  final String PASSWORD_HINT_TEXT = 'Insert your password';
-  final String PASSWORD_LABEL_TEXT = 'Password';
+  final String PASSWORD_HINT_TEXT = 'Insertar contraseña';
+  final String PASSWORD_LABEL_TEXT = 'Contraseña';
+
+  final String NAME_HINT_TEXT = 'Nombre';
+  final String NAME_LABEL_TEXT = 'Nombre';
+
+  final String LASTNAME_HINT_TEXT = 'Apellido';
+  final String LASTNAME_LABEL_TEXT = 'Apellido';
+
+  final String TELEPHONE_HINT_TEXT = 'Teléfono';
+  final String TELEPHONE_LABEL_TEXT = 'Teléfono';
+
+  final String DIRECTION_HINT_TEXT = 'Dirección';
+  final String DIRECTION_LABEL_TEXT = 'Dirección';
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
         body: Stack(
       children: <Widget>[
@@ -50,30 +60,24 @@ class RegisterPage extends StatelessWidget {
     return Stack(
       children: <Widget>[
         Container(
+          padding: EdgeInsets.only(top: 10),
           child: Column(
             children: <Widget>[
-              Icon(Icons.landscape, color: Colors.white, size: 100.0),
+              Image(
+                image: AssetImage(
+                  'assets/logo/logo-go-club.png',
+                ),
+                width: 250,
+              ),
               SizedBox(width: double.infinity),
-              Text(APP_NAME, style: buildTextStyleForHeader(26))
             ],
           ),
         ),
-        //pelotas de distintos deportes.
         Positioned(top: 90.0, left: 100.0, child: circle),
         Positioned(top: -40.0, left: -30.0, child: circle),
         Positioned(top: -50.0, right: 10.0, child: circle),
         Positioned(bottom: -10.0, left: 30.0, child: circle),
         Positioned(bottom: -50.0, right: 10.0, child: circle),
-        Container(
-          padding: EdgeInsets.only(top: 170.0),
-          child: Column(
-            children: <Widget>[
-              Icon(Icons.person_pin, color: Colors.white, size: 50.0),
-              SizedBox(width: double.infinity),
-              Text(USER_NAME, style: buildTextStyleForHeader(18))
-            ],
-          ),
-        )
       ],
     );
   }
@@ -109,9 +113,9 @@ class RegisterPage extends StatelessWidget {
             height: 200.0,
           )),
           Container(
-            width: size.width * 0.80,
-            margin: EdgeInsets.symmetric(vertical: 30.0),
-            padding: EdgeInsets.symmetric(vertical: 30.0),
+            width: size.width * 0.90,
+            margin: EdgeInsets.symmetric(vertical: 25.0),
+            padding: EdgeInsets.symmetric(vertical: 10.0),
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: new BorderRadius.circular(5.0),
@@ -125,10 +129,17 @@ class RegisterPage extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Text(REGISTER_DESCRIPTION),
-                SizedBox(height: 50.0),
                 _getEmailBox(_bloc),
                 SizedBox(height: 20.0),
                 _getPasswordBox(_bloc),
+                SizedBox(height: 10.0),
+                personalInfoIntro(),
+                getNameBox(_bloc),
+                getLastNameBox(_bloc),
+                SizedBox(height: 20.0),
+                getTelRow(_bloc),
+                SizedBox(height: 20.0),
+                getDirRow(_bloc),
                 //TODO IMPLEMENT WHOLE FORM WITH NAME, LASTNAME, TEL.
                 SizedBox(height: 20.0),
                 _getRegisterButton(_bloc, context)
@@ -136,7 +147,6 @@ class RegisterPage extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 30),
             child: Column(children: <Widget>[
               InkWell(
                 onTap: () => Navigator.pushNamed(context, 'login'),
@@ -147,6 +157,22 @@ class RegisterPage extends StatelessWidget {
           SizedBox(height: 75.0)
         ],
       ),
+    );
+  }
+
+  Column personalInfoIntro() {
+    return Column(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.only(left: 5, right: 40),
+          child: Divider(
+            thickness: 1,
+            height: 3,
+          ),
+        ),
+        SizedBox(height: 5.0),
+        Text(PERSONAL_INFO),
+      ],
     );
   }
 
@@ -161,7 +187,7 @@ class RegisterPage extends StatelessWidget {
 
   Container _getEmailContainer(AuthBloc loginBloc, AsyncSnapshot snapshot) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5.0),
+      padding: EdgeInsets.only(left: 5, right: 40),
       child: TextField(
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
@@ -169,7 +195,6 @@ class RegisterPage extends StatelessWidget {
           icon: Icon(Icons.alternate_email, color: Colors.green),
           hintText: EMAIL_HINT_TEXT,
           labelText: EMAIL_LABEL_TEXT,
-//          counterText: snapshot.data,
           errorText: snapshot.error,
         ),
         onChanged: loginBloc.changeEmail,
@@ -188,7 +213,7 @@ class RegisterPage extends StatelessWidget {
 
   Container _getPasswordContainer(AuthBloc loginBloc, AsyncSnapshot snapshot) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5.0),
+      padding: EdgeInsets.only(left: 5, right: 40),
       child: TextField(
         obscureText: true,
         decoration: InputDecoration(
@@ -196,16 +221,110 @@ class RegisterPage extends StatelessWidget {
             icon: Icon(Icons.lock_outline, color: Colors.green),
             hintText: PASSWORD_HINT_TEXT,
             labelText: PASSWORD_LABEL_TEXT,
-//            counterText: snapshot.data,
             errorText: snapshot.error),
         onChanged: loginBloc.changePassword,
       ),
     );
   }
 
+  StreamBuilder getNameBox(AuthBloc bloc) {
+    return StreamBuilder(
+      stream: bloc.nameStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return _getNameContainer(bloc, snapshot);
+      },
+    );
+  }
+
+  Container _getNameContainer(AuthBloc loginBloc, AsyncSnapshot snapshot) {
+    return Container(
+      padding: EdgeInsets.only(left: 5, right: 40),
+      child: TextField(
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.only(left: 2.5),
+            icon: Icon(Icons.person, color: Colors.green),
+            hintText: NAME_HINT_TEXT,
+            labelText: NAME_LABEL_TEXT,
+            errorText: snapshot.error),
+        onChanged: loginBloc.changeName,
+      ),
+    );
+  }
+
+  StreamBuilder getLastNameBox(AuthBloc bloc) {
+    return StreamBuilder(
+      stream: bloc.lastNameStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return _getLastNameContainer(bloc, snapshot);
+      },
+    );
+  }
+
+  Container _getLastNameContainer(AuthBloc loginBloc, AsyncSnapshot snapshot) {
+    return Container(
+      padding: EdgeInsets.only(left: 45, right: 40),
+      child: TextField(
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.only(left: 2.5),
+            hintText: LASTNAME_HINT_TEXT,
+            labelText: LASTNAME_LABEL_TEXT,
+            errorText: snapshot.error),
+        onChanged: loginBloc.changeLastName,
+      ),
+    );
+  }
+
+  StreamBuilder getTelRow(AuthBloc bloc) {
+    return StreamBuilder(
+      stream: bloc.telephoneStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return getTelRowContainer(bloc, snapshot);
+      },
+    );
+  }
+
+  Container getTelRowContainer(AuthBloc loginBloc, AsyncSnapshot snapshot) {
+    return Container(
+      padding: EdgeInsets.only(left: 5, right: 40),
+      child: TextField(
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.only(left: 2.5),
+            icon: Icon(Icons.phone, color: Colors.green),
+            hintText: TELEPHONE_HINT_TEXT,
+            labelText: TELEPHONE_LABEL_TEXT,
+            errorText: snapshot.error),
+        onChanged: loginBloc.changeTelephone,
+      ),
+    );
+  }
+
+  StreamBuilder getDirRow(AuthBloc bloc) {
+    return StreamBuilder(
+      stream: bloc.directionStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return getDirRowContainer(bloc, snapshot);
+      },
+    );
+  }
+
+  Container getDirRowContainer(AuthBloc loginBloc, AsyncSnapshot snapshot) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 5.0),
+      child: TextField(
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.only(left: 2.5),
+            icon: Icon(Icons.directions, color: Colors.green),
+            hintText: DIRECTION_HINT_TEXT,
+            labelText: DIRECTION_LABEL_TEXT,
+            errorText: snapshot.error),
+        onChanged: loginBloc.changeDirection,
+      ),
+    );
+  }
+
   StreamBuilder _getRegisterButton(AuthBloc loginBloc, BuildContext context) {
     return StreamBuilder(
-      stream: loginBloc.isValidFormStream,
+      stream: loginBloc.isValidFormStreamRegister,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return _getLoginRaissedButton(loginBloc, snapshot, context);
       },
@@ -227,18 +346,16 @@ class RegisterPage extends StatelessWidget {
   }
 
   _register(AuthBloc authBloc, BuildContext context) async {
-//    print('Email: ${loginBloc.email}');
-//    print('Password: ${loginBloc.password}');
     try {
       FirebaseUser info =
           await authBloc.registerFirebase(authBloc.email, authBloc.password);
       if (info != null) {
-        //TODO IMPLEMENT USER REGISTER
+        authBloc.handleUserRegister(info.uid, info.email);
+
         Navigator.pushReplacementNamed(context, 'login');
       }
     } catch (e) {
-      utils.showAlert(context, 'Error al registrarse, ${e.code}');
-
+      utils.showAlert(context, 'Error al registrarse, ${e}');
       print(e);
     }
   }

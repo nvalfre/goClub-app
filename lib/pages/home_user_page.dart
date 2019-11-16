@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
@@ -11,8 +10,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String _userId = prefs.uuid;
-
     ClubsBloc clubsBloc = Provider.clubsBloc(context);
 //    clubsBloc.loadClubs();
 
@@ -52,16 +49,15 @@ class HomePage extends StatelessWidget {
       final clubs = snapshot.data;
       return ListView.builder(
         itemCount: clubs.length,
-        itemBuilder: (context, i) =>
-            _createClub(context, clubs[i], clubsBloc),
+        itemBuilder: (context, i) => _createClub(context, clubs[i], clubsBloc),
       );
     } else {
       return Center(child: CircularProgressIndicator());
     }
   }
 
-  Widget _createClub(BuildContext context, ClubModel club,
-      ClubsBloc clubsBloc) {
+  Widget _createClub(
+      BuildContext context, ClubModel club, ClubsBloc clubsBloc) {
 //    var club = ClubModel.fromSnapshot(documentSnapshot);
     return Dismissible(
       key: UniqueKey(),

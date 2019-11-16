@@ -1,3 +1,4 @@
+import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserPreferences {
@@ -12,32 +13,40 @@ class UserPreferences {
 
   SharedPreferences _prefs;
 
-  get isAutenticated => _prefs.getString('token') != '';
-
   initUserPreferences() async {
     this._prefs = await SharedPreferences.getInstance();
   }
 
-  get token {
-    return _prefs.getString('token') ?? '';
-  }
-  set token( String value ) {
-    _prefs.setString('token', value);
-  }
-
-  get uuid {
+  get user {
     return _prefs.getString('uuid') ?? '';
   }
-  set uuid( String value ) {
-    _prefs.setString('uuid', value);
+  get name {
+    return _prefs.getString('name') ?? '';
+  }
+  get lastName {
+    return _prefs.getString('lastName') ?? '';
+  }
+  get telefono {
+    return _prefs.getString('telefono') ?? '';
+  }
+  get direccion {
+    return _prefs.getString('direccion') ?? '';
+  }
+  get avatar {
+    return _prefs.getString('avatar') ?? '';
+  }
+  get email {
+    return _prefs.getString('email') ?? '';
   }
 
-  get refreshToken {
-    return _prefs.getString('refreshToken') ?? '';
-  }
-
-  set refreshToken (String value){
-    _prefs.setString('refreshToken', value);
+  set user( UserModel user ) {
+    _prefs.setString('uuid', user.id);
+    _prefs.setString('name', user.name);
+    _prefs.setString('lastName', user.lastName);
+    _prefs.setString('telefono', user.telefono);
+    _prefs.setString('direccion', user.direccion);
+    _prefs.setString('avatar', user.avatar);
+    _prefs.setString('email', user.email);
   }
 
   // GET y SET de la última página

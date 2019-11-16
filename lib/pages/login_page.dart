@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_go_club_app/bloc/user_bloc.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 
@@ -15,10 +16,11 @@ class LoginPage extends StatelessWidget {
 
   final String PASSWORD_HINT_TEXT = 'Insert your password';
   final String PASSWORD_LABEL_TEXT = 'Contraseña';
+  UserBloc _bloc;
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    _bloc = Provider.userBloc(context);
     return Scaffold(
         body: Stack(
       children: <Widget>[
@@ -162,7 +164,7 @@ class LoginPage extends StatelessWidget {
 
   Container _getEmailContainer(AuthBloc loginBloc, AsyncSnapshot snapshot) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5.0),
+      padding: EdgeInsets.only(left: 5, right: 40),
       child: TextField(
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
@@ -189,7 +191,7 @@ class LoginPage extends StatelessWidget {
 
   Container _getPasswordContainer(AuthBloc loginBloc, AsyncSnapshot snapshot) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5.0),
+      padding: EdgeInsets.only(left: 5, right: 40),
       child: TextField(
         obscureText: true,
         decoration: InputDecoration(
@@ -206,7 +208,7 @@ class LoginPage extends StatelessWidget {
 
   StreamBuilder _getLoginButton(AuthBloc loginBloc, BuildContext context) {
     return StreamBuilder(
-      stream: loginBloc.isValidFormStream,
+      stream: loginBloc.isValidFormStreamLogin,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return _getLoginRaissedButton(loginBloc, snapshot, context);
       },
@@ -232,6 +234,7 @@ class LoginPage extends StatelessWidget {
           await authBloc.logIn(authBloc.email, authBloc.password);
       if (info != null) {
         //TODO IMPLEMENT USER RETRIEVE.
+        _bloc.loadUser(info.uid);
         Navigator.pushReplacementNamed(context, 'home');
       }
     } catch (e) {
