@@ -6,7 +6,7 @@ class PasswordValidator{
       if (password.length >= 8){
         sink.add(password);
       } else {
-        sink.addError('Lenght invalid, more than 8 characters');
+        sink.addError('Cantidad de caracteres invalida, minimo 8 caracteres.');
       }
     }
   );

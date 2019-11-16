@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1011428025228",
+    "firebase_url": "https://goclub2-fbb93.firebaseio.com",
+    "project_id": "goclub2-fbb93",
+    "storage_bucket": "goclub2-fbb93.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1011428025228:android:1cdfddf9a7e7bc06b5aca9",
+        "android_client_info": {
+          "package_name": "nv.ues21.flutter_go_club_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1011428025228-ltoafl0ns31li1lgjeltcg9vat5firg1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8I7qg57vXnHXIaWyw4jhjhQjyo09-HCU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1011428025228-ltoafl0ns31li1lgjeltcg9vat5firg1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

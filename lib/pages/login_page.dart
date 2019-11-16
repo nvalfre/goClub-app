@@ -1,21 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_go_club_app/providers/login_provider.dart';
-import 'package:flutter_go_club_app/providers/users_providers.dart';
+import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 
 class LoginPage extends StatelessWidget {
   final String APP_NAME = 'goClub';
 
-  final String LOGIN_DESCRIPTION = 'Iniciar Sesion';
+  final String LOGIN_DESCRIPTION = 'Iniciar Sesión';
   final String USER_NAME = 'Nicolas Valfre';
 
   final String EMAIL_HINT_TEXT = 'email@example.com';
-  final String EMAIL_LABEL_TEXT = 'Correo Electronico';
+  final String EMAIL_LABEL_TEXT = 'Correo Electrónico';
 
   final String PASSWORD_HINT_TEXT = 'Insert your password';
-  final String PASSWORD_LABEL_TEXT = 'Password';
-
-  final usuarioProvider = new UserProvider();
+  final String PASSWORD_LABEL_TEXT = 'Contraseña';
 
   @override
   Widget build(BuildContext context) {
@@ -50,15 +49,6 @@ class LoginPage extends StatelessWidget {
   Stack _getBackgroudLoginItems(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Container(
-          child: Column(
-            children: <Widget>[
-              Icon(Icons.landscape, color: Colors.white, size: 100.0),
-              SizedBox(width: double.infinity),
-              Text(APP_NAME, style: buildTextStyleForHeader(26))
-            ],
-          ),
-        ),
         //pelotas de distintos deportes.
         Positioned(top: 90.0, left: 100.0, child: circle),
         Positioned(top: -40.0, left: -30.0, child: circle),
@@ -66,15 +56,19 @@ class LoginPage extends StatelessWidget {
         Positioned(bottom: -10.0, left: 30.0, child: circle),
         Positioned(bottom: -50.0, right: 10.0, child: circle),
         Container(
-          padding: EdgeInsets.only(top: 170.0),
+          padding: EdgeInsets.only(top: 10),
           child: Column(
             children: <Widget>[
-              Icon(Icons.person_pin, color: Colors.white, size: 50.0),
+              Image(
+                image: AssetImage(
+                  'assets/logo/logo-go-club.png',
+                ),
+                width: 250,
+              ),
               SizedBox(width: double.infinity),
-              Text(USER_NAME, style: buildTextStyleForHeader(18))
             ],
           ),
-        )
+        ),
       ],
     );
   }
@@ -91,7 +85,7 @@ class LoginPage extends StatelessWidget {
       TextStyle(color: Colors.white, fontSize: size);
 
   SingleChildScrollView _loginForm(BuildContext context) {
-    final bloc = Provider.of(context);
+    final bloc = Provider.authBloc(context);
     final size = MediaQuery.of(context).size;
 
     return getLoginBox(size, bloc, context);
@@ -99,7 +93,7 @@ class LoginPage extends StatelessWidget {
 
   SingleChildScrollView getLoginBox(
     Size size,
-    LoginBloc loginBloc,
+    AuthBloc loginBloc,
     BuildContext context,
   ) {
     return SingleChildScrollView(
@@ -157,7 +151,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  StreamBuilder _getEmailBox(LoginBloc loginBloc) {
+  StreamBuilder _getEmailBox(AuthBloc loginBloc) {
     return StreamBuilder(
       stream: loginBloc.emailStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -166,7 +160,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Container _getEmailContainer(LoginBloc loginBloc, AsyncSnapshot snapshot) {
+  Container _getEmailContainer(AuthBloc loginBloc, AsyncSnapshot snapshot) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 5.0),
       child: TextField(
@@ -176,7 +170,7 @@ class LoginPage extends StatelessWidget {
           icon: Icon(Icons.alternate_email, color: Colors.green),
           hintText: EMAIL_HINT_TEXT,
           labelText: EMAIL_LABEL_TEXT,
-          counterText: snapshot.data,
+//          counterText: snapshot.data,
           errorText: snapshot.error,
         ),
         onChanged: loginBloc.changeEmail,
@@ -184,7 +178,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  StreamBuilder _getPasswordBox(LoginBloc loginBloc) {
+  StreamBuilder _getPasswordBox(AuthBloc loginBloc) {
     return StreamBuilder(
       stream: loginBloc.passwordStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -193,7 +187,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Container _getPasswordContainer(LoginBloc loginBloc, AsyncSnapshot snapshot) {
+  Container _getPasswordContainer(AuthBloc loginBloc, AsyncSnapshot snapshot) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 5.0),
       child: TextField(
@@ -203,14 +197,14 @@ class LoginPage extends StatelessWidget {
             icon: Icon(Icons.lock_outline, color: Colors.green),
             hintText: PASSWORD_HINT_TEXT,
             labelText: PASSWORD_LABEL_TEXT,
-            counterText: snapshot.data,
+//            counterText: snapshot.data,
             errorText: snapshot.error),
         onChanged: loginBloc.changePassword,
       ),
     );
   }
 
-  StreamBuilder _getLoginButton(LoginBloc loginBloc, BuildContext context) {
+  StreamBuilder _getLoginButton(AuthBloc loginBloc, BuildContext context) {
     return StreamBuilder(
       stream: loginBloc.isValidFormStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -220,7 +214,7 @@ class LoginPage extends StatelessWidget {
   }
 
   RaisedButton _getLoginRaissedButton(
-      LoginBloc loginBloc, AsyncSnapshot snapshot, BuildContext context) {
+      AuthBloc loginBloc, AsyncSnapshot snapshot, BuildContext context) {
     return RaisedButton(
         child: Container(
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
@@ -232,14 +226,18 @@ class LoginPage extends StatelessWidget {
         onPressed: snapshot.hasData ? () => _login(loginBloc, context) : null);
   }
 
-  _login(LoginBloc loginBloc, BuildContext context) async {
-    Map info = await usuarioProvider.logIn(loginBloc.email, loginBloc.password);
-    if(info['ok']){
-      Navigator.pushReplacementNamed(context, 'home');
-    } else {
-      utils.showAlert(context, info['message']);
+  _login(AuthBloc authBloc, BuildContext context) async {
+    try {
+      FirebaseUser info =
+          await authBloc.logIn(authBloc.email, authBloc.password);
+      if (info != null) {
+        //TODO IMPLEMENT USER RETRIEVE.
+        Navigator.pushReplacementNamed(context, 'home');
+      }
+    } catch (e) {
+      utils.showAlert(context, 'Login error, intente nuevamente.');
+
+      print(e.code);
     }
   }
-
-
 }

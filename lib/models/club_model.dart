@@ -1,14 +1,14 @@
-// To parse this JSON data, do
-//
-//     final clubModel = clubModelFromJson(jsonString);
-
 import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 ClubModel clubModelFromJson(String str) => ClubModel.fromJson(json.decode(str));
 
 String clubModelToJson(ClubModel data) => json.encode(data.toJson());
 
 class ClubModel {
+  List<ClubModel> items = new List();
+
   String id;
   String name;
   String description;
@@ -16,34 +16,86 @@ class ClubModel {
   String logoUrl;
   String hourOpen;
   String hourClose;
+  String creationDate;
+  List listPrestaciones = List();
+  List listImagenes = List();
+  List listClubMember = List();
+  List listTeachers = List();
+  String uniqueId;
+
+  List listClass = List();
 
   ClubModel({
     this.id,
     this.name = '',
-    this.description ='',
+    this.description = '',
     this.available = false,
     this.logoUrl,
     this.hourOpen,
     this.hourClose,
+    this.creationDate,
+    this.listPrestaciones,
+    this.listImagenes,
+    this.listClubMember,
+    this.listTeachers,
+    this.listClass,
+    this.uniqueId,
   });
 
-  factory ClubModel.fromJson(Map<String, dynamic> json) => ClubModel(
-        id         : json["id"],
-        name       : json["name"],
+
+  factory ClubModel.fromJson(Map<String, dynamic> json, [String documentID]) =>
+      ClubModel(
+        id: documentID,
+        name: json["name"],
         description: json["description"],
-        available  : json["available"],
-        logoUrl    : json["logoUrl"],
-        hourOpen   : json["hour-open"],
-        hourClose  : json["hour-close"],
+        available: json["available"],
+        logoUrl: json["logoUrl"],
+        hourOpen: json["hour-open"],
+        hourClose: json["hour-close"],
+        creationDate: json["creation-date"],
+        listPrestaciones: json["list-prestaciones"],
+        listImagenes: json["list-imagenes"],
+        listClubMember: json["list-club-member"],
+        listTeachers: json["list-teacher"],
+        listClass: json["list-class"],
+        uniqueId: json["uniqueId"],
       );
 
-  Map<String, dynamic> toJson() => {
-//        "id"         : id,
-        "name"       : name,
+
+
+  Map<String, dynamic> toJson() =>
+      {
+        "id": id,
+        "name": name,
         "description": description,
-        "available"  : available,
-        "logoUrl"    : logoUrl,
-        "hour-open"  : hourOpen,
-        "hour-close" : hourClose,
+        "available": available,
+        "logoUrl": logoUrl,
+        "hour-open": hourOpen,
+        "hour-close": hourClose,
+        "creation-date": creationDate,
+        "list-prestaciones": listPrestaciones,
+        "list-imagenes": listImagenes,
+        "list-club-member": listClubMember,
+        "list-teacher": listTeachers,
+        "list-class": listClass,
+        "uniqueId": uniqueId,
       };
+
+  factory ClubModel.fromSnapshot(DocumentSnapshot snap) =>
+      ClubModel(
+        id: snap.documentID,
+        name: snap.data['name'],
+        description: snap.data["description"],
+        available: snap.data["available"],
+        logoUrl: snap.data["logoUrl"],
+        hourOpen: snap.data["hour-open"],
+        hourClose: snap.data["hour-close"],
+        creationDate: snap.data["creation-date"],
+        listPrestaciones: snap.data["list-prestaciones"],
+        listImagenes: snap.data["list-imagenes"],
+        listClubMember: snap.data["list-club-member"],
+        listTeachers: snap.data["list-teacher"],
+        listClass: snap.data["list-class"],
+        uniqueId: snap.data["uniqueId"],
+      );
 }
