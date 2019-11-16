@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/models/auth_status_model.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
-import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/authentication_service_impl.dart';
 
@@ -142,7 +141,6 @@ class _SplashRootPageState extends State<SplashRootPage> {
       case AuthStatus.LOGGED_IN:
         if (_userId.length > 0 && _userId != null) {
           final prefs = new UserPreferences();
-          prefs.uuid = _userId;
           return HomePage();
         } else
           return backgroundStack();

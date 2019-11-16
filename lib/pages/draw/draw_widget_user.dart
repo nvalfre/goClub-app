@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/login_bloc.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
@@ -93,7 +92,7 @@ class UserDrawer extends StatelessWidget {
                 Icon(Icons.close, color: Colors.green),
                 Padding(
                   padding: EdgeInsets.only(left: 8.0),
-                  child: Text('Close Sesion'),
+                  child: Text('Cerrar Sesión'),
                 )
               ],
             ),
@@ -167,7 +166,7 @@ class UserDrawer extends StatelessWidget {
   _logOut(AuthBloc authBloc, BuildContext context) async {
     try {
       await authBloc.logOut();
-      Navigator.pushReplacementNamed(context, 'root');
+      Navigator.pushReplacementNamed(context, 'splash');
     } catch (e) {
       print(e);
     }

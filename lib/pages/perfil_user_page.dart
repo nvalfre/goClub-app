@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/user_bloc.dart';
 import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
+import 'package:image_picker/image_picker.dart';
 
 class ProfileUser extends StatefulWidget {
   @override
@@ -26,7 +26,6 @@ class MapScreenState extends State<ProfileUser>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -296,7 +295,6 @@ class MapScreenState extends State<ProfileUser>
   }
 
   void _saveForID() {
-
     //TODO Validate proper work.
     print(_user.avatar);
 

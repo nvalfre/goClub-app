@@ -1,22 +1,23 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/src/widgets/async.dart';
 import 'package:flutter_go_club_app/models/user_model.dart';
+import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/user_service_impl.dart';
 import 'package:rxdart/rxdart.dart';
 
 class UserBloc {
   final _userController = new BehaviorSubject<List<UserModel>>();
   final _loadingController = new BehaviorSubject<bool>();
+  final _prefs = new UserPreferences();
 
-  final _userProvider = new UserServiceImpl();
+  final _userProvider = UserServiceImpl.getState();
 
   Stream<List<UserModel>> get userStream => _userController.stream;
 
   Stream<bool> get loadingStream => _loadingController.stream;
 
-  Future<List<UserModel>> loadClubs() async{
+  Future<List<UserModel>> loadUsers() async {
     _loadingController.sink.add(true);
     var querySnapshot = await _userProvider.loadUsers();
     _loadingController.sink.add(false);
@@ -25,13 +26,7 @@ class UserBloc {
   }
 
   Stream<List<UserModel>> loadClubsSnap() {
-    return _userProvider.loadUserSnap();
-  }
-
-  void addClub(UserModel userModel) async {
-    _loadingController.sink.add(true);
-    await _userProvider.createData(userModel);
-    _loadingController.sink.add(false);
+    return _userProvider.loadUserListSnap();
   }
 
   void editClub(UserModel userModel) {
@@ -57,18 +52,24 @@ class UserBloc {
     _loadingController.close();
   }
 
-
   List<UserModel> filterClubsByName(AsyncSnapshot snapshot, String query) {
-    List<UserModel> userList= List();
+    List<UserModel> userList = List();
     List<UserModel> userDocuments = snapshot.data;
     userDocuments.forEach((userModel) {
-      if(userList.length < 6 && userModel.name.toLowerCase().substring(0, query.length) == query){
+      if (userList.length < 6 &&
+          userModel.name.toLowerCase().substring(0, query.length) == query) {
         userList.add(userModel);
       }
-    }
-    );
+    });
     return userList;
   }
 
+  Future<UserModel> loadUser(String uid) async {
+    _loadingController.sink.add(true);
+    UserModel user = await _userProvider.loadUser(uid);
+    _prefs.user = user;
+    _loadingController.sink.add(false);
 
+    return user;
+  }
 }

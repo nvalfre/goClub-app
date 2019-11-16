@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/src/widgets/async.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/providers/club_service_impl.dart';
@@ -16,7 +15,7 @@ class ClubsBloc {
 
   Stream<bool> get loadingStream => _loadingController.stream;
 
-  Future<List<ClubModel>> loadClubs() async{
+  Future<List<ClubModel>> loadClubs() async {
     _loadingController.sink.add(true);
     var querySnapshot = await _clubsProvider.loadClubs();
     _loadingController.sink.add(false);
@@ -57,20 +56,15 @@ class ClubsBloc {
     _loadingController.close();
   }
 
-
   List<ClubModel> filterClubsByName(AsyncSnapshot snapshot, String query) {
-    List<ClubModel> clubList= List();
+    List<ClubModel> clubList = List();
     List<ClubModel> clubDocuments = snapshot.data;
-//    List<DocumentSnapshot> clubDocuments = snapshot.data.documents;
     clubDocuments.forEach((clubModel) {
-//      var clubModel = ClubModel.fromSnapshot(clubDocument);
-      if(clubList.length < 6 && clubModel.name.toLowerCase().substring(0, query.length) == query){
+      if (clubList.length < 6 &&
+          clubModel.name.toLowerCase().substring(0, query.length) == query) {
         clubList.add(clubModel);
       }
-    }
-    );
+    });
     return clubList;
   }
-
-
 }

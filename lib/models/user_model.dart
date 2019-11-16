@@ -12,6 +12,7 @@ class UserModel {
   String lastName;
   String email;
   String telefono;
+  String direccion;
   String idClub;
   bool available;
   String avatar;
@@ -23,6 +24,7 @@ class UserModel {
     this.lastName = '',
     this.email = '',
     this.telefono = '',
+    this.direccion = '',
     this.idClub = '',
     this.available = false,
     this.avatar,
@@ -34,21 +36,11 @@ class UserModel {
         name: json["name"],
         email: json["email"],
         telefono: json["telefono"],
+        direccion: json["direccion"],
         idClub: json["idClub"],
         available: json["available"],
         avatar: json["avatar"],
         role: json["role"],
-      );
-
-  factory UserModel.fromSnapshot(DocumentSnapshot snap) => UserModel(
-        id: snap.documentID,
-        name: snap.data["name"],
-        email: snap.data["email"],
-        telefono: snap.data["telefono"],
-        idClub: snap.data["idClub"],
-        available: snap.data["available"],
-        avatar: snap.data["avatar"],
-        role: snap.data["role"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -57,9 +49,36 @@ class UserModel {
         "lastName": lastName,
         "email": email,
         "telefono": telefono,
+        "direccion": direccion,
         "idClub": idClub,
         "available": available,
-        "logoUrl": avatar,
+        "avatar": avatar,
         "role": role,
       };
+
+  factory UserModel.fromSnapshot(DocumentSnapshot snap) => UserModel(
+        id: snap.documentID,
+        name: snap.data["name"],
+        email: snap.data["email"],
+        telefono: snap.data["telefono"],
+        direccion: snap.data["direccion"],
+        idClub: snap.data["idClub"],
+        available: snap.data["available"],
+        avatar: snap.data["avatar"],
+        role: snap.data["role"],
+      );
+  factory UserModel.fromQuerySnapshot(QuerySnapshot snap) {
+    var document = snap.documents[0];
+    return UserModel(
+        id: document.data['id'],
+        name: document.data["name"],
+        email: document.data["email"],
+        telefono: document.data["telefono"],
+        direccion: document.data["direccion"],
+        idClub: document.data["idClub"],
+        available: document.data["available"],
+        avatar: document.data["avatar"],
+        role: document.data["role"],
+      );
+  }
 }
