@@ -11,7 +11,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ClubsBloc clubsBloc = Provider.clubsBloc(context);
-//    clubsBloc.loadClubs();
 
     return buildScaffold(clubsBloc, context);
   }

@@ -7,6 +7,7 @@ import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
 import 'package:flutter_go_club_app/pages/register_page.dart';
+import 'package:flutter_go_club_app/pages/root_nav_bar_admin.dart';
 import 'package:flutter_go_club_app/pages/splash_page.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
@@ -17,6 +18,28 @@ void main() async {
 
   runApp(MyApp());
 }
+//TODO: Perfil Admin
+//TODO: Drawer Admin
+//TODO: Perfil Admin Club
+//TODO: Perfil User
+//TODO: Bottom nav bar Admin
+//TODO: Bottom nav bar user to profile
+//TODO: Crear club admins
+
+//TODO: Crear prestaciones club
+//TODO: Crear reservas desde prestaciones por cada club
+//TODO: Ver prestaciones usuarios y clubes
+//TODO: Detalles prestaciones usuarios y clubes
+//TODO: Ver reservas usuarios y clubes, se cargan disponibilidades para reservas SIN convergencia
+//TODO: Detalles reserva usuarios y clubes
+//TODO: Solicitar reserva usuario
+//TODO: Aceptar reserva
+//TODO: Chat usuario reserva y club
+//TODO: Buscador en prestaciones
+//TODO: Buscador en reservas
+//TODO: Buscador en clubes
+//TODO: On generated route
+
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -29,14 +52,10 @@ class MyApp extends StatelessWidget {
           initialRoute: 'splash',
           routes: {
             'splash': (BuildContext context) => SplashRootPage(),
-            'root': (BuildContext context) => RootHomeNavBar(),
+            'root': (BuildContext context) => RootNavBarGeneric(),
             'login': (BuildContext context) => LoginPage(),
             'register': (BuildContext context) => RegisterPage(),
 
-            'home' : (BuildContext context) => RootHomeNavBar(),
-            'homeUser' : (BuildContext context) => HomePage(), //TODO LAS HOME PAGE DEBERIAN ESTAR VINCULADAS EN LA ROOTPAGE Y VALIDADAS POR ROL. SE DEBERIAN BORRAR DE ACA.
-            'homeAdmin' : (BuildContext context) => HomePageAdmin(),
-            'homeAdminClub' : (BuildContext context) => HomePageAdminClub(),
             'search': (BuildContext context) => ClubsPage(),
             'clubs': (BuildContext context) => ClubsPage(),
             'clubsAdmin': (BuildContext context) => ClubsPage(),

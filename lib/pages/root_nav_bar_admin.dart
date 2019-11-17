@@ -4,14 +4,14 @@ import 'package:flutter_go_club_app/pages/home_user_page.dart';
 
 import '../place_holder_widget.dart';
 
-class Home extends StatefulWidget {
+class RootNavBarGeneric extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _HomeState();
+    return _RootNavBarGenericState();
   }
 }
 
-class _HomeState extends State<Home> {
+class _RootNavBarGenericState extends State<RootNavBarGeneric> {
   int _currentIndex = 0;
   final List<Widget> _childrenRoutes = [
     PlaceholderWidget(HomePage()),

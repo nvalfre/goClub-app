@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/user_bloc.dart';
+import 'package:flutter_go_club_app/pages/root_nav_bar_admin.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 
@@ -235,7 +236,10 @@ class LoginPage extends StatelessWidget {
       if (info != null) {
         //TODO IMPLEMENT USER RETRIEVE.
         _bloc.loadUser(info.uid);
-        Navigator.pushReplacementNamed(context, 'home');
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RootNavBarGeneric()),
+        );
       }
     } catch (e) {
       utils.showAlert(context, 'Login error, intente nuevamente.');

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/login_bloc.dart';
+import 'package:flutter_go_club_app/pages/home_admin_page.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
 class UserDrawerAdmin extends StatelessWidget {
@@ -27,7 +28,11 @@ class UserDrawerAdmin extends StatelessWidget {
               ],
             ),
             trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.pushNamed(context, 'home'),
+            onTap: () =>
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePageAdmin()),
+                ),
           ),
           ListTile(
             title: Row(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/login_bloc.dart';
+import 'package:flutter_go_club_app/pages/home_user_page.dart';
+import 'package:flutter_go_club_app/pages/login_page.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
 class UserDrawer extends StatelessWidget {
@@ -29,7 +31,11 @@ class UserDrawer extends StatelessWidget {
               ],
             ),
             trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.pushNamed(context, 'home'),
+            onTap: () =>
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                ),
           ),
           ListTile(
             title: Row(
@@ -165,8 +171,14 @@ class UserDrawer extends StatelessWidget {
 
   _logOut(AuthBloc authBloc, BuildContext context) async {
     try {
-      await authBloc.logOut();
-      Navigator.pushReplacementNamed(context, 'splash');
+      var logOut = authBloc.logOut();
+      await logOut;
+      if(logOut != null){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      }
     } catch (e) {
       print(e);
     }
