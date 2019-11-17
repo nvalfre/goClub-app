@@ -36,7 +36,7 @@ class UserDrawerAdmin extends StatelessWidget {
             trailing: Icon(Icons.arrow_forward_ios),
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => RootHomeNavBar()),
+              MaterialPageRoute(builder: (context) => RootHomeNavBar(0)),
             ),
           ),
           ListTile(

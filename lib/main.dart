@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
           initialRoute: 'splash',
           routes: {
             'splash': (BuildContext context) => SplashRootPage(),
-            'root': (BuildContext context) => RootHomeNavBar(),
+            'root': (BuildContext context) => RootHomeNavBar(0),
             'login': (BuildContext context) => LoginPage(),
             'register': (BuildContext context) => RegisterPage(),
 

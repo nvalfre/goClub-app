@@ -6,6 +6,8 @@ import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
 
+import 'draw/draw_widget_user.dart';
+
 class ClubsPage extends StatefulWidget {
   @override
   _ClubPageState createState() => _ClubPageState();
@@ -42,6 +44,7 @@ class _ClubPageState extends State<ClubsPage> {
           )
         ],
       ),
+      drawer: UserDrawer(),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(12.0),

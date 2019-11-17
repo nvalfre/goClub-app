@@ -137,7 +137,7 @@ class _SplashRootPageState extends State<SplashRootPage> {
         break;
       case AuthStatus.LOGGED_IN:
         if (_userId.length > 0 && _userId != null) {
-          return RootHomeNavBar();
+          return RootHomeNavBar(0);
         } else
           return backgroundStack();
         break;

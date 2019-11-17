@@ -11,14 +11,24 @@ import '../place_holder_widget.dart';
 import 'clubs_page.dart';
 
 class RootHomeNavBar extends StatefulWidget {
+  int lastPage;
+
+  RootHomeNavBar(int lp) {
+    lastPage = lp;
+  }
+
   @override
   State<StatefulWidget> createState() {
-    return _RootHomeNavBarState();
+    return _RootHomeNavBarState(lastPage);
   }
 }
 
 class _RootHomeNavBarState extends State<RootHomeNavBar> {
-  int _currentIndex = 0;
+  _RootHomeNavBarState(int lastPage) {
+    _currentIndex = lastPage;
+  }
+
+  int _currentIndex;
   final _prefs = UserPreferences();
   String _role;
 
@@ -27,8 +37,8 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
 //    PlaceholderWidget(EmptyPage()), // should target DataSearch search delegate.
     PlaceholderWidget(ReservePage()),
     PlaceholderWidget(BenefitPage()),
+    PlaceholderWidget(RequestPage()),
     PlaceholderWidget(ClubsPage()),
-
   ];
 
   final List<Widget> _childrenRoutesAdmin = [
@@ -43,6 +53,7 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
     PlaceholderWidget(ReservePage()),
     PlaceholderWidget(RequestPage())
   ];
+
   @override
   Widget build(BuildContext context) {
     _role = _prefs.role;
@@ -51,11 +62,9 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
       bottomNavigationBar: new Theme(
         data: Theme.of(context).copyWith(
             canvasColor: Colors.green,
-            primaryColor: Colors.greenAccent,
             textTheme: Theme.of(context)
                 .textTheme
                 .copyWith(caption: new TextStyle(color: Colors.white))),
-
         child: _buildBottomNavigationBarByRole(context),
       ),
     );
@@ -91,22 +100,25 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
           break;
       }
     }
+    return BottomNavigationBar();
   }
 
-  BottomNavigationBar _buildBottomNavigationBar(List<BottomNavigationBarItem> items) {
+  BottomNavigationBar _buildBottomNavigationBar(
+      List<BottomNavigationBarItem> items) {
     return BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: onTabTapped,
-          items: items,
-        );
+      selectedItemColor: Colors.greenAccent,
+      currentIndex: _currentIndex,
+      onTap: onTabTapped,
+      items: items,
+    );
   }
 
   List<BottomNavigationBarItem> _getUserItems(BuildContext context) {
     return [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Container(height: 0.0),
-            ),
+      BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          title: Container(height: 0.0),
+          activeIcon: Icon(Icons.home, size: 35)),
 //            BottomNavigationBarItem(
 //              icon: IconButton(
 //                icon: Icon(Icons.search),
@@ -119,27 +131,32 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
 //              ),
 //              title: Container(height: 0.0),
 //            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.collections_bookmark),
-              title: Container(height: 0.0),
-            ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.schedule),
-        title: Container(height: 0.0),
-      ),
+          icon: Icon(Icons.schedule),
+          title: Container(height: 0.0),
+          activeIcon: Icon(Icons.schedule, size: 35)),
       BottomNavigationBarItem(
-        icon: Icon(Icons.room_service),
-        title: Container(height: 0.0),
-      ),
-          ];
+          icon: Icon(Icons.playlist_add_check),
+          title: Container(height: 0.0),
+          activeIcon: Icon(Icons.playlist_add_check, size: 35)),
+      BottomNavigationBarItem(
+          icon: Icon(Icons.room_service),
+          title: Container(height: 0.0),
+          activeIcon: Icon(Icons.room_service, size: 35)),
+      BottomNavigationBarItem(
+          icon: Icon(Icons.collections_bookmark),
+          title: Container(height: 0.0),
+          activeIcon: Icon(Icons.collections_bookmark, size: 35)),
+    ];
   }
 
   List<BottomNavigationBarItem> _getClubAdminItems(BuildContext context) {
     return [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Container(height: 0.0),
-            ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home),
+        title: Container(height: 0.0),
+        activeIcon: Icon(Icons.home, size: 35),
+      ),
 //            BottomNavigationBarItem(
 //              icon: IconButton(
 //                icon: Icon(Icons.search),
@@ -152,32 +169,37 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
 //              ),
 //              title: Container(height: 0.0),
 //            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.collections_bookmark),
-              title: Container(height: 0.0),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.schedule),
-              title: Container(height: 0.0),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.room_service),
-              title: Container(height: 0.0),
-            ),
-          ];
+      BottomNavigationBarItem(
+        icon: Icon(Icons.collections_bookmark),
+        title: Container(height: 0.0),
+        activeIcon: Icon(Icons.collections_bookmark, size: 35),
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.schedule),
+        title: Container(height: 0.0),
+        activeIcon: Icon(Icons.schedule, size: 35),
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.room_service),
+        title: Container(height: 0.0),
+        activeIcon: Icon(Icons.room_service, size: 35),
+      ),
+    ];
   }
 
   List<BottomNavigationBarItem> _getAdminItems(BuildContext context) {
     return [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Container(height: 0.0),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.collections_bookmark),
-              title: Container(height: 0.0),
-            ),
-          ];
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home),
+        title: Container(height: 0.0),
+        activeIcon: Icon(Icons.home, size: 35),
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.collections_bookmark),
+        title: Container(height: 0.0),
+        activeIcon: Icon(Icons.collections_bookmark, size: 35),
+      ),
+    ];
   }
 
   void onTabTapped(int index) {

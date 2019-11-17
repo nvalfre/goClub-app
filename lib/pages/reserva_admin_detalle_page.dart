@@ -6,6 +6,7 @@ import 'package:flutter_go_club_app/pages/search_delegate.dart';
 
 import 'card_swiper_widget.dart';
 import 'card_horizontal.dart';
+import 'draw/draw_widget_user.dart';
 
 class ReservePage extends StatelessWidget {
 
@@ -16,9 +17,8 @@ class ReservePage extends StatelessWidget {
     clubBloc.loadClubs();
     return Scaffold(
         appBar: AppBar(
-          leading: Container(),
           centerTitle: false,
-          title: Text('Clubs Swipper'),
+          title: Text('Reserva'),
           backgroundColor: Colors.green,
           actions: <Widget>[
             IconButton(
@@ -33,6 +33,7 @@ class ReservePage extends StatelessWidget {
             )
           ],
         ),
+        drawer: UserDrawer(),
         body: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

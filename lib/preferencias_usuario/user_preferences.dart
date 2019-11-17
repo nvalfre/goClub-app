@@ -54,7 +54,7 @@ class UserPreferences {
 
   // GET y SET de la última página
   get lastPage {
-    return _prefs.getString('lastPage') ?? 'login';
+    return _prefs.getString('lastPage') ?? 'splash';
   }
 
   set lastPage( String value ) {
