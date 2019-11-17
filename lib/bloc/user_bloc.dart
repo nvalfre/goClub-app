@@ -72,4 +72,8 @@ class UserBloc {
 
     return user;
   }
+  Stream<UserModel> loadUserStream(String uid)  {
+    return _userProvider.loadUserStream(uid);
+
+  }
 }

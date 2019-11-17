@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
   Scaffold buildScaffold(ClubsBloc clubsBloc, BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        title: Text('Inicio'),
       ),
       body: _getListOfClubs(clubsBloc),
       drawer: UserDrawer(),

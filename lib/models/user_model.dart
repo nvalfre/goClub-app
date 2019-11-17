@@ -72,6 +72,7 @@ class UserModel {
     return UserModel(
         id: document.data['id'],
         name: document.data["name"],
+        lastName: document.data["lastName"],
         email: document.data["email"],
         telefono: document.data["telefono"],
         direccion: document.data["direccion"],
@@ -81,4 +82,5 @@ class UserModel {
         role: document.data["role"],
       );
   }
+
 }

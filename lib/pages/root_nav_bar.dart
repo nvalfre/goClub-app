@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/models/access_role_model.dart';
+import 'package:flutter_go_club_app/pages/home_admin_page.dart';
 import 'package:flutter_go_club_app/pages/home_user_page.dart';
-import 'package:flutter_go_club_app/pages/search_delegate.dart';
+import 'package:flutter_go_club_app/pages/prestacion_admin_detalle_page.dart';
+import 'package:flutter_go_club_app/pages/request_admin_detalle_page.dart';
+import 'package:flutter_go_club_app/pages/reserva_admin_detalle_page.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 
 import '../place_holder_widget.dart';
-import 'empty_widget_page.dart';
-import 'home_swipper_page.dart';
+import 'clubs_page.dart';
 
 class RootHomeNavBar extends StatefulWidget {
   @override
@@ -22,15 +24,30 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
 
   final List<Widget> _childrenRoutes = [
     PlaceholderWidget(HomePage()),
-    PlaceholderWidget(EmptyPage()), // should target DataSearch search delegate.
-    PlaceholderWidget(HomePageSwipper())
+//    PlaceholderWidget(EmptyPage()), // should target DataSearch search delegate.
+    PlaceholderWidget(ReservePage()),
+    PlaceholderWidget(BenefitPage()),
+    PlaceholderWidget(ClubsPage()),
+
   ];
 
+  final List<Widget> _childrenRoutesAdmin = [
+    PlaceholderWidget(HomePageAdmin()),
+    PlaceholderWidget(ClubsPage())
+  ];
+
+  final List<Widget> _childrenRoutesClub = [
+    PlaceholderWidget(HomePage()),
+//    PlaceholderWidget(EmptyPage()),
+    PlaceholderWidget(BenefitPage()),
+    PlaceholderWidget(ReservePage()),
+    PlaceholderWidget(RequestPage())
+  ];
   @override
   Widget build(BuildContext context) {
     _role = _prefs.role;
     return Scaffold(
-      body: _childrenRoutes[_currentIndex],
+      body: buildChildrenRoute(),
       bottomNavigationBar: new Theme(
         data: Theme.of(context).copyWith(
             canvasColor: Colors.green,
@@ -42,6 +59,22 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
         child: _buildBottomNavigationBarByRole(context),
       ),
     );
+  }
+
+  Widget buildChildrenRoute() {
+    if (_role != null && _role != '') {
+      switch (_role) {
+        case AccessStatus.ADMIN:
+          return _childrenRoutesAdmin[_currentIndex];
+          break;
+        case AccessStatus.CLUB_ADMIN:
+          return _childrenRoutesClub[_currentIndex];
+          break;
+        case AccessStatus.USER:
+          return _childrenRoutes[_currentIndex];
+          break;
+      }
+    }
   }
 
   BottomNavigationBar _buildBottomNavigationBarByRole(BuildContext context) {
@@ -74,22 +107,30 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
               icon: Icon(Icons.home),
               title: Container(height: 0.0),
             ),
-            BottomNavigationBarItem(
-              icon: IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  showSearch(
-                    context: context,
-                    delegate: DataSearchClubs(),
-                  );
-                },
-              ),
-              title: Container(height: 0.0),
-            ),
+//            BottomNavigationBarItem(
+//              icon: IconButton(
+//                icon: Icon(Icons.search),
+//                onPressed: () {
+//                  showSearch(
+//                    context: context,
+//                    delegate: DataSearchClubs(),
+//                  );
+//                },
+//              ),
+//              title: Container(height: 0.0),
+//            ),
             BottomNavigationBarItem(
               icon: Icon(Icons.collections_bookmark),
               title: Container(height: 0.0),
             ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.schedule),
+        title: Container(height: 0.0),
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.room_service),
+        title: Container(height: 0.0),
+      ),
           ];
   }
 
@@ -99,20 +140,28 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
               icon: Icon(Icons.home),
               title: Container(height: 0.0),
             ),
+//            BottomNavigationBarItem(
+//              icon: IconButton(
+//                icon: Icon(Icons.search),
+//                onPressed: () {
+//                  showSearch(
+//                    context: context,
+//                    delegate: DataSearchClubs(),
+//                  );
+//                },
+//              ),
+//              title: Container(height: 0.0),
+//            ),
             BottomNavigationBarItem(
-              icon: IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  showSearch(
-                    context: context,
-                    delegate: DataSearchClubs(),
-                  );
-                },
-              ),
+              icon: Icon(Icons.collections_bookmark),
               title: Container(height: 0.0),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.collections_bookmark),
+              icon: Icon(Icons.schedule),
+              title: Container(height: 0.0),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.room_service),
               title: Container(height: 0.0),
             ),
           ];
@@ -122,18 +171,6 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
     return [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              title: Container(height: 0.0),
-            ),
-            BottomNavigationBarItem(
-              icon: IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  showSearch(
-                    context: context,
-                    delegate: DataSearchClubs(),
-                  );
-                },
-              ),
               title: Container(height: 0.0),
             ),
             BottomNavigationBarItem(

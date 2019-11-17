@@ -8,6 +8,18 @@ import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
 
+
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_go_club_app/bloc/user_bloc.dart';
+import 'package:flutter_go_club_app/models/user_model.dart';
+import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
+import 'package:flutter_go_club_app/providers/provider_impl.dart';
+import 'package:flutter_go_club_app/utils/utils.dart' as utils;
+import 'package:image_picker/image_picker.dart';
+
 class ProfileUser extends StatefulWidget {
   @override
   MapScreenState createState() => MapScreenState();
@@ -21,6 +33,7 @@ class MapScreenState extends State<ProfileUser>
   final formKey = GlobalKey<FormState>();
   bool _saving = false;
   UserModel _user = UserModel();
+  UserPreferences _pref = UserPreferences();
   UserBloc _bloc;
   File _photo;
 
@@ -32,20 +45,32 @@ class MapScreenState extends State<ProfileUser>
   @override
   Widget build(BuildContext context) {
     _bloc = Provider.userBloc(context);
-
     return Scaffold(
       appBar: perfilAppBar(),
       body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            _perfilPhotoAndUser(),
-            _perfilBody(),
-          ],
-        ),
+        child: _getPerfilPhotoAndUser(),
       ),
     );
   }
 
+  StreamBuilder _getPerfilPhotoAndUser( ) {
+    return StreamBuilder(
+      stream: _bloc.loadUserStream(_pref.user),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if(snapshot.hasData){
+          _user = snapshot.data;
+          return Column(
+            children: <Widget>[
+              _perfilPhotoAndUser(),
+              _perfilBody(),
+            ],
+          );
+        }else{
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
   Column _perfilPhotoAndUser() {
     return Column(
       children: <Widget>[
@@ -91,15 +116,11 @@ class MapScreenState extends State<ProfileUser>
           child: Column(
             children: <Widget>[
               Text(
-                'Nombre Usuario',
+                _user.name + ' ' +_user.lastName,
                 style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.blueAccent),
-              ),
-              Text(
-                'Usuario desde',
-                style: TextStyle(fontSize: 14.0, color: Colors.grey),
               ),
             ],
           ),
@@ -114,16 +135,16 @@ class MapScreenState extends State<ProfileUser>
         image: FileImage(_photo),
         fit: BoxFit.cover,
       );
-    } else if (_photo == null) {
+    } else if (_user.avatar != null) {
+      return DecorationImage(
+          image: NetworkImage(_user.avatar), fit: BoxFit.cover);
+    } else {
       return DecorationImage(
         image: ExactAssetImage('assets/images/no-image.png'),
         fit: BoxFit.cover,
       );
     }
-    if (_user.avatar != null) {
-      return DecorationImage(
-          image: NetworkImage(_user.avatar), fit: BoxFit.cover);
-    }
+
   }
 
   AppBar perfilAppBar() {
@@ -135,6 +156,7 @@ class MapScreenState extends State<ProfileUser>
 
   Container _perfilBody() {
     return new Container(
+        padding: EdgeInsets.symmetric(horizontal: 10),
         color: Color(0xffFFFFFF),
         child: Form(
             key: formKey,
@@ -149,23 +171,23 @@ class MapScreenState extends State<ProfileUser>
                 _getUserClubs(),
                 !_status
                     ? Container(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            _getSubmitButtom(),
-                            SizedBox(
-                              width: 30,
-                            ),
-                            _getCancelButtom()
-                          ],
-                        ),
-                      )
+                  padding: EdgeInsets.only(top: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      _getSubmitButtom(),
+                      SizedBox(
+                        width: 30,
+                      ),
+                      _getCancelButtom()
+                    ],
+                  ),
+                )
                     : new Container(),
               ],
             ))
 //      getPaddingBody(),
-        );
+    );
   }
 
   TextFormField _getUserName() {
@@ -176,7 +198,9 @@ class MapScreenState extends State<ProfileUser>
       decoration: InputDecoration(labelText: type),
       textCapitalization: TextCapitalization.words,
       keyboardType: TextInputType.text,
-      onSaved: (value) => _user.name = value,
+      onSaved: (value) => setState(() {
+        _user.name = value;
+      }),
       validator: (value) {
         return _validateLenghtOf(value, type, 6);
       },
@@ -191,7 +215,9 @@ class MapScreenState extends State<ProfileUser>
       decoration: InputDecoration(labelText: type),
       textCapitalization: TextCapitalization.sentences,
       keyboardType: TextInputType.text,
-      onSaved: (value) => _user.lastName = value,
+      onSaved: (value) => setState(() {
+        _user.lastName = value;
+      }),
       validator: (value) {
         return _validateLenghtOf(value, type, 12);
       },
@@ -201,12 +227,14 @@ class MapScreenState extends State<ProfileUser>
   _getUserDirection() {
     var type = 'Dirección';
     return TextFormField(
-      initialValue: _user.lastName,
+      initialValue: _user.direccion,
       enabled: !_status,
       decoration: InputDecoration(labelText: type),
       textCapitalization: TextCapitalization.sentences,
       keyboardType: TextInputType.text,
-      onSaved: (value) => _user.lastName = value,
+      onSaved: (value) => setState(() {
+        _user.lastName = value;
+      }),
       validator: (value) {
         return _validateLenghtOf(value, type, 12);
       },
@@ -216,12 +244,14 @@ class MapScreenState extends State<ProfileUser>
   _getUserTel() {
     var type = 'Teléfono';
     return TextFormField(
-      initialValue: _user.lastName,
+      initialValue: _user.telefono,
       enabled: !_status,
       decoration: InputDecoration(labelText: type),
       textCapitalization: TextCapitalization.sentences,
       keyboardType: TextInputType.text,
-      onSaved: (value) => _user.lastName = value,
+      onSaved: (value) => setState(() {
+        _user.lastName = value;
+      }),
       validator: (value) {
         return _validateLenghtOf(value, type, 12);
       },
@@ -237,7 +267,9 @@ class MapScreenState extends State<ProfileUser>
       decoration: InputDecoration(labelText: type),
       textCapitalization: TextCapitalization.sentences,
       keyboardType: TextInputType.text,
-      onSaved: (value) => _user.lastName = value,
+      onSaved: (value) => setState(() {
+        _user.lastName = value;
+      }),
       validator: (value) {
         return _validateLenghtOf(value, type, 12);
       },
@@ -285,13 +317,17 @@ class MapScreenState extends State<ProfileUser>
     setState(() {
       _saving = true;
     });
+    String uploadPhoto;
 
     if (_photo != null) {
-      _user.avatar = await _bloc.uploadPhoto(_photo);
+      uploadPhoto = await _bloc.uploadPhoto(_photo);
     }
 
-    _saveForID();
-    Navigator.pop(context);
+    if (uploadPhoto != null){
+      _user.avatar = uploadPhoto;
+      _saveForID();
+      Navigator.pop(context);
+    }
   }
 
   void _saveForID() {
@@ -323,6 +359,9 @@ class MapScreenState extends State<ProfileUser>
     }
     setState(() {
       _photo = img;
+      _user.avatar = img.path;
+      _saving = false;
+      _status = false;
     });
   }
 

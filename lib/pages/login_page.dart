@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/user_bloc.dart';
-import 'package:flutter_go_club_app/pages/root_nav_bar_admin.dart';
+import 'package:flutter_go_club_app/models/user_model.dart';
+import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
+import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 
@@ -18,7 +20,6 @@ class LoginPage extends StatelessWidget {
   final String PASSWORD_HINT_TEXT = 'Insert your password';
   final String PASSWORD_LABEL_TEXT = 'Contraseña';
   UserBloc _bloc;
-
   @override
   Widget build(BuildContext context) {
     _bloc = Provider.userBloc(context);
@@ -234,11 +235,12 @@ class LoginPage extends StatelessWidget {
       FirebaseUser info =
           await authBloc.logIn(authBloc.email, authBloc.password);
       if (info != null) {
+
         //TODO IMPLEMENT USER RETRIEVE.
-        _bloc.loadUser(info.uid);
+        await setRoleUserPref(info);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => RootNavBarGeneric()),
+          MaterialPageRoute(builder: (context) => RootHomeNavBar()),
         );
       }
     } catch (e) {
@@ -246,5 +248,9 @@ class LoginPage extends StatelessWidget {
 
       print(e.code);
     }
+  }
+
+  setRoleUserPref(FirebaseUser info) async{
+    await _bloc.loadUser(info.uid);
   }
 }

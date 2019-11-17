@@ -60,4 +60,14 @@ class UserPreferences {
   set lastPage( String value ) {
     _prefs.setString('lastPage', value);
   }
+
+  void clear() {
+    _prefs.setString('uuid','');
+    _prefs.setString('name','');
+    _prefs.setString('role','');
+    _prefs.setString('lastName','');
+    _prefs.setString('telefono','');
+    _prefs.setString('direccion','');
+    _prefs.setString('avatar','');
+    _prefs.setString('email','');}
 }

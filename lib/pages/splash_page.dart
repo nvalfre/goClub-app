@@ -4,11 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/models/auth_status_model.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
-import 'package:flutter_go_club_app/pages/root_nav_bar_admin.dart';
-import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
+import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/providers/authentication_service_impl.dart';
-
-import 'home_user_page.dart';
 
 class SplashRootPage extends StatefulWidget {
   SplashRootPage();
@@ -26,11 +23,9 @@ class _SplashRootPageState extends State<SplashRootPage> {
   @override
   void initState() {
     super.initState();
-    new Future.delayed(
-        const Duration(milliseconds: 2500),
+    new Future.delayed(const Duration(milliseconds: 2500),
         () => Navigator.pushNamed(context, 'root'));
   }
-
 
   void currentUser() async {
     await _authProvider.getCurrentUser().then((user) {
@@ -62,7 +57,7 @@ class _SplashRootPageState extends State<SplashRootPage> {
     });
   }
 
-  Scaffold backgroundStack( ) {
+  Scaffold backgroundStack() {
     return Scaffold(
         body: Stack(
       children: <Widget>[
@@ -91,7 +86,10 @@ class _SplashRootPageState extends State<SplashRootPage> {
             height: 25,
           ),
           Container(
-              alignment: Alignment.center, child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.greenAccent)))
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(
+                  valueColor:
+                      new AlwaysStoppedAnimation<Color>(Colors.greenAccent)))
         ],
       ),
     );
@@ -139,7 +137,7 @@ class _SplashRootPageState extends State<SplashRootPage> {
         break;
       case AuthStatus.LOGGED_IN:
         if (_userId.length > 0 && _userId != null) {
-          return RootNavBarGeneric();
+          return RootHomeNavBar();
         } else
           return backgroundStack();
         break;

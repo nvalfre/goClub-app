@@ -7,7 +7,7 @@ import 'package:flutter_go_club_app/pages/search_delegate.dart';
 import 'card_swiper_widget.dart';
 import 'card_horizontal.dart';
 
-class HomePageSwipper extends StatelessWidget {
+class RequestPage extends StatelessWidget {
 
   final clubBloc = new ClubsBloc();
 
@@ -19,6 +19,7 @@ class HomePageSwipper extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
+          leading: Container(),
           centerTitle: false,
           title: Text('Clubs Swipper'),
           backgroundColor: Colors.indigoAccent,
