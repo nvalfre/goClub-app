@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_go_club_app/bloc/login_bloc.dart';
 import 'package:flutter_go_club_app/models/access_role_model.dart';
 import 'package:flutter_go_club_app/pages/home_admin_page.dart';
 import 'package:flutter_go_club_app/pages/home_user_page.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_go_club_app/pages/prestacion_admin_detalle_page.dart';
 import 'package:flutter_go_club_app/pages/request_admin_detalle_page.dart';
 import 'package:flutter_go_club_app/pages/reserva_admin_detalle_page.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
+import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
 import '../place_holder_widget.dart';
 import 'clubs_page.dart';
@@ -100,7 +102,6 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
           break;
       }
     }
-    return BottomNavigationBar();
   }
 
   BottomNavigationBar _buildBottomNavigationBar(
