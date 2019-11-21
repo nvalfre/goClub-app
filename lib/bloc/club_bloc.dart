@@ -67,4 +67,8 @@ class ClubsBloc {
     });
     return clubList;
   }
+
+  Stream<ClubModel> loadClubStream(String uid)  {
+    return _clubsProvider.loadClubStream(uid);
+  }
 }

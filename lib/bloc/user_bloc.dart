@@ -17,7 +17,7 @@ class UserBloc {
 
   Stream<bool> get loadingStream => _loadingController.stream;
 
-  Future<List<UserModel>> loadUsers() async {
+  Future<List<UserModel>> loadAllUsers() async {
     _loadingController.sink.add(true);
     var querySnapshot = await _userProvider.loadUsers();
     _loadingController.sink.add(false);

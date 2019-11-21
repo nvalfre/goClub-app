@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/pages/draw/draw_widget_admin.dart';
+import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
@@ -75,17 +76,17 @@ class HomePageAdmin extends StatelessWidget {
     return (club.logoUrl == null)
         ? Image(image: AssetImage('assets/images/no-image.jpg'))
         : FadeInImage(
-      image: NetworkImage(club.logoUrl),
-      placeholder: AssetImage('assets/images/jar-loading.jpg'),
-      height: 300.0,
-      width: double.infinity,
-      fit: BoxFit.cover,
-    );
+            image: NetworkImage(club.logoUrl),
+            placeholder: AssetImage('assets/images/jar-loading.jpg'),
+            height: 300.0,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          );
   }
 
   InkWell _getDescriptionContainer(BuildContext context, ClubModel club) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, 'clubs', arguments: club),
+      onTap: () => Navigator.pushNamed(context, 'clubsAdmin', arguments: club),
       child: _rowWidgetWithNameAndDescriptions(club, context),
     );
   }
@@ -131,14 +132,21 @@ class HomePageAdmin extends StatelessWidget {
     );
   }
 
-  Container _largeDescription(ClubModel club, BuildContext context) =>
-      Container(
+  Container _largeDescription(ClubModel club, BuildContext context) {
+      var direction = club.direction != null
+          ? club.direction
+          : '-';
+      var telefono = club.telephone != null
+          ? club.telephone
+          : '-';
+      return Container(
           padding: EdgeInsets.all(10),
           child: Text(
-            club.description +
-                ' +  +++++ +++++ +++++ +++ +++ ++ + ' +
-                club.description,
+            'Direccion: ' + direction
+            + '\nTelefono: ' + telefono,
             style: Theme.of(context).textTheme.subhead,
             textAlign: TextAlign.justify,
           ));
+  }
+
 }

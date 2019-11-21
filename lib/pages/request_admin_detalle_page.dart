@@ -5,7 +5,7 @@ import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/pages/search_delegate.dart';
 
 import 'card_swiper_widget.dart';
-import 'card_horizontal.dart';
+import 'club_card_horizontal.dart';
 import 'draw/draw_widget_user.dart';
 
 class RequestPage extends StatelessWidget {

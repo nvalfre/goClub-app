@@ -233,7 +233,7 @@ class MapScreenState extends State<ProfileUser>
       textCapitalization: TextCapitalization.sentences,
       keyboardType: TextInputType.text,
       onSaved: (value) => setState(() {
-        _user.lastName = value;
+        _user.direccion = value;
       }),
       validator: (value) {
         return _validateLenghtOf(value, type, 12);
@@ -250,7 +250,7 @@ class MapScreenState extends State<ProfileUser>
       textCapitalization: TextCapitalization.sentences,
       keyboardType: TextInputType.text,
       onSaved: (value) => setState(() {
-        _user.lastName = value;
+        _user.telefono = value;
       }),
       validator: (value) {
         return _validateLenghtOf(value, type, 12);

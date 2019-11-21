@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/login_bloc.dart';
-import 'package:flutter_go_club_app/pages/clubs_page.dart';
+import 'package:flutter_go_club_app/pages/clubs_page_admin.dart';
 import 'package:flutter_go_club_app/pages/home_user_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
 import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
@@ -23,27 +23,6 @@ class UserDrawer extends StatelessWidget {
           ListTile(
             title: Row(
               children: <Widget>[
-                Icon(
-                  Icons.home,
-                  color: Colors.green,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Text('Inicio'),
-                )
-              ],
-            ),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => RootHomeNavBar(0)),
-              ),
-            }
-          ),
-          ListTile(
-            title: Row(
-              children: <Widget>[
                 Icon(Icons.account_circle, color: Colors.green),
                 Padding(
                   padding: EdgeInsets.only(left: 8.0),
@@ -56,6 +35,27 @@ class UserDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ProfileUser()),
+                ),
+              }
+          ),
+          ListTile(
+              title: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.home,
+                    color: Colors.green,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Text('Inicio'),
+                  )
+                ],
+              ),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RootHomeNavBar(0)),
                 ),
               }
           ),
@@ -80,6 +80,24 @@ class UserDrawer extends StatelessWidget {
           ListTile(
             title: Row(
               children: <Widget>[
+                Icon(Icons.collections_bookmark, color: Colors.green),
+                Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Text('Prestaciones'),
+                )
+              ],
+            ),
+            trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RootHomeNavBar(2)),
+                ),
+              }
+          ),
+          ListTile(
+            title: Row(
+              children: <Widget>[
                 Icon(Icons.room_service, color: Colors.green),
                 Padding(
                   padding: EdgeInsets.only(left: 8.0),
@@ -98,7 +116,7 @@ class UserDrawer extends StatelessWidget {
           ListTile(
             title: Row(
               children: <Widget>[
-                Icon(Icons.collections_bookmark, color: Colors.green),
+                Icon(Icons.supervised_user_circle, color: Colors.green),
                 Padding(
                   padding: EdgeInsets.only(left: 8.0),
                   child: Text('Clubes'),

@@ -3,6 +3,8 @@ import 'package:flutter_go_club_app/bloc/club_bloc.dart';
 export 'package:flutter_go_club_app/bloc/club_bloc.dart';
 
 import 'package:flutter_go_club_app/bloc/login_bloc.dart';
+import 'package:flutter_go_club_app/bloc/prestation_bloc.dart';
+import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/bloc/user_bloc.dart';
 export 'package:flutter_go_club_app/bloc/login_bloc.dart';
 
@@ -12,6 +14,8 @@ class Provider extends InheritedWidget {
   final _authBloc = new AuthBloc();
   final _clubsBloc = new ClubsBloc();
   final _userBloc = new UserBloc();
+  final _prestacionBloc = new PrestacionBloc();
+  final _reservationBloc= new ReservationBloc();
 
   factory Provider( { Key key, Widget child} ){
     if(_instance == null){
@@ -40,5 +44,15 @@ class Provider extends InheritedWidget {
   static UserBloc userBloc(BuildContext context) {
     return (context.inheritFromWidgetOfExactType(Provider) as Provider)
         ._userBloc;
+  }
+
+  static ReservationBloc reservationBloc(BuildContext context) {
+    return (context.inheritFromWidgetOfExactType(Provider) as Provider)
+        ._reservationBloc;
+  }
+
+  static PrestacionBloc prestacionBloc(BuildContext context) {
+    return (context.inheritFromWidgetOfExactType(Provider) as Provider)
+        ._prestacionBloc;
   }
 }

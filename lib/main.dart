@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_go_club_app/pages/clubs_page.dart';
+import 'package:flutter_go_club_app/pages/clubs_page_admin.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
+import 'package:flutter_go_club_app/pages/mapas/mapa_page.dart';
+import 'package:flutter_go_club_app/pages/mapas/mapas_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_admin_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_club_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
@@ -16,14 +18,9 @@ void main() async {
 
   runApp(MyApp());
 }
-//TODO: Perfil Admin
-//TODO: Drawer Admin
-//TODO: Perfil Admin Club
-//TODO: Perfil User
-//TODO: Bottom nav bar Admin
-//TODO: Bottom nav bar user to profile
-//TODO: Crear club admins
 
+//TODO: Validaciones perfil
+//TODO: Crear club admins
 //TODO: Crear prestaciones club
 //TODO: Crear reservas desde prestaciones por cada club
 //TODO: Ver prestaciones usuarios y clubes
@@ -36,7 +33,6 @@ void main() async {
 //TODO: Buscador en prestaciones
 //TODO: Buscador en reservas
 //TODO: Buscador en clubes
-//TODO: On generated route
 
 
 class MyApp extends StatelessWidget {
@@ -54,17 +50,20 @@ class MyApp extends StatelessWidget {
             'login': (BuildContext context) => LoginPage(),
             'register': (BuildContext context) => RegisterPage(),
 
-            'search': (BuildContext context) => ClubsPage(),
-            'clubs': (BuildContext context) => ClubsPage(),
-            'clubsAdmin': (BuildContext context) => ClubsPage(),
-            'reservations': (BuildContext context) => ClubsPage(),
-            'reservationsAdmin': (BuildContext context) => ClubsPage(),
-            'class': (BuildContext context) => ClubsPage(),
-            'classAdmin': (BuildContext context) => ClubsPage(),
+            'clubMapHome': (BuildContext context) => ClubMapPage(),
+            'clubMapListHome': (BuildContext context) => ClubMapListPage(),
+
+            'search': (BuildContext context) => RootHomeNavBar(0),
+            'clubs': (BuildContext context) => ClubsPageAdmin(),
+            'clubsAdmin': (BuildContext context) => ClubsPageAdmin(),
+            'reservations': (BuildContext context) => ClubsPageAdmin(),
+            'reservationsAdmin': (BuildContext context) => ClubsPageAdmin(),
+            'class': (BuildContext context) => ClubsPageAdmin(),
+            'classAdmin': (BuildContext context) => ClubsPageAdmin(),
             'profileUser': (BuildContext context) => ProfileUser(),
             'profileAdmin': (BuildContext context) => ProfileAdmin(),
             'profileClub': (BuildContext context) => ProfileClub(),
-            'prestacion': (BuildContext context) => ClubsPage(),
+            'prestacion': (BuildContext context) => ClubsPageAdmin(),
           },
           theme: ThemeData(
             primaryColor: Colors.green
