@@ -1,5 +1,5 @@
 # flutter_go_club_app
-Esta aplicación es un prototipo de desarrollo de gestor de clubes deportivos y sus respectivas prestaciones desarrollado bajo el Framework de Flutter y acompañado del lenguaje de programacion Dart con sus respectivas librerias.
+Esta aplicación es un prototipo de desarrollo de gestor de clubes deportivos con sus respectivas prestaciones para realizar reservas, desarrollado bajo el Framework de Flutter y acompañado del lenguaje de programacion Dart con sus respectivas librerias.
 
 ## Configuracion de la aplicaión
 
