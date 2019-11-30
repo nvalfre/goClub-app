@@ -65,7 +65,7 @@ class RegisterPage extends StatelessWidget {
             children: <Widget>[
               Image(
                 image: AssetImage(
-                  'assets/logo/logo-go-club.png',
+                  'assets/logo/Logo-Curvas.png',
                 ),
                 width: 250,
               ),

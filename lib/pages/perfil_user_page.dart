@@ -202,7 +202,7 @@ class MapScreenState extends State<ProfileUser>
         _user.name = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 6);
+        return _validateLenghtOf(value, type, 3);
       },
     );
   }
@@ -219,7 +219,7 @@ class MapScreenState extends State<ProfileUser>
         _user.lastName = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 12);
+        return _validateLenghtOf(value, type, 3);
       },
     );
   }
@@ -236,7 +236,7 @@ class MapScreenState extends State<ProfileUser>
         _user.direccion = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 12);
+        return _validateLenghtOf(value, type, 10);
       },
     );
   }
@@ -253,7 +253,7 @@ class MapScreenState extends State<ProfileUser>
         _user.telefono = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 12);
+        return _validateLenghtOf(value, type, 10);
       },
     );
   }
@@ -271,7 +271,7 @@ class MapScreenState extends State<ProfileUser>
         _user.lastName = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 12);
+        return _validateLenghtOf(value, type, 3);
       },
     );
   }

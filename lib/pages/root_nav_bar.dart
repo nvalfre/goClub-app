@@ -11,6 +11,7 @@ import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 
 import '../place_holder_widget.dart';
 import 'clubs_page_admin.dart';
+import 'clubs_page_user.dart';
 import 'mapas/mapa_page.dart';
 
 class RootHomeNavBar extends StatefulWidget {
@@ -35,12 +36,12 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
   final _prefs = UserPreferences();
   String _role;
 
-  final List<Widget> _childrenRoutes = [
+  final List<Widget> _childrenRoutesUser = [
     PlaceholderWidget(HomePage()),
     PlaceholderWidget(ReservePage()),
     PlaceholderWidget(BenefitPage()),
     PlaceholderWidget(RequestPage()),
-    PlaceholderWidget(ProfileClub()), // TODO deberia ser la lista de clubes que te lleven al profile.
+    PlaceholderWidget(ClubsPageUser()), // TODO deberia ser la lista de clubes que te lleven al profile.
   ];
 
   final List<Widget> _childrenRoutesAdmin = [
@@ -83,7 +84,7 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
           return _childrenRoutesClub[_currentIndex];
           break;
         case AccessStatus.USER:
-          return _childrenRoutes[_currentIndex];
+          return _childrenRoutesUser[_currentIndex];
           break;
       }
     }

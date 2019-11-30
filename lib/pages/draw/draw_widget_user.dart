@@ -181,7 +181,7 @@ class UserDrawer extends StatelessWidget {
                           SizedBox(width: 10),
                           Image(
                             image: AssetImage(
-                              'assets/logo/logo-go-club.png',
+                              'assets/logo/Logo-Curvas.png',
                             ),
                             width: 100,
                             height: 100,

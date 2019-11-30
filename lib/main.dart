@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/pages/clubs_page_admin.dart';
+import 'package:flutter_go_club_app/pages/clubs_page_user.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
 import 'package:flutter_go_club_app/pages/mapas/mapa_page.dart';
 import 'package:flutter_go_club_app/pages/mapas/mapas_page.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
             'clubMapHome': (BuildContext context) => ClubMapPage(),
             'clubMapListHome': (BuildContext context) => ClubMapListPage(),
 
+            'detalle': (BuildContext context) => ClubsPageUser(),
             'search': (BuildContext context) => RootHomeNavBar(0),
             'clubs': (BuildContext context) => ClubsPageAdmin(),
             'clubsAdmin': (BuildContext context) => ClubsPageAdmin(),

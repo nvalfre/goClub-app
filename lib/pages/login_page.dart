@@ -63,7 +63,7 @@ class LoginPage extends StatelessWidget {
             children: <Widget>[
               Image(
                 image: AssetImage(
-                  'assets/logo/logo-go-club.png',
+                  'assets/logo/Logo-Curvas.png',
                 ),
                 width: 250,
               ),
@@ -134,7 +134,6 @@ class LoginPage extends StatelessWidget {
           Container(
             padding: EdgeInsets.only(top: 30),
             child: Column(children: <Widget>[
-              inkWellNavigationButton(context, '', 'Olvidaste la contraseña?'),
               SizedBox(height: 10.0),
               inkWellNavigationButton(context, 'register', 'Registrarse'),
             ]),
