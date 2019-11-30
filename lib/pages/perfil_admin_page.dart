@@ -4,28 +4,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/user_bloc.dart';
 import 'package:flutter_go_club_app/models/user_model.dart';
-import 'package:flutter_go_club_app/providers/provider_impl.dart';
-import 'package:flutter_go_club_app/utils/utils.dart' as utils;
-import 'package:image_picker/image_picker.dart';
-
-
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_go_club_app/bloc/user_bloc.dart';
-import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
 
-class ProfileUser extends StatefulWidget {
+class ProfileAdmin extends StatefulWidget {
   @override
   MapScreenState createState() => MapScreenState();
 }
 
-class MapScreenState extends State<ProfileUser>
+class MapScreenState extends State<ProfileAdmin>
     with SingleTickerProviderStateMixin {
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
@@ -168,26 +157,25 @@ class MapScreenState extends State<ProfileUser>
                 _getLastName(),
                 _getUserDirection(),
                 _getUserTel(),
-                _getUserClubs(),
                 !_status
                     ? Container(
-                  padding: EdgeInsets.only(top: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _getSubmitButtom(),
-                      SizedBox(
-                        width: 30,
-                      ),
-                      _getCancelButtom()
-                    ],
-                  ),
-                )
+                        padding: EdgeInsets.only(top: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            _getSubmitButtom(),
+                            SizedBox(
+                              width: 30,
+                            ),
+                            _getCancelButtom()
+                          ],
+                        ),
+                      )
                     : new Container(),
               ],
             ))
 //      getPaddingBody(),
-    );
+        );
   }
 
   TextFormField _getUserName() {
@@ -202,7 +190,7 @@ class MapScreenState extends State<ProfileUser>
         _user.name = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 3);
+        return _validateLenghtOf(value, type, 6);
       },
     );
   }
@@ -219,7 +207,7 @@ class MapScreenState extends State<ProfileUser>
         _user.lastName = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 3);
+        return _validateLenghtOf(value, type, 12);
       },
     );
   }
@@ -236,7 +224,7 @@ class MapScreenState extends State<ProfileUser>
         _user.direccion = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 10);
+        return _validateLenghtOf(value, type, 12);
       },
     );
   }
@@ -253,7 +241,7 @@ class MapScreenState extends State<ProfileUser>
         _user.telefono = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 10);
+        return _validateLenghtOf(value, type, 12);
       },
     );
   }
@@ -271,7 +259,7 @@ class MapScreenState extends State<ProfileUser>
         _user.lastName = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 3);
+        return _validateLenghtOf(value, type, 12);
       },
     );
   }

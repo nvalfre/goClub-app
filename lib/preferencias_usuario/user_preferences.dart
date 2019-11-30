@@ -23,6 +23,9 @@ class UserPreferences {
   get name {
     return _prefs.getString('name') ?? '';
   }
+  get role {
+    return _prefs.getString('role') ?? '';
+  }
   get lastName {
     return _prefs.getString('lastName') ?? '';
   }
@@ -38,10 +41,10 @@ class UserPreferences {
   get email {
     return _prefs.getString('email') ?? '';
   }
-
   set user( UserModel user ) {
     _prefs.setString('uuid', user.id);
     _prefs.setString('name', user.name);
+    _prefs.setString('role', user.role);
     _prefs.setString('lastName', user.lastName);
     _prefs.setString('telefono', user.telefono);
     _prefs.setString('direccion', user.direccion);
@@ -51,10 +54,20 @@ class UserPreferences {
 
   // GET y SET de la última página
   get lastPage {
-    return _prefs.getString('lastPage') ?? 'login';
+    return _prefs.getString('lastPage') ?? 'splash';
   }
 
   set lastPage( String value ) {
     _prefs.setString('lastPage', value);
   }
+
+  void clear() {
+    _prefs.setString('uuid','');
+    _prefs.setString('name','');
+    _prefs.setString('role','');
+    _prefs.setString('lastName','');
+    _prefs.setString('telefono','');
+    _prefs.setString('direccion','');
+    _prefs.setString('avatar','');
+    _prefs.setString('email','');}
 }

@@ -67,18 +67,20 @@ class UserModel {
         avatar: snap.data["avatar"],
         role: snap.data["role"],
       );
+
   factory UserModel.fromQuerySnapshot(QuerySnapshot snap) {
     var document = snap.documents[0];
     return UserModel(
-        id: document.data['id'],
-        name: document.data["name"],
-        email: document.data["email"],
-        telefono: document.data["telefono"],
-        direccion: document.data["direccion"],
-        idClub: document.data["idClub"],
-        available: document.data["available"],
-        avatar: document.data["avatar"],
-        role: document.data["role"],
-      );
+      id: document.data['id'],
+      name: document.data["name"],
+      lastName: document.data["lastName"],
+      email: document.data["email"],
+      telefono: document.data["telefono"],
+      direccion: document.data["direccion"],
+      idClub: document.data["idClub"],
+      available: document.data["available"],
+      avatar: document.data["avatar"],
+      role: document.data["role"],
+    );
   }
 }

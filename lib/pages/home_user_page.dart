@@ -11,7 +11,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ClubsBloc clubsBloc = Provider.clubsBloc(context);
-//    clubsBloc.loadClubs();
 
     return buildScaffold(clubsBloc, context);
   }
@@ -19,7 +18,7 @@ class HomePage extends StatelessWidget {
   Scaffold buildScaffold(ClubsBloc clubsBloc, BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        title: Text('Inicio'),
       ),
       body: _getListOfClubs(clubsBloc),
       drawer: UserDrawer(),

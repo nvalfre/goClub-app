@@ -5,9 +5,10 @@ import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/pages/search_delegate.dart';
 
 import 'card_swiper_widget.dart';
-import 'card_horizontal.dart';
+import 'club_card_horizontal.dart';
+import 'draw/draw_widget_user.dart';
 
-class HomePageSwipper extends StatelessWidget {
+class BenefitPage extends StatelessWidget {
 
   final clubBloc = new ClubsBloc();
 
@@ -20,8 +21,8 @@ class HomePageSwipper extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: Text('Clubs Swipper'),
-          backgroundColor: Colors.indigoAccent,
+          title: Text('Prestacion'),
+          backgroundColor: Colors.green,
           actions: <Widget>[
             IconButton(
               icon: Icon( Icons.search ),
@@ -35,6 +36,7 @@ class HomePageSwipper extends StatelessWidget {
             )
           ],
         ),
+        drawer: UserDrawer(),
         body: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -60,7 +62,7 @@ class HomePageSwipper extends StatelessWidget {
           return CardSwiper( clubs:  clubList);
         } else {
           return Container(
-              height: 400.0,
+              height: 350.0,
               child: Center(
                   child: CircularProgressIndicator()
               )

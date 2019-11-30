@@ -1,13 +1,12 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/models/auth_status_model.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
-import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
+import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/providers/authentication_service_impl.dart';
-
-import 'home_user_page.dart';
 
 class SplashRootPage extends StatefulWidget {
   SplashRootPage();
@@ -26,15 +25,10 @@ class _SplashRootPageState extends State<SplashRootPage> {
   void initState() {
     super.initState();
     new Future.delayed(
-        const Duration(milliseconds: 2500),
-        () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => switchStatement()),
-            ));
+        const Duration(milliseconds: 2500), () => {currentUser()});
   }
 
-
-  void currentUser() async {
+  Future<void> currentUser() async {
     await _authProvider.getCurrentUser().then((user) {
       setState(() {
         if (user != null) {
@@ -42,6 +36,7 @@ class _SplashRootPageState extends State<SplashRootPage> {
         }
         authStatus =
             user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
+        switchStatement();
       });
     });
   }
@@ -64,7 +59,7 @@ class _SplashRootPageState extends State<SplashRootPage> {
     });
   }
 
-  Scaffold backgroundStack( ) {
+  Scaffold backgroundStack() {
     return Scaffold(
         body: Stack(
       children: <Widget>[
@@ -82,7 +77,7 @@ class _SplashRootPageState extends State<SplashRootPage> {
             height: 50,
           ),
           FadeInImage(
-            image: AssetImage('assets/logo/logo-go-club.png'),
+            image: AssetImage('assets/logo/Logo-Curvas.png'),
             placeholder: AssetImage('assets/images/no-image.jpg'),
             fit: BoxFit.contain,
             fadeInDuration: Duration(seconds: 1),
@@ -93,7 +88,10 @@ class _SplashRootPageState extends State<SplashRootPage> {
             height: 25,
           ),
           Container(
-              alignment: Alignment.center, child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.greenAccent)))
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(
+                  valueColor:
+                      new AlwaysStoppedAnimation<Color>(Colors.greenAccent)))
         ],
       ),
     );
@@ -121,7 +119,6 @@ class _SplashRootPageState extends State<SplashRootPage> {
 
   @override
   Widget build(BuildContext context) {
-    currentUser();
     return Container(
       child: Center(
         child: backgroundStack(),
@@ -129,24 +126,24 @@ class _SplashRootPageState extends State<SplashRootPage> {
     );
   }
 
-  Widget switchStatement() {
+  void switchStatement() {
     switch (authStatus) {
       case AuthStatus.NOT_DETERMINED:
-        return backgroundStack();
         break;
       case AuthStatus.NOT_LOGGED_IN:
-        new Future.delayed(const Duration(seconds: 4));
-        return LoginPage();
+        Future.delayed(
+          const Duration(seconds: 2),
+          () => Navigator.pushReplacementNamed(context, 'login'),
+        );
         break;
       case AuthStatus.LOGGED_IN:
         if (_userId.length > 0 && _userId != null) {
-          final prefs = new UserPreferences();
-          return HomePage();
-        } else
-          return backgroundStack();
+          Future.delayed(
+            const Duration(seconds: 2),
+            () => Navigator.pushReplacementNamed(context, 'root'),
+          );
+        }
         break;
-      default:
-        return backgroundStack();
     }
   }
 }

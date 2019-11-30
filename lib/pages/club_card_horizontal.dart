@@ -23,7 +23,7 @@ class ClubHorizontal extends StatelessWidget {
     });
 
     return Container(
-      height: _screenSize.height * 0.2,
+      height: _screenSize.height * 0.18,
       child: PageView.builder(
         pageSnapping: false,
         controller: _pageController,
@@ -40,18 +40,18 @@ class ClubHorizontal extends StatelessWidget {
     clubs.uniqueId = '${clubs.id}-poster';
 
     final tarjeta = Container(
-      margin: EdgeInsets.only(right: 15.0),
+      margin: EdgeInsets.only(right: 10.0),
       child: Column(
         children: <Widget>[
           Hero(
             tag: clubs.uniqueId,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20.0),
+              borderRadius: BorderRadius.circular(15.0),
               child: FadeInImage(
                 image: NetworkImage(clubs.logoUrl),
                 placeholder: AssetImage('assets/images/no-image.jpg'),
                 fit: BoxFit.cover,
-                height: 110.0,
+                height: 100.0,
               ),
             ),
           ),

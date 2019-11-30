@@ -1,0 +1,373 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_go_club_app/bloc/user_bloc.dart';
+import 'package:flutter_go_club_app/models/club_model.dart';
+import 'package:flutter_go_club_app/models/user_model.dart';
+import 'package:flutter_go_club_app/pages/draw/draw_widget_admin.dart';
+import 'package:flutter_go_club_app/pages/mapas/mapa_page.dart';
+import 'package:flutter_go_club_app/providers/provider_impl.dart';
+import 'package:flutter_go_club_app/utils/utils.dart' as utils;
+import 'package:image_picker/image_picker.dart';
+
+import 'draw/draw_widget_user.dart';
+
+class ClubsPageAdmin extends StatefulWidget {
+  var clubArg;
+
+  @override
+  _ClubPageState createState() => _ClubPageState();
+}
+
+const String CLUB_HEADER = 'Club Admin';
+
+class _ClubPageState extends State<ClubsPageAdmin> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final formKey = GlobalKey<FormState>();
+  ClubsBloc _bloc;
+
+  bool _saving = false;
+  File _photo;
+  ClubModel _club = ClubModel();
+
+  @override
+  Widget build(BuildContext context) {
+    _bloc = Provider.clubsBloc(context);
+
+    validateAndLoadArguments(context);
+
+    return Scaffold(
+      key: scaffoldKey,
+      appBar: AppBar(
+        leading: InkWell(
+            onTap: () => Navigator.pushNamed(context, 'root'),
+            child: Icon(Icons.arrow_back_ios)),
+        title: Text(CLUB_HEADER),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.photo_library),
+            onPressed: _selectPicture,
+          ),
+          IconButton(
+            icon: Icon(Icons.photo_camera),
+            onPressed: _takePhoto,
+          ),
+          IconButton(
+            icon: Icon(Icons.my_location),
+            onPressed: () {
+              Navigator.pushNamed(context, 'clubMapHome', arguments: _club);
+            },
+          )
+        ],
+      ),
+      drawer: UserDrawerAdmin(),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(12.0),
+          child: Form(
+              key: formKey,
+              child: Column(
+                children: <Widget>[
+                  _showLogo(),
+                  _getClubName(),
+                  _getDescription(),
+                  getLatitud(),
+                  getLongitud(),
+                  _getDirection(),
+                  _getTelephone(),
+                  getUser(),
+                  _getAvailable(),
+                  _getButtom()
+                ],
+              )),
+        ),
+      ),
+    );
+  }
+
+  void validateAndLoadArguments(BuildContext context) async {
+    final ClubModel clubModelDataArg = ModalRoute.of(context)
+        .settings
+        .arguments; //tambien se puede recibir por constructor.
+
+    if (clubModelDataArg != null) {
+      _club = clubModelDataArg;
+    }
+  }
+
+  TextFormField _getClubName() {
+    var type = 'Nombre del club';
+    return TextFormField(
+      initialValue: _club.name,
+      decoration: InputDecoration(labelText: type),
+      textCapitalization: TextCapitalization.words,
+      keyboardType: TextInputType.text,
+      onSaved: (value) => _club.name = value,
+      validator: (value) {
+        return _validateLenghtOf(value, type, 6);
+      },
+    );
+  }
+
+  TextFormField _getDescription() {
+    var type = 'Description del club';
+    return TextFormField(
+      initialValue: _club.description,
+      decoration: InputDecoration(labelText: type),
+      textCapitalization: TextCapitalization.sentences,
+      keyboardType: TextInputType.text,
+      onSaved: (value) => _club.description = value,
+      validator: (value) {
+        return _validateLenghtOf(value, type, 12);
+      },
+    );
+  }
+
+  TextFormField _getDirection() {
+    var type = 'Direccion';
+    return TextFormField(
+      initialValue: _club.direction,
+      decoration: InputDecoration(labelText: type),
+      textCapitalization: TextCapitalization.sentences,
+      keyboardType: TextInputType.text,
+      onSaved: (value) => _club.direction = value,
+      validator: (value) {
+        return _validateLenghtOf(value, type, 10);
+      },
+    );
+  }
+
+  TextFormField _getTelephone() {
+    var type = 'Telefono';
+    return TextFormField(
+      initialValue: _club.telephone,
+      decoration: InputDecoration(labelText: type),
+      textCapitalization: TextCapitalization.sentences,
+      keyboardType: TextInputType.text,
+      onSaved: (value) => _club.telephone = value,
+      validator: (value) {
+        return _validateLenghtOf(value, type, 10);
+      },
+    );
+  }
+
+  String _validateLenghtOf(String value, String type, int lenght) {
+    if (!utils.hasMoreLenghtThan(value, lenght)) {
+      return 'Deberia tener más de ${lenght} caracteres para la ${type}.';
+    }
+    return null;
+  }
+
+  SwitchListTile _getAvailable() {
+    return SwitchListTile(
+      value: _club.available,
+      title: Text('Disponible'),
+      onChanged: (value) => setState(() {
+        _club.available = value;
+      }),
+    );
+  }
+
+  RaisedButton _getButtom() {
+    return RaisedButton.icon(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      color: Colors.green,
+      textColor: Colors.white,
+      label: Text('Guardar'),
+      icon: Icon(Icons.add_box),
+      onPressed: (_saving) ? null : _submitWithFormValidation,
+    );
+  }
+
+  void _submitWithFormValidation() async {
+    if (!formKey.currentState.validate()) return;
+
+    formKey.currentState.save();
+    setState(() {
+      _saving = true;
+    });
+
+    if (_photo != null) {
+      _club.logoUrl = await _bloc.uploadPhoto(_photo);
+    }
+
+    _saveForID();
+    Navigator.pop(context);
+  }
+
+  void _saveForID() {
+    print(_club.logoUrl);
+
+    if (_club.id == null) {
+      _bloc.addClub(_club);
+      setState(() {
+        _saving = false;
+      });
+      _showSnackbar('Nuevo registro guardado exitosamente.');
+    } else {
+      _bloc.editClub(_club);
+      setState(() {
+        _saving = false;
+      });
+      _showSnackbar('Registro actualizado correctamente.');
+    }
+  }
+
+  void _showSnackbar(String message) {
+    final snackbar = SnackBar(
+      content: Text(message),
+      duration: Duration(microseconds: 10000),
+      backgroundColor: Colors.blue,
+    );
+
+    scaffoldKey.currentState.showSnackBar(snackbar);
+  }
+
+  void _selectPicture() async {
+    _processImage(ImageSource.gallery);
+  }
+
+  void _takePhoto() async {
+    _processImage(ImageSource.camera);
+  }
+
+  void _processImage(ImageSource source) async {
+    File img = await ImagePicker.pickImage(source: source);
+    if (img == null) {
+      _club.logoUrl = null;
+    }
+    setState(() {
+      _photo = img;
+    });
+  }
+
+  Widget _showLogo() {
+    if (_photo != null) {
+      return Container(
+        margin: EdgeInsets.only(right: 10.0),
+        child: Column(
+          children: <Widget>[
+            Hero(
+              tag: _club.uniqueId ?? '',
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15.0),
+                child: FadeInImage(
+                  image: FileImage(_photo),
+                  placeholder: AssetImage('assets/images/no-image.jpg'),
+                  fit: BoxFit.cover,
+                  width: 130,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    if (_club.logoUrl != null) {
+      return _fadeInImageFromNetworkWithJarHolder();
+    } else {
+      return Image(
+        image: AssetImage('assets/images/no-image.png'),
+        height: 100.0,
+        fit: BoxFit.cover,
+      );
+    }
+  }
+
+  Widget _fadeInImageFromNetworkWithJarHolder() {
+    return new Container(
+      width: 240.0,
+      height: 300.0,
+      alignment: Alignment.center,
+      decoration: new BoxDecoration(
+        image: DecorationImage(
+            image: NetworkImage(_club.logoUrl), fit: BoxFit.fill),
+      ),
+    );
+  }
+
+  getLatitud() {
+    var type = 'Latitud';
+    var lat = _club.getLat();
+    return TextFormField(
+      initialValue: lat != null ? lat : '',
+      decoration: InputDecoration(labelText: type),
+      textCapitalization: TextCapitalization.words,
+      keyboardType: TextInputType.text,
+      onSaved: (value) => _club.setLat(value),
+      validator: (value) {
+        return _validateLenghtOf(value, type, 4);
+      },
+    );
+  }
+
+  getLongitud() {
+    var type = 'Longitud';
+    var lng = _club.getLng();
+    return TextFormField(
+      initialValue: lng != null ? lng : '',
+      decoration: InputDecoration(labelText: type),
+      textCapitalization: TextCapitalization.words,
+      keyboardType: TextInputType.text,
+      onSaved: (value) => _club.setLng(value),
+      validator: (value) {
+        return _validateLenghtOf(value, type, 4);
+      },
+    );
+  }
+
+  FutureBuilder<List<UserModel>> getUser() {
+    UserBloc userBloc = Provider.userBloc(context);
+
+    return FutureBuilder(
+      future: userBloc.loadAllUsers(),
+      builder: (BuildContext context, AsyncSnapshot<List<UserModel>> snapshot) {
+        if (snapshot.hasData) {
+          return getUserList(snapshot);
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        ;
+      },
+    );
+  }
+
+  getUserList(AsyncSnapshot<List<UserModel>> snapshot) {
+    List<UserModel> temp = List();
+    final list = snapshot.data;
+    for (var f in list) {
+      if (f.role == 'user') {
+        temp.add(f);
+      }
+    }
+
+    return Row(
+      children: <Widget>[
+        Container(
+          child: Center(
+            child: Text(
+              "Club Admin: ",
+              style: TextStyle(color: Colors.blueGrey),
+            ),
+          ),
+        ),
+        DropdownButton<String>(
+          items: temp.map((UserModel user) {
+            return new DropdownMenuItem<String>(
+              value: user.name,
+              child: new Text(user.name),
+            );
+          }).toList(),
+          onChanged: (value) => setState(() {
+            _club.clubAdminId = value;
+          }),
+          hint: Text('Seleccionar administrador de club'),
+          value: _club.clubAdminId,
+        )
+      ],
+    );
+  }
+}

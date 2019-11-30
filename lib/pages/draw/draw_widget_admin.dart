@@ -1,16 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/login_bloc.dart';
+import 'package:flutter_go_club_app/pages/home_admin_page.dart';
+import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
+
+import '../root_nav_bar.dart';
 
 class UserDrawerAdmin extends StatelessWidget {
   final String APP_NAME = 'goClub';
 
-  AuthBloc authBloc;
+  AuthBloc _authBloc;
 
   @override
   Widget build(BuildContext context) {
-    authBloc = Provider.authBloc(context);
+    _authBloc = Provider.authBloc(context);
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -19,7 +23,10 @@ class UserDrawerAdmin extends StatelessWidget {
           ListTile(
             title: Row(
               children: <Widget>[
-                Icon(Icons.home, color: Colors.green,),
+                Icon(
+                  Icons.home,
+                  color: Colors.green,
+                ),
                 Padding(
                   padding: EdgeInsets.only(left: 8.0),
                   child: Text('Inicio'),
@@ -27,7 +34,10 @@ class UserDrawerAdmin extends StatelessWidget {
               ],
             ),
             trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.pushNamed(context, 'home'),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => RootHomeNavBar(0)),
+            ),
           ),
           ListTile(
             title: Row(
@@ -40,20 +50,7 @@ class UserDrawerAdmin extends StatelessWidget {
               ],
             ),
             trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.pushNamed(context, 'profileUser'),
-          ),
-          ListTile(
-            title: Row(
-              children: <Widget>[
-                Icon(Icons.schedule, color: Colors.green),
-                Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Text('Reservas'),
-                )
-              ],
-            ),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.pushNamed(context, 'reservas'),
+            onTap: () => Navigator.pushNamed(context, 'profileAdmin'),
           ),
           ListTile(
             title: Row(
@@ -68,21 +65,8 @@ class UserDrawerAdmin extends StatelessWidget {
             trailing: Icon(Icons.arrow_forward_ios),
             onTap: () => Navigator.pushNamed(context, 'clubs'),
           ),
-          ListTile(
-            title: Row(
-              children: <Widget>[
-                Icon(Icons.class_, color: Colors.green),
-                Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Text('Clases'),
-                )
-              ],
-            ),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.pushNamed(context, 'class'),
-          ),
           SizedBox(
-            height: 100,
+            height: 150,
           ),
           ListTile(
             title: Row(
@@ -94,7 +78,7 @@ class UserDrawerAdmin extends StatelessWidget {
                 )
               ],
             ),
-            onTap: () => _logOut(authBloc, context),
+            onTap: () => _logOut(_authBloc, context),
           ),
           ListTile(
             title: Text('Version: 0.0.1'),
@@ -121,39 +105,40 @@ class UserDrawerAdmin extends StatelessWidget {
         children: <Widget>[
           Positioned(
             child: Container(
-                color: Colors.green,
-                child: Row(
-
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(left: 100),
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(width: 10),
-                          Icon(Icons.landscape, color: Colors.white, size: 75.0),
-                          SizedBox(width: 10),
-                          Text(APP_NAME, style: buildTextStyleForHeader(15))
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(
-                        left: 85,
-                        right: 10,
-                        top: 10,
-                      ),
-                      child: InkWell(
-                        onTap: () => Navigator.of(context).pop(),
-                        child: Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.white,
+              color: Colors.green,
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(left: 100, top: 25),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(width: 10),
+                        Image(
+                          image: AssetImage(
+                            'assets/logo/Logo-Curvas.png',
+                          ),
+                          width: 100,
+                          height: 100,
                         ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(
+                      left: 60,
+                      right: 10,
+                      top: 10,
+                    ),
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
                       ),
                     ),
-
-                  ],
-                )
-
+                  ),
+                ],
+              ),
             ),
           )
         ],
@@ -163,6 +148,8 @@ class UserDrawerAdmin extends StatelessWidget {
 
   _logOut(AuthBloc authBloc, BuildContext context) async {
     try {
+      UserPreferences _pref = UserPreferences();
+      _pref.clear();
       await authBloc.logOut();
       Navigator.pushReplacementNamed(context, 'login');
     } catch (e) {

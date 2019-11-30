@@ -56,4 +56,10 @@ class ClubServiceImpl {
   Future<String> uploadImage(File photo) async {
     return await _photoProvider.uploadImage(photo);
   }
+
+  Stream<ClubModel> loadClubStream(String uid)  {
+    return getUserSnap(uid).map((user) => ClubModel.fromQuerySnapshot(user));
+  }
+
+  Stream<QuerySnapshot> getUserSnap(String uid) => db.where('id', isEqualTo: uid).snapshots();
 }

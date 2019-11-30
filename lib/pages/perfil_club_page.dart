@@ -2,39 +2,37 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_go_club_app/bloc/user_bloc.dart';
-import 'package:flutter_go_club_app/models/user_model.dart';
-import 'package:flutter_go_club_app/providers/provider_impl.dart';
-import 'package:flutter_go_club_app/utils/utils.dart' as utils;
-import 'package:image_picker/image_picker.dart';
-
-
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_go_club_app/bloc/user_bloc.dart';
-import 'package:flutter_go_club_app/models/user_model.dart';
+import 'package:flutter_go_club_app/bloc/prestation_bloc.dart';
+import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
+import 'package:flutter_go_club_app/models/club_model.dart';
+import 'package:flutter_go_club_app/models/perstacion_model.dart';
+import 'package:flutter_go_club_app/models/reserva_model.dart';
+import 'package:flutter_go_club_app/pages/prestacion_card_horizontal.dart';
+import 'package:flutter_go_club_app/pages/reservation_card_horizontal.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
 
-class ProfileUser extends StatefulWidget {
+class ProfileClub extends StatefulWidget {
   @override
   MapScreenState createState() => MapScreenState();
 }
 
-class MapScreenState extends State<ProfileUser>
+class MapScreenState extends State<ProfileClub>
     with SingleTickerProviderStateMixin {
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
   bool _saving = false;
-  UserModel _user = UserModel();
+  ClubModel _club = ClubModel();
+  PrestacionModel _prestacion = PrestacionModel();
+  ReservationModel _reservation = ReservationModel();
   UserPreferences _pref = UserPreferences();
-  UserBloc _bloc;
+  PrestacionBloc _pestacionBloc;
+  ReservationBloc _reservationBloc;
+  ClubsBloc _clubBloc;
   File _photo;
 
   @override
@@ -44,33 +42,43 @@ class MapScreenState extends State<ProfileUser>
 
   @override
   Widget build(BuildContext context) {
-    _bloc = Provider.userBloc(context);
+    _clubBloc = Provider.clubsBloc(context);
+    _pestacionBloc = Provider.prestacionBloc(context);
+    _reservationBloc = Provider.reservationBloc(context);
     return Scaffold(
       appBar: perfilAppBar(),
       body: SingleChildScrollView(
-        child: _getPerfilPhotoAndUser(),
+        child: _perfilBody(),
+//        child: _getPerfilPhotoAndUser(),
       ),
     );
   }
 
-  StreamBuilder _getPerfilPhotoAndUser( ) {
+  StreamBuilder _getPerfilPhotoAndUser() {
     return StreamBuilder(
-      stream: _bloc.loadUserStream(_pref.user),
+      stream: _clubBloc.loadClubStream(_pref.user),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if(snapshot.hasData){
-          _user = snapshot.data;
+        if (snapshot.hasData) {
+          _club = snapshot.data;
           return Column(
             children: <Widget>[
               _perfilPhotoAndUser(),
               _perfilBody(),
             ],
           );
-        }else{
-          return CircularProgressIndicator();
+        } else {
+          return Center(
+            child: Container(
+              padding: EdgeInsets.only(top: 250),
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
       },
     );
   }
+
   Column _perfilPhotoAndUser() {
     return Column(
       children: <Widget>[
@@ -116,7 +124,7 @@ class MapScreenState extends State<ProfileUser>
           child: Column(
             children: <Widget>[
               Text(
-                _user.name + ' ' +_user.lastName,
+                _club.name,
                 style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
@@ -135,22 +143,21 @@ class MapScreenState extends State<ProfileUser>
         image: FileImage(_photo),
         fit: BoxFit.cover,
       );
-    } else if (_user.avatar != null) {
+    } else if (_club.logoUrl != null) {
       return DecorationImage(
-          image: NetworkImage(_user.avatar), fit: BoxFit.cover);
+          image: NetworkImage(_club.logoUrl), fit: BoxFit.cover);
     } else {
       return DecorationImage(
         image: ExactAssetImage('assets/images/no-image.png'),
         fit: BoxFit.cover,
       );
     }
-
   }
 
   AppBar perfilAppBar() {
     return AppBar(
       centerTitle: true,
-      title: Text('Perfil'),
+      title: Text('Perfil Club'),
     );
   }
 
@@ -162,64 +169,46 @@ class MapScreenState extends State<ProfileUser>
             key: formKey,
             child: Column(
               children: <Widget>[
-                _bodyHeader('Información personal'),
-                //TODO VER VALIDACIONES.
-                _getUserName(),
-                _getLastName(),
+                _bodyHeader('Información del club'),
+                _getClubDescription(),
                 _getUserDirection(),
                 _getUserTel(),
-                _getUserClubs(),
+                _getClubPrestaciones(),
+                _getClubReservations(),
                 !_status
                     ? Container(
-                  padding: EdgeInsets.only(top: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _getSubmitButtom(),
-                      SizedBox(
-                        width: 30,
-                      ),
-                      _getCancelButtom()
-                    ],
-                  ),
-                )
+                        padding: EdgeInsets.only(top: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            _getSubmitButtom(),
+                            SizedBox(
+                              width: 30,
+                            ),
+                            _getCancelButtom()
+                          ],
+                        ),
+                      )
                     : new Container(),
               ],
             ))
 //      getPaddingBody(),
-    );
+        );
   }
 
-  TextFormField _getUserName() {
-    var type = 'Nombre';
+  TextFormField _getClubDescription() {
+    var type = 'Descripcion';
     return TextFormField(
-      initialValue: _user.name,
+      initialValue: _club.name,
       enabled: !_status,
       decoration: InputDecoration(labelText: type),
       textCapitalization: TextCapitalization.words,
       keyboardType: TextInputType.text,
       onSaved: (value) => setState(() {
-        _user.name = value;
+        _club.name = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 3);
-      },
-    );
-  }
-
-  TextFormField _getLastName() {
-    var type = 'Apellido';
-    return TextFormField(
-      initialValue: _user.lastName,
-      enabled: !_status,
-      decoration: InputDecoration(labelText: type),
-      textCapitalization: TextCapitalization.sentences,
-      keyboardType: TextInputType.text,
-      onSaved: (value) => setState(() {
-        _user.lastName = value;
-      }),
-      validator: (value) {
-        return _validateLenghtOf(value, type, 3);
+        return _validateLenghtOf(value, type, 140);
       },
     );
   }
@@ -227,16 +216,16 @@ class MapScreenState extends State<ProfileUser>
   _getUserDirection() {
     var type = 'Dirección';
     return TextFormField(
-      initialValue: _user.direccion,
+      initialValue: _club.direction,
       enabled: !_status,
       decoration: InputDecoration(labelText: type),
       textCapitalization: TextCapitalization.sentences,
       keyboardType: TextInputType.text,
       onSaved: (value) => setState(() {
-        _user.direccion = value;
+        _club.direction = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 10);
+        return _validateLenghtOf(value, type, 12);
       },
     );
   }
@@ -244,35 +233,83 @@ class MapScreenState extends State<ProfileUser>
   _getUserTel() {
     var type = 'Teléfono';
     return TextFormField(
-      initialValue: _user.telefono,
+      initialValue: _club.telephone,
       enabled: !_status,
       decoration: InputDecoration(labelText: type),
       textCapitalization: TextCapitalization.sentences,
       keyboardType: TextInputType.text,
       onSaved: (value) => setState(() {
-        _user.telefono = value;
+        _club.telephone = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 10);
+        return _validateLenghtOf(value, type, 12);
       },
     );
   }
 
-  _getUserClubs() {
+  Widget _getClubPrestaciones() {
     //TODO DEBERIA SER UN BOTON QUE TE LLEVE A LA PAGINA DE CLUBES DEL USUARIO SINO HAY MUCHA INFORMACION
-    var type = 'Clubs';
-    return TextFormField(
-      initialValue: _user.lastName,
-      enabled: !_status,
-      decoration: InputDecoration(labelText: type),
-      textCapitalization: TextCapitalization.sentences,
-      keyboardType: TextInputType.text,
-      onSaved: (value) => setState(() {
-        _user.lastName = value;
-      }),
-      validator: (value) {
-        return _validateLenghtOf(value, type, 3);
-      },
+    var type = 'Prestaciones';
+
+    return Container(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+              padding: EdgeInsets.only(left: 20.0),
+              child: Text('Populares',
+                  style: Theme.of(context).textTheme.subhead)),
+          SizedBox(height: 5.0),
+          StreamBuilder(
+            stream: _pestacionBloc.loadPrestacionesSnap(),
+            builder: (BuildContext context,
+                AsyncSnapshot<List<PrestacionModel>> snapshot) {
+              if (snapshot.hasData) {
+                return PrestacionHorizontal(
+                  prestaciones: snapshot.data,
+                  siguientePagina: _pestacionBloc.loadPrestaciones,
+                );
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  _getClubReservations() {
+    //TODO DEBERIA SER UN BOTON QUE TE LLEVE A LA PAGINA DE CLUBES DEL USUARIO SINO HAY MUCHA INFORMACION
+    var type = 'Prestaciones';
+
+    return Container(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+              padding: EdgeInsets.only(left: 20.0),
+              child: Text('Populares',
+                  style: Theme.of(context).textTheme.subhead)),
+          SizedBox(height: 5.0),
+          StreamBuilder(
+            stream: _reservationBloc.loadClubsSnap(),
+            builder: (BuildContext context,
+                AsyncSnapshot<List<ReservationModel>> snapshot) {
+              if (snapshot.hasData) {
+                return ReservationHorizontal(
+                  reservations: snapshot.data,
+                  siguientePagina: _reservationBloc.loadReservations,
+                );
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -320,11 +357,11 @@ class MapScreenState extends State<ProfileUser>
     String uploadPhoto;
 
     if (_photo != null) {
-      uploadPhoto = await _bloc.uploadPhoto(_photo);
+      uploadPhoto = await _pestacionBloc.uploadPhoto(_photo);
     }
 
-    if (uploadPhoto != null){
-      _user.avatar = uploadPhoto;
+    if (uploadPhoto != null) {
+      _club.logoUrl = uploadPhoto;
       _saveForID();
       Navigator.pop(context);
     }
@@ -332,9 +369,9 @@ class MapScreenState extends State<ProfileUser>
 
   void _saveForID() {
     //TODO Validate proper work.
-    print(_user.avatar);
+    print(_club.logoUrl);
 
-    _bloc.editClub(_user);
+    _clubBloc.editClub(_club);
     setState(() {
       _saving = false;
       _status = true;
@@ -355,11 +392,11 @@ class MapScreenState extends State<ProfileUser>
   void _takePhoto() async {
     File img = await ImagePicker.pickImage(source: ImageSource.camera);
     if (img == null) {
-      _user.avatar = null;
+      _club.logoUrl = null;
     }
     setState(() {
       _photo = img;
-      _user.avatar = img.path;
+      _club.logoUrl = img.path;
       _saving = false;
       _status = false;
     });

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/login_bloc.dart';
+import 'package:flutter_go_club_app/pages/clubs_page_admin.dart';
+import 'package:flutter_go_club_app/pages/home_user_page.dart';
+import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
+import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
+import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
 class UserDrawer extends StatelessWidget {
   final String APP_NAME = 'goClub';
-
+  final _pref = UserPreferences();
   AuthBloc authBloc;
 
   @override
@@ -18,22 +23,6 @@ class UserDrawer extends StatelessWidget {
           ListTile(
             title: Row(
               children: <Widget>[
-                Icon(
-                  Icons.home,
-                  color: Colors.green,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Text('Inicio'),
-                )
-              ],
-            ),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.pushNamed(context, 'home'),
-          ),
-          ListTile(
-            title: Row(
-              children: <Widget>[
                 Icon(Icons.account_circle, color: Colors.green),
                 Padding(
                   padding: EdgeInsets.only(left: 8.0),
@@ -42,7 +31,33 @@ class UserDrawer extends StatelessWidget {
               ],
             ),
             trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.pushNamed(context, 'profileUser'),
+              onTap: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileUser()),
+                ),
+              }
+          ),
+          ListTile(
+              title: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.home,
+                    color: Colors.green,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Text('Inicio'),
+                  )
+                ],
+              ),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RootHomeNavBar(0)),
+                ),
+              }
           ),
           ListTile(
             title: Row(
@@ -55,7 +70,12 @@ class UserDrawer extends StatelessWidget {
               ],
             ),
             trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.pushNamed(context, 'reservas'),
+              onTap: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RootHomeNavBar(1)),
+                ),
+              }
           ),
           ListTile(
             title: Row(
@@ -63,28 +83,56 @@ class UserDrawer extends StatelessWidget {
                 Icon(Icons.collections_bookmark, color: Colors.green),
                 Padding(
                   padding: EdgeInsets.only(left: 8.0),
+                  child: Text('Prestaciones'),
+                )
+              ],
+            ),
+            trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RootHomeNavBar(2)),
+                ),
+              }
+          ),
+          ListTile(
+            title: Row(
+              children: <Widget>[
+                Icon(Icons.room_service, color: Colors.green),
+                Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Text('Solicitudes'),
+                )
+              ],
+            ),
+            trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RootHomeNavBar(3)),
+                ),
+              }
+          ),
+          ListTile(
+            title: Row(
+              children: <Widget>[
+                Icon(Icons.supervised_user_circle, color: Colors.green),
+                Padding(
+                  padding: EdgeInsets.only(left: 8.0),
                   child: Text('Clubes'),
                 )
               ],
             ),
             trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.pushNamed(context, 'clubs'),
-          ),
-          ListTile(
-            title: Row(
-              children: <Widget>[
-                Icon(Icons.class_, color: Colors.green),
-                Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Text('Clases'),
-                )
-              ],
-            ),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.pushNamed(context, 'class'),
+              onTap: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RootHomeNavBar(4)),
+                ),
+              }
           ),
           SizedBox(
-            height: 100,
+            height: 50,
           ),
           ListTile(
             title: Row(
@@ -133,7 +181,7 @@ class UserDrawer extends StatelessWidget {
                           SizedBox(width: 10),
                           Image(
                             image: AssetImage(
-                              'assets/logo/logo-go-club.png',
+                              'assets/logo/Logo-Curvas.png',
                             ),
                             width: 100,
                             height: 100,
@@ -165,8 +213,12 @@ class UserDrawer extends StatelessWidget {
 
   _logOut(AuthBloc authBloc, BuildContext context) async {
     try {
-      await authBloc.logOut();
-      Navigator.pushReplacementNamed(context, 'splash');
+      var logOut = authBloc.logOut();
+      await logOut;
+      if (logOut != null) {
+        _pref.clear();
+        Navigator.pushNamedAndRemoveUntil(context, 'login', (_) => false);
+      }
     } catch (e) {
       print(e);
     }

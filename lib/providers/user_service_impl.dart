@@ -22,7 +22,8 @@ class UserServiceImpl {
     return _instance;
   }
 
-  Future<void> createUserData(String uid, String email, String name, String lastName, String telephone, String direction) async {
+  Future<void> createUserData(String uid, String email, String name,
+      String lastName, String telephone, String direction) async {
     return await db.document(uid).setData({
       'id': uid,
       'email': email,
@@ -35,14 +36,15 @@ class UserServiceImpl {
     });
   }
 
-  Future<List<UserModel>> loadUsers() async{
+  Future<List<UserModel>> loadUsers() async {
     QuerySnapshot snapshots = await db.getDocuments();
     List<UserModel> clubList = toUserList(snapshots.documents);
     return clubList;
   }
 
   Stream<List<UserModel>> loadUserListSnap() {
-    Stream<List<UserModel>> snapshots = db.snapshots().map((snap) => toUserList(snap.documents));
+    Stream<List<UserModel>> snapshots =
+        db.snapshots().map((snap) => toUserList(snap.documents));
     return snapshots;
   }
 
@@ -54,10 +56,9 @@ class UserServiceImpl {
     });
     return list;
   }
-  void updateData(UserModel club) async {
-    await db
-        .document(club.id)
-        .updateData(club.toJson());
+
+  void updateData(UserModel user) async {
+    await db.document(user.id).updateData(user.toJson());
   }
 
   void deleteData(String id) async {
@@ -68,7 +69,13 @@ class UserServiceImpl {
     return await _photoProvider.uploadImage(photo);
   }
 
-  Future<UserModel> loadUser(String uid) async{
-    return UserModel.fromQuerySnapshot(await db.where('id', isEqualTo: uid).getDocuments());
+  Future<UserModel> loadUser(String uid) async {
+    return UserModel.fromQuerySnapshot(
+        await db.where('id', isEqualTo: uid).getDocuments());
   }
+  Stream<UserModel> loadUserStream(String uid)  {
+    return getUserSnap(uid).map((user) => UserModel.fromQuerySnapshot(user));
+  }
+
+  Stream<QuerySnapshot> getUserSnap(String uid) => db.where('id', isEqualTo: uid).snapshots();
 }
