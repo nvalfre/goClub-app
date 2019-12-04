@@ -4,17 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/user_bloc.dart';
 import 'package:flutter_go_club_app/models/user_model.dart';
-import 'package:flutter_go_club_app/providers/provider_impl.dart';
-import 'package:flutter_go_club_app/utils/utils.dart' as utils;
-import 'package:image_picker/image_picker.dart';
-
-
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_go_club_app/bloc/user_bloc.dart';
-import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;

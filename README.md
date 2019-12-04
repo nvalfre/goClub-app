@@ -36,6 +36,9 @@ https://drive.google.com/open?id=1ZmILxDBmBSplUFV6J5mbTDGtg_2R4iUZ
 
 ```
 Almacenarlo en un dispositivo Android
+
 Activar la instalacion de aplicaciones por medios desconocidos.
+
 Ejecutar el archivo descargado e instalar la aplicacion.
+
 Ejecutar la aplicacion.

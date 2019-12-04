@@ -80,4 +80,10 @@ class PrestacionServiceImpl {
 
   Stream<QuerySnapshot> getPrestacionSnap(String uid) =>
       db.where('id', isEqualTo: uid).snapshots();
+
+  createData(PrestacionModel prestacionModel) async {
+    DocumentReference ref = await db.add(prestacionModel.toJson());
+    print(ref.documentID);
+    return ref.documentID;
+  }
 }

@@ -1,43 +1,42 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_go_club_app/bloc/prestation_bloc.dart';
 import 'package:flutter_go_club_app/bloc/user_bloc.dart';
-import 'package:flutter_go_club_app/models/club_model.dart';
+import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:flutter_go_club_app/pages/draw/draw_widget_admin.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
 
-class ClubsPageAdmin extends StatefulWidget {
+class PrestacionAddPageAdmin extends StatefulWidget {
   var clubArg;
 
   @override
-  _ClubPageState createState() => _ClubPageState();
+  _PrestacionAddPageAdminState createState() => _PrestacionAddPageAdminState();
 }
 
-const String CLUB_HEADER = 'Club Admin';
+const String CLUB_HEADER = 'Prestacion Admin';
 
-class _ClubPageState extends State<ClubsPageAdmin> {
+class _PrestacionAddPageAdminState extends State<PrestacionAddPageAdmin> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
-  ClubsBloc _bloc;
+  PrestacionBloc _bloc;
 
   bool _saving = false;
   File _photo;
-  ClubModel _club = ClubModel();
+  PrestacionModel _prestacion = PrestacionModel();
 
   @override
   Widget build(BuildContext context) {
-    _bloc = Provider.clubsBloc(context);
-
+    _bloc = Provider.prestacionBloc(context);
     validateAndLoadArguments(context);
-
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
         leading: InkWell(
-            onTap: () => Navigator.pushNamed(context, 'root'),
+            onTap: () => Navigator.pop(context),
             child: Icon(Icons.arrow_back_ios)),
         title: Text(CLUB_HEADER),
         actions: <Widget>[
@@ -49,12 +48,6 @@ class _ClubPageState extends State<ClubsPageAdmin> {
             icon: Icon(Icons.photo_camera),
             onPressed: _takePhoto,
           ),
-          IconButton(
-            icon: Icon(Icons.my_location),
-            onPressed: () {
-              Navigator.pushNamed(context, 'clubMapHome', arguments: _club);
-            },
-          )
         ],
       ),
       drawer: UserDrawerAdmin(),
@@ -68,12 +61,8 @@ class _ClubPageState extends State<ClubsPageAdmin> {
                   _showLogo(),
                   _getClubName(),
                   _getDescription(),
-                  _getLatitud(),
-                  _getLongitud(),
-                  _getDirection(),
-                  _getTelephone(),
-                  _getUser(),
                   _getAvailable(),
+                  _getIsClass(),
                   _getButtom()
                 ],
               )),
@@ -82,24 +71,14 @@ class _ClubPageState extends State<ClubsPageAdmin> {
     );
   }
 
-  void validateAndLoadArguments(BuildContext context) async {
-    final ClubModel clubModelDataArg = ModalRoute.of(context)
-        .settings
-        .arguments; //tambien se puede recibir por constructor.
-
-    if (clubModelDataArg != null) {
-      _club = clubModelDataArg;
-    }
-  }
-
   TextFormField _getClubName() {
     var type = 'Nombre del club';
     return TextFormField(
-      initialValue: _club.name,
+      initialValue: _prestacion.name,
       decoration: InputDecoration(labelText: type),
       textCapitalization: TextCapitalization.words,
       keyboardType: TextInputType.text,
-      onSaved: (value) => _club.name = value,
+      onSaved: (value) => _prestacion.name = value,
       validator: (value) {
         return _validateLenghtOf(value, type, 6);
       },
@@ -109,41 +88,13 @@ class _ClubPageState extends State<ClubsPageAdmin> {
   TextFormField _getDescription() {
     var type = 'Description del club';
     return TextFormField(
-      initialValue: _club.description,
+      initialValue: _prestacion.description,
       decoration: InputDecoration(labelText: type),
       textCapitalization: TextCapitalization.sentences,
       keyboardType: TextInputType.text,
-      onSaved: (value) => _club.description = value,
+      onSaved: (value) => _prestacion.description = value,
       validator: (value) {
         return _validateLenghtOf(value, type, 12);
-      },
-    );
-  }
-
-  TextFormField _getDirection() {
-    var type = 'Direccion';
-    return TextFormField(
-      initialValue: _club.direction,
-      decoration: InputDecoration(labelText: type),
-      textCapitalization: TextCapitalization.sentences,
-      keyboardType: TextInputType.text,
-      onSaved: (value) => _club.direction = value,
-      validator: (value) {
-        return _validateLenghtOf(value, type, 10);
-      },
-    );
-  }
-
-  TextFormField _getTelephone() {
-    var type = 'Telefono';
-    return TextFormField(
-      initialValue: _club.telephone,
-      decoration: InputDecoration(labelText: type),
-      textCapitalization: TextCapitalization.sentences,
-      keyboardType: TextInputType.text,
-      onSaved: (value) => _club.telephone = value,
-      validator: (value) {
-        return _validateLenghtOf(value, type, 10);
       },
     );
   }
@@ -157,12 +108,31 @@ class _ClubPageState extends State<ClubsPageAdmin> {
 
   SwitchListTile _getAvailable() {
     return SwitchListTile(
-      value: _club.available,
+      value: _prestacion.available,
       title: Text('Disponible'),
       onChanged: (value) => setState(() {
-        _club.available = value;
+        _prestacion.available = value;
       }),
     );
+  }
+  SwitchListTile _getIsClass() {
+    return SwitchListTile(
+      value: _prestacion.isClass,
+      title: Text('Clase?'),
+      onChanged: (value) => setState(() {
+        _prestacion.isClass = value;
+      }),
+    );
+  }
+
+  void validateAndLoadArguments(BuildContext context) async {
+    final PrestacionModel prestacion = ModalRoute.of(context)
+        .settings
+        .arguments; //tambien se puede recibir por constructor.
+
+    if (prestacion != null) {
+      _prestacion = prestacion;
+    }
   }
 
   RaisedButton _getButtom() {
@@ -185,7 +155,7 @@ class _ClubPageState extends State<ClubsPageAdmin> {
     });
 
     if (_photo != null) {
-      _club.logoUrl = await _bloc.uploadPhoto(_photo);
+      _prestacion.avatar = await _bloc.uploadPhoto(_photo);
     }
 
     _saveForID();
@@ -193,16 +163,16 @@ class _ClubPageState extends State<ClubsPageAdmin> {
   }
 
   void _saveForID() {
-    print(_club.logoUrl);
+    print(_prestacion.avatar);
 
-    if (_club.id == null) {
-      _bloc.addClub(_club);
+    if (_prestacion.id == null) {
+      _bloc.addPrestacion(_prestacion);
       setState(() {
         _saving = false;
       });
       _showSnackbar('Nuevo registro guardado exitosamente.');
     } else {
-      _bloc.editClub(_club);
+      _bloc.editPrestacion(_prestacion);
       setState(() {
         _saving = false;
       });
@@ -231,7 +201,7 @@ class _ClubPageState extends State<ClubsPageAdmin> {
   void _processImage(ImageSource source) async {
     File img = await ImagePicker.pickImage(source: source);
     if (img == null) {
-      _club.logoUrl = null;
+      _prestacion.avatar = null;
     }
     setState(() {
       _photo = img;
@@ -245,7 +215,7 @@ class _ClubPageState extends State<ClubsPageAdmin> {
         child: Column(
           children: <Widget>[
             Hero(
-              tag: _club.uniqueId ?? '',
+              tag: _prestacion.uniqueId ?? '',
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15.0),
                 child: FadeInImage(
@@ -260,7 +230,7 @@ class _ClubPageState extends State<ClubsPageAdmin> {
         ),
       );
     }
-    if (_club.logoUrl != null) {
+    if (_prestacion.avatar != null) {
       return _fadeInImageFromNetworkWithJarHolder();
     } else {
       return Image(
@@ -278,92 +248,8 @@ class _ClubPageState extends State<ClubsPageAdmin> {
       alignment: Alignment.center,
       decoration: new BoxDecoration(
         image: DecorationImage(
-            image: NetworkImage(_club.logoUrl), fit: BoxFit.fill),
+            image: NetworkImage(_prestacion.avatar), fit: BoxFit.fill),
       ),
-    );
-  }
-
-  _getLatitud() {
-    var type = 'Latitud';
-    var lat = _club.getLat();
-    return TextFormField(
-      initialValue: lat != null ? lat : '',
-      decoration: InputDecoration(labelText: type),
-      textCapitalization: TextCapitalization.words,
-      keyboardType: TextInputType.text,
-      onSaved: (value) => _club.setLat(value),
-      validator: (value) {
-        return _validateLenghtOf(value, type, 4);
-      },
-    );
-  }
-
-  _getLongitud() {
-    var type = 'Longitud';
-    var lng = _club.getLng();
-    return TextFormField(
-      initialValue: lng != null ? lng : '',
-      decoration: InputDecoration(labelText: type),
-      textCapitalization: TextCapitalization.words,
-      keyboardType: TextInputType.text,
-      onSaved: (value) => _club.setLng(value),
-      validator: (value) {
-        return _validateLenghtOf(value, type, 4);
-      },
-    );
-  }
-
-  FutureBuilder<List<UserModel>> _getUser() {
-    UserBloc userBloc = Provider.userBloc(context);
-
-    return FutureBuilder(
-      future: userBloc.loadAllUsers(),
-      builder: (BuildContext context, AsyncSnapshot<List<UserModel>> snapshot) {
-        if (snapshot.hasData) {
-          return getUserList(snapshot);
-        } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        ;
-      },
-    );
-  }
-
-  getUserList(AsyncSnapshot<List<UserModel>> snapshot) {
-    List<UserModel> temp = List();
-    final list = snapshot.data;
-    for (var f in list) {
-      if (f.role == 'user') {
-        temp.add(f);
-      }
-    }
-
-    return Row(
-      children: <Widget>[
-        Container(
-          child: Center(
-            child: Text(
-              "Club Admin: ",
-              style: TextStyle(color: Colors.blueGrey),
-            ),
-          ),
-        ),
-        DropdownButton<String>(
-          items: temp.map((UserModel user) {
-            return new DropdownMenuItem<String>(
-              value: user.name,
-              child: new Text(user.name),
-            );
-          }).toList(),
-          onChanged: (value) => setState(() {
-            _club.clubAdminId = value;
-          }),
-          hint: Text('Seleccionar administrador de club'),
-          value: _club.clubAdminId,
-        )
-      ],
     );
   }
 }

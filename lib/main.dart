@@ -7,6 +7,8 @@ import 'package:flutter_go_club_app/pages/mapas/mapas_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_admin_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_club_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
+import 'package:flutter_go_club_app/pages/prestacion_add_page_admin.dart';
+import 'package:flutter_go_club_app/pages/prestacion_admin_detalle_page.dart';
 import 'package:flutter_go_club_app/pages/register_page.dart';
 import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/splash_page.dart';
@@ -66,6 +68,7 @@ class MyApp extends StatelessWidget {
             'profileAdmin': (BuildContext context) => ProfileAdmin(),
             'profileClub': (BuildContext context) => ProfileClub(),
             'prestacion': (BuildContext context) => ClubsPageAdmin(),
+            'prestacionCRUD': (BuildContext context) => (PrestacionAddPageAdmin()),
           },
           theme: ThemeData(
             primaryColor: Colors.green
