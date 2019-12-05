@@ -12,7 +12,7 @@ import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import '../place_holder_widget.dart';
 import 'clubs_page_admin.dart';
 import 'clubs_page_user.dart';
-import 'datetimepicker.dart';
+import 'reservas_page_Admin.dart';
 
 class RootHomeNavBar extends StatefulWidget {
   int lastPage;
@@ -38,7 +38,7 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
 
   final List<Widget> _childrenRoutesUser = [
     PlaceholderWidget(HomePage()),
-    PlaceholderWidget(DateTimePickerExample()),
+    PlaceholderWidget(reserva_date_time_page()),
     PlaceholderWidget(PrestacionPageUser()),
     PlaceholderWidget(RequestPage()),
     PlaceholderWidget(ClubsPageUser()), // TODO deberia ser la lista de clubes que te lleven al profile.
@@ -51,7 +51,7 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
 
   final List<Widget> _childrenRoutesClub = [
     PlaceholderWidget(HomePage()),
-    PlaceholderWidget(DateTimePickerExample()),
+    PlaceholderWidget(reserva_date_time_page()),
     PlaceholderWidget(PrestacionPageAdmin()),
     PlaceholderWidget(RequestPage()),
     PlaceholderWidget(ProfileClub())

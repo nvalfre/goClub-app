@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/pages/draw/draw_widget_admin.dart';
-import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
-
-import 'draw/draw_widget_user.dart';
 
 class HomePageAdmin extends StatelessWidget {
   final prefs = new UserPreferences();
