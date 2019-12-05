@@ -1,3 +1,4 @@
+import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,6 +51,36 @@ class UserPreferences {
     _prefs.setString('direccion', user.direccion);
     _prefs.setString('avatar', user.avatar);
     _prefs.setString('email', user.email);
+  }
+
+
+
+  get prestacion {
+    return _prefs.getString('prestacion') ?? '';
+  }
+  get prestacionName {
+    return _prefs.getString('prestacionName') ?? '';
+  }
+  get prestacionDescription {
+    return _prefs.getString('prestacionDescription') ?? '';
+  }
+  get prestacionAvatar {
+    return _prefs.getString('prestacionAvatar') ?? '';
+  }
+  get prestacionAvailable {
+    return _prefs.getString('prestacionAvailable') ?? '';
+  }
+  get prestacionIsClass {
+    return _prefs.getString('prestacionIsClass') ?? '';
+  }
+
+  set prestacion ( PrestacionModel prestacionModel ) {
+    _prefs.setString('prestacion', prestacionModel.id);
+    _prefs.setString('prestacionName', prestacionModel.name);
+    _prefs.setString('prestacionDescription', prestacionModel.description);
+    _prefs.setString('prestacionAvatar', prestacionModel.avatar);
+    _prefs.setString('prestacionAvailable', prestacionModel.available ? "true" : "false");
+    _prefs.setString('prestacionIsClass', prestacionModel.isClass ? "true" : "false");
   }
 
   // GET y SET de la última página

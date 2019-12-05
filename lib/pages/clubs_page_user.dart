@@ -165,7 +165,7 @@ class _ClubPageState extends State<ClubsPageUser> {
                 borderRadius: BorderRadius.circular(15.0),
                 child: FadeInImage(
                   image: FileImage(_photo),
-                  placeholder: AssetImage('assets/images/no-image.jpg'),
+                  placeholder: AssetImage('assets/images/no-image.png'),
                   fit: BoxFit.cover,
                   width: 130,
                 ),

@@ -34,7 +34,7 @@ class CardSwiper extends StatelessWidget {
                   onTap: ()=> Navigator.pushNamed(context, 'detalle', arguments: clubs[index]),
                   child: FadeInImage(
                     image: NetworkImage( clubs[index].logoUrl  ),
-                    placeholder: AssetImage('assets/images/no-image.jpg'),
+                    placeholder: AssetImage('assets/images/no-image.png'),
                     fit: BoxFit.cover,
                   ),
                 )

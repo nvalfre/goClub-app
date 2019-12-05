@@ -30,7 +30,7 @@ class PrestacionBloc {
     return _prestacionProvider.loadPrestacionListSnap();
   }
 
-  void editClub(PrestacionModel prestacionModel) {
+  void editPrestacion(PrestacionModel prestacionModel) {
     _loadingController.sink.add(true);
     _prestacionProvider.updateData(prestacionModel);
     _loadingController.sink.add(false);
@@ -78,5 +78,11 @@ class PrestacionBloc {
 
   Stream<PrestacionModel> loadPrestacionStream(String uid) {
     return _prestacionProvider.loadPrestacionStream(uid);
+  }
+
+  void addPrestacion(PrestacionModel prestacionModel) async{
+    _loadingController.sink.add(true);
+    await _prestacionProvider.createData(prestacionModel);
+    _loadingController.sink.add(false);
   }
 }

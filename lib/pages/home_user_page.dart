@@ -72,7 +72,7 @@ class HomePage extends StatelessWidget {
 
   Widget getImageUrlWidget(ClubModel club) {
     return (club.logoUrl == null)
-        ? Image(image: AssetImage('assets/images/no-image.jpg'))
+        ? Image(image: AssetImage('assets/images/no-image.png'))
         : FadeInImage(
             image: NetworkImage(club.logoUrl),
             placeholder: AssetImage('assets/images/jar-loading.jpg'),

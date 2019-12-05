@@ -1,34 +1,32 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/club_bloc.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
-import 'package:flutter_go_club_app/pages/reservas_page_Admin.dart';
 import 'package:flutter_go_club_app/pages/search_delegate.dart';
+import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 
 import 'card_swiper_widget.dart';
 import 'club_card_horizontal.dart';
 import 'draw/draw_widget_user.dart';
 
-class ReservePage extends StatelessWidget {
-
+class PrestacionPageUser extends StatelessWidget {
   final clubBloc = new ClubsBloc();
 
   @override
   Widget build(BuildContext context) {
     clubBloc.loadClubs();
+
     return Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: Text('Reserva'),
+          title: Text('Prestacion'),
           backgroundColor: Colors.green,
           actions: <Widget>[
             IconButton(
-              icon: Icon( Icons.search ),
+              icon: Icon(Icons.search),
               onPressed: () {
                 showSearch(
                   context: context,
                   delegate: DataSearchClubs(),
-                  // query: 'Hola'
                 );
               },
             )
@@ -38,43 +36,28 @@ class ReservePage extends StatelessWidget {
         body: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              reserva_date_time_page(),
-              _swiperTarjetas(),
-              _footer(context)
-            ],
+            children: <Widget>[_swiperTarjetas(), _footer(context)],
           ),
-        )
-
-    );
+        ));
   }
 
   Widget _swiperTarjetas() {
-
     return FutureBuilder(
       future: clubBloc.loadClubs(),
       builder: (BuildContext context, AsyncSnapshot<List<ClubModel>> snapshot) {
-
-        if ( snapshot.hasData ) {
+        if (snapshot.hasData) {
 //          List<ClubModel> clubList = clubBloc.toClubList(snapshot.data.documents);
           List<ClubModel> clubList = snapshot.data;
-          return CardSwiper( clubs:  clubList);
+          return CardSwiper(clubs: clubList);
         } else {
           return Container(
-              height: 400.0,
-              child: Center(
-                  child: CircularProgressIndicator()
-              )
-          );
+              height: 350.0, child: Center(child: CircularProgressIndicator()));
         }
-
       },
     );
   }
 
-
-  Widget _footer(BuildContext context){
-
+  Widget _footer(BuildContext context) {
     return Container(
       width: double.infinity,
       child: Column(
@@ -82,15 +65,14 @@ class ReservePage extends StatelessWidget {
         children: <Widget>[
           Container(
               padding: EdgeInsets.only(left: 20.0),
-              child: Text('Populares', style: Theme.of(context).textTheme.subhead  )
-          ),
+              child: Text('Populares',
+                  style: Theme.of(context).textTheme.subhead)),
           SizedBox(height: 5.0),
-
           StreamBuilder(
             stream: clubBloc.loadClubsSnap(),
-            builder: (BuildContext context, AsyncSnapshot<List<ClubModel>> snapshot) {
-
-              if ( snapshot.hasData ) {
+            builder: (BuildContext context,
+                AsyncSnapshot<List<ClubModel>> snapshot) {
+              if (snapshot.hasData) {
                 return ClubHorizontal(
                   clubs: snapshot.data,
                   siguientePagina: clubBloc.loadClubs,
@@ -100,12 +82,8 @@ class ReservePage extends StatelessWidget {
               }
             },
           ),
-
         ],
       ),
     );
-
-
   }
-
 }

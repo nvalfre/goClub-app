@@ -50,7 +50,7 @@ class ReservationHorizontal extends StatelessWidget {
               borderRadius: BorderRadius.circular(15.0),
               child: FadeInImage(
                 image: NetworkImage(reservation.avatar),
-                placeholder: AssetImage('assets/images/no-image.jpg'),
+                placeholder: AssetImage('assets/images/no-image.png'),
                 fit: BoxFit.cover,
                 height: 100.0,
               ),
@@ -85,7 +85,7 @@ class ReservationHorizontal extends StatelessWidget {
               borderRadius: BorderRadius.circular(20.0),
               child: FadeInImage(
                 image: NetworkImage(reservationDoc.avatar),
-                placeholder: AssetImage('assets/images/no-image.jpg'),
+                placeholder: AssetImage('assets/images/no-image.png'),
                 fit: BoxFit.cover,
                 height: 160.0,
               ),

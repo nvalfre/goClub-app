@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
 
@@ -49,7 +48,7 @@ class ClubHorizontal extends StatelessWidget {
               borderRadius: BorderRadius.circular(15.0),
               child: FadeInImage(
                 image: NetworkImage(clubs.logoUrl),
-                placeholder: AssetImage('assets/images/no-image.jpg'),
+                placeholder: AssetImage('assets/images/no-image.png'),
                 fit: BoxFit.cover,
                 height: 100.0,
               ),
@@ -84,7 +83,7 @@ class ClubHorizontal extends StatelessWidget {
               borderRadius: BorderRadius.circular(20.0),
               child: FadeInImage(
                 image: NetworkImage(clubDoc.logoUrl),
-                placeholder: AssetImage('assets/images/no-image.jpg'),
+                placeholder: AssetImage('assets/images/no-image.png'),
                 fit: BoxFit.cover,
                 height: 160.0,
               ),
