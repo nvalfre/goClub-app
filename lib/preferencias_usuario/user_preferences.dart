@@ -1,4 +1,5 @@
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
+import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -58,6 +59,9 @@ class UserPreferences {
   get prestacion {
     return _prefs.getString('prestacion') ?? '';
   }
+  get reserva {
+    return _prefs.getString('reserva') ?? '';
+  }
   get prestacionName {
     return _prefs.getString('prestacionName') ?? '';
   }
@@ -83,6 +87,37 @@ class UserPreferences {
     _prefs.setString('prestacionIsClass', prestacionModel.isClass ? "true" : "false");
   }
 
+  set reserva ( ReservationModel reservaModel ) {
+    _prefs.setString('reserva', reservaModel.id);
+    _prefs.setString('reservaName', reservaModel.name);
+    _prefs.setString('reservaDescription', reservaModel.description);
+    _prefs.setString('reservaAvatar', reservaModel.avatar);
+    _prefs.setString('prestacionId', reservaModel.prestacionId);
+    _prefs.setString('reservaTime', reservaModel.time);
+    _prefs.setString('reservaDate', reservaModel.date);
+    _prefs.setString('reservaAvailable', reservaModel.available ? "true" : "false");
+  }
+  get reservaName {
+    return _prefs.getString('reservaName') ?? '';
+  }
+  get reservaDescription {
+    return _prefs.getString('reservaDescription') ?? '';
+  }
+  get reservaAvatar {
+    return _prefs.getString('reservaAvatar') ?? '';
+  }
+  get reservaAvailable {
+    return _prefs.getString('reservaAvailable') ?? '';
+  }
+  get reservaDate {
+    return _prefs.getString('reservaDate') ?? '';
+  }
+  get reservaTime {
+    return _prefs.getString('reservaTime') ?? '';
+  }
+  get prestacionId {
+    return _prefs.getString('prestacionId') ?? '';
+  }
   // GET y SET de la última página
   get lastPage {
     return _prefs.getString('lastPage') ?? 'splash';
@@ -100,5 +135,7 @@ class UserPreferences {
     _prefs.setString('telefono','');
     _prefs.setString('direccion','');
     _prefs.setString('avatar','');
-    _prefs.setString('email','');}
+    _prefs.setString('email','');
+    _prefs.setString('prestacion','');
+    _prefs.setString('reserva','');}
 }

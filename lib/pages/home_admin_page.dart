@@ -21,14 +21,21 @@ class HomePageAdmin extends StatelessWidget {
       ),
       body: _getListOfClubs(clubsBloc),
       drawer: UserDrawerAdmin(),
-      floatingActionButton: _getClubsFloattingActionButton(context),
-    );
-  }
-
-  FloatingActionButton _getClubsFloattingActionButton(BuildContext context) {
-    return FloatingActionButton(
-      child: Icon(Icons.add),
-      onPressed: () => Navigator.pushNamed(context, 'clubs'),
+      floatingActionButton: Container(
+        width: 40.0,
+        height: 40.0,
+        child: new RawMaterialButton(
+          fillColor: Colors.blueAccent,
+          shape: new CircleBorder(),
+          elevation: 0.0,
+          child: new Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          onPressed: (){
+            Navigator.pushNamed(context, 'clubs');
+          },
+        ),),
     );
   }
 

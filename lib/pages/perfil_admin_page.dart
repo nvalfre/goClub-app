@@ -322,7 +322,7 @@ class MapScreenState extends State<ProfileAdmin>
     //TODO Validate proper work.
     print(_user.avatar);
 
-    _bloc.editClub(_user);
+    _bloc.editUser(_user);
     setState(() {
       _saving = false;
       _status = true;

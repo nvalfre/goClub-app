@@ -29,45 +29,50 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
     _prestacionBloc = Provider.prestacionBloc(context);
     validateAndLoadArguments(context);
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: false,
-          title: Text('Prestacion'),
-          backgroundColor: Colors.green,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                showSearch(
-                  context: context,
-                  delegate: DataSearchClubs(),
-                );
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                Navigator.pushNamed(context, 'prestacionCRUD');
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () {
-                Navigator.pushNamed(context, 'prestacionCRUD',
-                    arguments: _prestacionModel);
-              },
-            ),
+      appBar: AppBar(
+        centerTitle: false,
+        title: Text('Prestacion'),
+        backgroundColor: Colors.green,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: DataSearchClubs(),
+              );
+            },
+          ),
+        ],
+      ),
+      drawer: UserDrawer(),
+      floatingActionButton: Container(
+        width: 40.0,
+        height: 40.0,
+        child: new RawMaterialButton(
+          fillColor: Colors.blueAccent,
+          shape: new CircleBorder(),
+          elevation: 0.0,
+          child: new Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pushNamed(context, 'prestacionCRUD');
+          },
+        ),
+      ),
+      body: SingleChildScrollView(
+          child: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            _swiperTarjetas(),
+            _detailsColumn(),
           ],
         ),
-        drawer: UserDrawer(),
-        body: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              _swiperTarjetas(),
-              _detailsColumn(),
-            ],
-          ),
-        ));
+      )),
+    );
   }
 
   Widget _swiperTarjetas() {
@@ -85,10 +90,7 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
                   Container(
                       padding: EdgeInsets.only(left: 20.0),
                       child: Text('Prestaciones',
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .subhead)),
+                          style: Theme.of(context).textTheme.subhead)),
                   SizedBox(height: 5.0),
                   PrestacionHorizontal(
                     prestaciones: snapshot.data,
@@ -108,10 +110,6 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
   }
 
   void validateAndLoadArguments(BuildContext context) async {
-    final PrestacionModel prest = ModalRoute
-        .of(context)
-        .settings
-        .arguments; //tambien se puede recibir por constructor.
     var userPreferences = UserPreferences();
 
     if (userPreferences.prestacion != null) {
@@ -119,9 +117,9 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
       _prestacionModel.description = userPreferences.prestacionDescription;
       _prestacionModel.avatar = userPreferences.prestacionAvatar;
       _prestacionModel.available =
-      userPreferences.prestacionAvailable == "true" ? true : false;
+          userPreferences.prestacionAvailable == "true" ? true : false;
       _prestacionModel.isClass =
-      userPreferences.prestacionIsClass == "true" ? true : false;
+          userPreferences.prestacionIsClass == "true" ? true : false;
     } else {
       _prestacionModel = new PrestacionModel();
     }
@@ -142,11 +140,20 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
           SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                _showLogo(),
-                _getTitulo(),
-                _getDescripcion(),
+                _getImageRow(),
                 _getAvailable(),
                 _getIsClass(),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _getEditButton(),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    _getReservasButton()
+                  ],
+                )
               ],
             ),
           ),
@@ -155,40 +162,59 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
     );
   }
 
-  _getTitulo() {
-    var type = 'Titulo';
-    return TextFormField(
-      initialValue: _prestacionModel.name,
-      decoration: InputDecoration(labelText: type),
-      textCapitalization: TextCapitalization.words,
-      keyboardType: TextInputType.text,
-      onSaved: (value) => _prestacionModel.name = value,
-      validator: (value) {
-        return _validateLenghtOf(value, type, 12);
-      },
+  Container _getImageRow() {
+    return Container(
+      padding: EdgeInsets.only(right: 5, left: 5),
+      child: Row(
+        children: <Widget>[
+          _showLogo(),
+          Flexible(
+              child: Container(
+                  padding: EdgeInsets.only(left: 1),
+                  child: Column(
+                    children: <Widget>[
+                      Text("Prestacion:",
+                          style: Theme.of(context).textTheme.headline),
+                      Text(_prestacionModel.name,
+                          style: TextStyle(color: Colors.black, fontSize: 20),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.justify),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text("Descripcion:",
+                          style: Theme.of(context).textTheme.headline),
+                      Text(
+                        _prestacionModel.description,
+                        style: TextStyle(color: Colors.black, fontSize: 20),
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.justify,
+                      ),
+                    ],
+                  )))
+        ],
+      ),
     );
   }
 
-  CheckboxListTile _getAvailable() {
-    return CheckboxListTile(
-      value: _prestacionModel.available,
-      activeColor: Colors.lightBlueAccent,
-      title: Text('Disponible', style: Theme
-          .of(context)
-          .textTheme
-          .subhead),
-    );
+  _getAvailable() {
+    return Container(
+        padding: EdgeInsets.only(right: 10, left: 10),
+        child: CheckboxListTile(
+          value: _prestacionModel.available,
+          activeColor: Colors.lightBlueAccent,
+          title: Text('Disponible', style: Theme.of(context).textTheme.subhead),
+        ));
   }
 
-  CheckboxListTile _getIsClass() {
-    return CheckboxListTile(
-      value: _prestacionModel.isClass,
-      activeColor: Colors.lightBlueAccent,
-      title: Text('Clase', style: Theme
-          .of(context)
-          .textTheme
-          .subhead),
-    );
+  _getIsClass() {
+    return Container(
+        padding: EdgeInsets.only(right: 10, left: 10),
+        child: CheckboxListTile(
+          value: _prestacionModel.isClass,
+          activeColor: Colors.lightBlueAccent,
+          title: Text('Clase', style: Theme.of(context).textTheme.subhead),
+        ));
   }
 
   Widget _showLogo() {
@@ -236,25 +262,28 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
     );
   }
 
-  _getDescripcion() {
-    var type = 'Descripcion';
-    return TextFormField(
-      initialValue: _prestacionModel.description,
-      decoration: InputDecoration(labelText: type),
-      textCapitalization: TextCapitalization.words,
-      keyboardType: TextInputType.text,
-      onSaved: (value) => _prestacionModel.description = value,
-      validator: (value) {
-        return _validateLenghtOf(value, type, 12);
-      },
+  Widget _getReservasButton() {
+    return RaisedButton.icon(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      color: Colors.blueAccent,
+      textColor: Colors.white,
+      label: Text('Ver Reservas'),
+      icon: Icon(Icons.details),
+      onPressed: () => Navigator.pushNamed(context, 'reservaDetalle',
+          arguments: _prestacionModel),
     );
   }
 
-  String _validateLenghtOf(String value, String type, int lenght) {
-    if (!utils.hasMoreLenghtThan(value, lenght)) {
-      return 'Deberia tener más de ${lenght} caracteres para la ${type}.';
-    }
-    return null;
+  Widget _getEditButton() {
+    return RaisedButton.icon(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      color: Colors.blueAccent,
+      textColor: Colors.white,
+      label: Text('     Editar         '),
+      icon: Icon(Icons.edit),
+      onPressed: () => Navigator.pushNamed(context, 'prestacionCRUD',
+          arguments: _prestacionModel),
+    );
   }
 }
 
@@ -266,13 +295,11 @@ class PrestacionHorizontal extends StatelessWidget {
       {@required this.prestaciones, @required this.siguientePagina});
 
   final _pageController =
-  new PageController(initialPage: 1, viewportFraction: 0.3);
+      new PageController(initialPage: 1, viewportFraction: 0.3);
 
   @override
   Widget build(BuildContext context) {
-    final _screenSize = MediaQuery
-        .of(context)
-        .size;
+    final _screenSize = MediaQuery.of(context).size;
 
     _pageController.addListener(() {
       if (_pageController.position.pixels >=
@@ -304,26 +331,22 @@ class PrestacionHorizontal extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15.0),
                 child: prestacion.avatar != null && prestacion.avatar != ""
                     ? FadeInImage(
-                  image: NetworkImage(prestacion.avatar),
-                  placeholder: AssetImage('assets/images/no-image.png'),
-                  fit: BoxFit.cover,
-                  height: 80.0,
-                )
+                        image: NetworkImage(prestacion.avatar),
+                        placeholder: AssetImage('assets/images/no-image.png'),
+                        fit: BoxFit.cover,
+                        height: 80.0,
+                      )
                     : Image(
-                  image: AssetImage('assets/images/no-image.png'),
-                  height:80.0,
-                  fit: BoxFit.cover,
-                )
-            ),
+                        image: AssetImage('assets/images/no-image.png'),
+                        height: 80.0,
+                        fit: BoxFit.cover,
+                      )),
           ),
           SizedBox(height: 5.0),
           Text(
             prestacion.name,
             overflow: TextOverflow.ellipsis,
-            style: Theme
-                .of(context)
-                .textTheme
-                .caption,
+            style: Theme.of(context).textTheme.caption,
           ),
         ],
       ),

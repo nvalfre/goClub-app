@@ -8,8 +8,8 @@ import 'package:flutter_go_club_app/pages/perfil_admin_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_club_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
 import 'package:flutter_go_club_app/pages/prestacion_add_page_admin.dart';
-import 'package:flutter_go_club_app/pages/prestacion_admin_detalle_page.dart';
 import 'package:flutter_go_club_app/pages/register_page.dart';
+import 'package:flutter_go_club_app/pages/reservas_add_page_admin.dart';
 import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/splash_page.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
@@ -37,44 +37,39 @@ void main() async {
 //TODO: Buscador en reservas
 //TODO: Buscador en clubes
 
-
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return Provider(
       child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'goClub app',
-          initialRoute: 'splash',
-          routes: {
-            'splash': (BuildContext context) => SplashRootPage(),
-            'root': (BuildContext context) => RootHomeNavBar(0),
-            'login': (BuildContext context) => LoginPage(),
-            'register': (BuildContext context) => RegisterPage(),
-
-            'clubMapHome': (BuildContext context) => ClubMapPage(),
-            'clubMapListHome': (BuildContext context) => ClubMapListPage(),
-
-            'detalle': (BuildContext context) => ClubsPageUser(),
-            'search': (BuildContext context) => RootHomeNavBar(0),
-            'clubs': (BuildContext context) => ClubsPageAdmin(),
-            'clubsAdmin': (BuildContext context) => ClubsPageAdmin(),
-            'reservations': (BuildContext context) => ClubsPageAdmin(),
-            'reservationsAdmin': (BuildContext context) => ClubsPageAdmin(),
-            'class': (BuildContext context) => ClubsPageAdmin(),
-            'classAdmin': (BuildContext context) => ClubsPageAdmin(),
-            'profileUser': (BuildContext context) => ProfileUser(),
-            'profileAdmin': (BuildContext context) => ProfileAdmin(),
-            'profileClub': (BuildContext context) => ProfileClub(),
-            'prestacion': (BuildContext context) => ClubsPageAdmin(),
-            'prestacionCRUD': (BuildContext context) => (PrestacionAddPageAdmin()),
-          },
-          theme: ThemeData(
-            primaryColor: Colors.green
-          ),
+        debugShowCheckedModeBanner: false,
+        title: 'goClub app',
+        initialRoute: 'splash',
+        routes: {
+          'splash': (BuildContext context) => SplashRootPage(),
+          'root': (BuildContext context) => RootHomeNavBar(0),
+          'login': (BuildContext context) => LoginPage(),
+          'register': (BuildContext context) => RegisterPage(),
+          'clubMapHome': (BuildContext context) => ClubMapPage(),
+          'clubMapListHome': (BuildContext context) => ClubMapListPage(),
+          'detalle': (BuildContext context) => ClubsPageUser(),
+          'search': (BuildContext context) => RootHomeNavBar(0),
+          'clubs': (BuildContext context) => ClubsPageAdmin(),
+          'clubsAdmin': (BuildContext context) => ClubsPageAdmin(),
+          'reservations': (BuildContext context) => ClubsPageAdmin(),
+          'reservationsAdmin': (BuildContext context) => ClubsPageAdmin(),
+          'class': (BuildContext context) => ClubsPageAdmin(),
+          'classAdmin': (BuildContext context) => ClubsPageAdmin(),
+          'profileUser': (BuildContext context) => ProfileUser(),
+          'profileAdmin': (BuildContext context) => ProfileAdmin(),
+          'profileClub': (BuildContext context) => ProfileClub(),
+          'prestacion': (BuildContext context) => ClubsPageAdmin(),
+          'prestacionCRUD': (BuildContext context) => PrestacionAddPageAdmin(),
+          'reservasCRUD': (BuildContext context) => ReservasAddPageAdmin(),
+        },
+        theme: ThemeData(primaryColor: Colors.green),
       ),
     );
   }
 }
-

@@ -295,7 +295,7 @@ class MapScreenState extends State<ProfileClub>
                   style: Theme.of(context).textTheme.subhead)),
           SizedBox(height: 5.0),
           StreamBuilder(
-            stream: _reservationBloc.loadClubsSnap(),
+            stream: _reservationBloc.loadReservationsSnap(),
             builder: (BuildContext context,
                 AsyncSnapshot<List<ReservationModel>> snapshot) {
               if (snapshot.hasData) {

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/photo_service_impl.dart';
+import 'package:uuid/uuid.dart';
 
 class ReservationServiceImpl {
   final _pref = new UserPreferences();
@@ -21,18 +22,12 @@ class ReservationServiceImpl {
     return _instance;
   }
 
-  Future<void> ReservationData(String uid, String email, String name,
-      String lastName, String telephone, String direction) async {
-    return await db.document(uid).setData({
-      'id': uid,
-      'email': email,
-      'role': 'reservation',
-      'available': true,
-      'name': name,
-      'lastName': lastName,
-      'telefono': telephone,
-      'direccion': direction
-    });
+  Future<void> createReservationData(ReservationModel reservationModel) async {
+    var uuid = new Uuid();
+    reservationModel.id = uuid.v1();
+    var json = reservationModel.toJson();
+
+    return await db.document(reservationModel.id).setData(json);
   }
 
   Future<List<ReservationModel>> loadReservations() async {
@@ -80,4 +75,10 @@ class ReservationServiceImpl {
 
   Stream<QuerySnapshot> ReservationSnap(String uid) =>
       db.where('id', isEqualTo: uid).snapshots();
+
+  createData(ReservationModel reserva) async {
+    DocumentReference ref = await db.add(reserva.toJson());
+    print(ref.documentID);
+    return ref.documentID;
+  }
 }

@@ -2,22 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/prestation_bloc.dart';
-import 'package:flutter_go_club_app/bloc/user_bloc.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
-import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:flutter_go_club_app/pages/draw/draw_widget_admin.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
 
 class PrestacionAddPageAdmin extends StatefulWidget {
-  var clubArg;
-
   @override
   _PrestacionAddPageAdminState createState() => _PrestacionAddPageAdminState();
 }
 
-const String CLUB_HEADER = 'Prestacion Admin';
+const String PRESTACION_HEADER = 'Prestacion Admin';
 
 class _PrestacionAddPageAdminState extends State<PrestacionAddPageAdmin> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -38,7 +34,7 @@ class _PrestacionAddPageAdminState extends State<PrestacionAddPageAdmin> {
         leading: InkWell(
             onTap: () => Navigator.pop(context),
             child: Icon(Icons.arrow_back_ios)),
-        title: Text(CLUB_HEADER),
+        title: Text(PRESTACION_HEADER),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.photo_library),
@@ -59,7 +55,7 @@ class _PrestacionAddPageAdminState extends State<PrestacionAddPageAdmin> {
               child: Column(
                 children: <Widget>[
                   _showLogo(),
-                  _getClubName(),
+                  _getPrestacionName(),
                   _getDescription(),
                   _getAvailable(),
                   _getIsClass(),
@@ -71,8 +67,8 @@ class _PrestacionAddPageAdminState extends State<PrestacionAddPageAdmin> {
     );
   }
 
-  TextFormField _getClubName() {
-    var type = 'Nombre del club';
+  TextFormField _getPrestacionName() {
+    var type = 'Prestacion';
     return TextFormField(
       initialValue: _prestacion.name,
       decoration: InputDecoration(labelText: type),
@@ -86,7 +82,7 @@ class _PrestacionAddPageAdminState extends State<PrestacionAddPageAdmin> {
   }
 
   TextFormField _getDescription() {
-    var type = 'Description del club';
+    var type = 'Description de la prestacion';
     return TextFormField(
       initialValue: _prestacion.description,
       decoration: InputDecoration(labelText: type),

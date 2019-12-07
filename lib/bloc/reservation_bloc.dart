@@ -26,7 +26,7 @@ class ReservationBloc {
     return querySnapshot;
   }
 
-  Stream<List<ReservationModel>> loadClubsSnap() {
+  Stream<List<ReservationModel>> loadReservationsSnap() {
     return _reservationProvider.loadReservationListSnap();
   }
 
@@ -79,5 +79,17 @@ class ReservationBloc {
 
   Stream<ReservationModel> loadReservationStream(String uid) {
     return _reservationProvider.loadReservationStream(uid);
+  }
+
+  void addPrestacion(ReservationModel reservaModel) async{
+    _loadingController.sink.add(true);
+    await _reservationProvider.createReservationData(reservaModel);
+    _loadingController.sink.add(false);
+  }
+
+  void editPrestacion(ReservationModel reservaModel) {
+    _loadingController.sink.add(true);
+    _reservationProvider.updateData(reservaModel);
+    _loadingController.sink.add(false);
   }
 }

@@ -22,14 +22,6 @@ class HomePage extends StatelessWidget {
       ),
       body: _getListOfClubs(clubsBloc),
       drawer: UserDrawer(),
-      floatingActionButton: _getClubsFloattingActionButton(context),
-    );
-  }
-
-  FloatingActionButton _getClubsFloattingActionButton(BuildContext context) {
-    return FloatingActionButton(
-      child: Icon(Icons.add),
-      onPressed: () => Navigator.pushNamed(context, 'clubs'),
     );
   }
 

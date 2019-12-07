@@ -29,13 +29,13 @@ class UserBloc {
     return _userProvider.loadUserListSnap();
   }
 
-  void editClub(UserModel userModel) {
+  void editUser(UserModel userModel) {
     _loadingController.sink.add(true);
     _userProvider.updateData(userModel);
     _loadingController.sink.add(false);
   }
 
-  void deleteClub(String id) {
+  void deleteUser(String id) {
     _userProvider.deleteData(id);
   }
 

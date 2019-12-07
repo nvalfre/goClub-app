@@ -9,77 +9,93 @@ String reservationModelToJson(ReservationModel data) => json.encode(data.toJson(
 class ReservationModel {
   String id;
   String name;
-  String lastName;
-  String email;
+  String description;
+  String user;
   String telefono;
   String direccion;
   String idClub;
   bool available;
   String avatar;
-  String role;
+  String prestacionId;
+  String uniqueId;
+  String time;
+  String date;
 
   ReservationModel({
     this.id,
     this.name = '',
-    this.lastName = '',
-    this.email = '',
+    this.description = '',
+    this.user = '',
     this.telefono = '',
     this.direccion = '',
     this.idClub = '',
     this.available = false,
     this.avatar,
-    this.role,
+    this.prestacionId,
+    this.time,
+    this.date,
+    this.uniqueId,
   });
 
   factory ReservationModel.fromJson(Map<String, dynamic> json) => ReservationModel(
     id: json["id"],
     name: json["name"],
-    email: json["email"],
+    user: json["user"],
+    description: json["description"],
     telefono: json["telefono"],
     direccion: json["direccion"],
     idClub: json["idClub"],
     available: json["available"],
     avatar: json["avatar"],
-    role: json["role"],
+    prestacionId: json["prestacionId"],
+    time: json["time"],
+    date: json["date"],
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "name": name,
-    "lastName": lastName,
-    "email": email,
+    "description": description,
+    "user": user,
     "telefono": telefono,
     "direccion": direccion,
     "idClub": idClub,
     "available": available,
     "avatar": avatar,
-    "role": role,
+    "prestacionId": prestacionId,
+    "time": time,
+    "date": date,
   };
 
   factory ReservationModel.fromSnapshot(DocumentSnapshot snap) => ReservationModel(
     id: snap.documentID,
     name: snap.data["name"],
-    email: snap.data["email"],
+    user: snap.data["user"],
+    description: snap.data["description"],
     telefono: snap.data["telefono"],
     direccion: snap.data["direccion"],
     idClub: snap.data["idClub"],
     available: snap.data["available"],
     avatar: snap.data["avatar"],
-    role: snap.data["role"],
+    prestacionId: snap.data["prestacionId"],
+    time: snap.data["time"],
+    date: snap.data["date"],
   );
   factory ReservationModel.fromQuerySnapshot(QuerySnapshot snap) {
     var document = snap.documents[0];
     return ReservationModel(
       id: document.data['id'],
       name: document.data["name"],
-      lastName: document.data["lastName"],
-      email: document.data["email"],
+      description: document.data["description"],
+      user: document.data["user"],
       telefono: document.data["telefono"],
       direccion: document.data["direccion"],
       idClub: document.data["idClub"],
       available: document.data["available"],
       avatar: document.data["avatar"],
-      role: document.data["role"],
+      prestacionId: document.data["prestacionId"],
+      time: document.data["time"],
+      date: document.data["date"],
     );
   }
 

@@ -70,7 +70,6 @@ class PrestacionBloc {
   Future<PrestacionModel> loadPrestacion(String uid) async {
     _loadingController.sink.add(true);
     PrestacionModel prestacion = await _prestacionProvider.loadPrestacion(uid);
-//    _prefs.prestacion = prestacion;
     _loadingController.sink.add(false);
 
     return prestacion;
@@ -82,7 +81,7 @@ class PrestacionBloc {
 
   void addPrestacion(PrestacionModel prestacionModel) async{
     _loadingController.sink.add(true);
-    await _prestacionProvider.createData(prestacionModel);
+    await _prestacionProvider.createPrestacionData(prestacionModel);
     _loadingController.sink.add(false);
   }
 }

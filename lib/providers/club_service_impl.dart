@@ -20,6 +20,7 @@ class ClubServiceImpl {
   Future<String> createData(ClubModel club) async {
     DocumentReference ref = await db.add(club.toJson());
     print(ref.documentID);
+
     return ref.documentID;
   }
 

@@ -78,7 +78,7 @@ class _SplashRootPageState extends State<SplashRootPage> {
           ),
           FadeInImage(
             image: AssetImage('assets/logo/Logo-Curvas.png'),
-            placeholder: AssetImage('assets/images/no-image.png'),
+            placeholder: AssetImage('assets/images/jar-loading.gif'),
             fit: BoxFit.contain,
             fadeInDuration: Duration(seconds: 1),
             width: 275,

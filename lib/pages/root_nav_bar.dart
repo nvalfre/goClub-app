@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/models/access_role_model.dart';
 import 'package:flutter_go_club_app/pages/home_admin_page.dart';
 import 'package:flutter_go_club_app/pages/home_user_page.dart';
-import 'package:flutter_go_club_app/pages/perfil_club_page.dart';
+import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
 import 'package:flutter_go_club_app/pages/prestacion_admin_detalle_page.dart';
 import 'package:flutter_go_club_app/pages/prestacion_user_detalle_page.dart';
 import 'package:flutter_go_club_app/pages/request_admin_detalle_page.dart';
-import 'package:flutter_go_club_app/pages/reserva_admin_detalle_page.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 
 import '../place_holder_widget.dart';
 import 'clubs_page_admin.dart';
 import 'clubs_page_user.dart';
-import 'reservas_page_Admin.dart';
+import 'reservas_page_admin.dart';
 
 class RootHomeNavBar extends StatefulWidget {
   int lastPage;
@@ -38,7 +37,7 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
 
   final List<Widget> _childrenRoutesUser = [
     PlaceholderWidget(HomePage()),
-    PlaceholderWidget(reserva_date_time_page()),
+    PlaceholderWidget(ReservaClubAdminPAge()),
     PlaceholderWidget(PrestacionPageUser()),
     PlaceholderWidget(RequestPage()),
     PlaceholderWidget(ClubsPageUser()), // TODO deberia ser la lista de clubes que te lleven al profile.
@@ -51,10 +50,10 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
 
   final List<Widget> _childrenRoutesClub = [
     PlaceholderWidget(HomePage()),
-    PlaceholderWidget(reserva_date_time_page()),
+    PlaceholderWidget(ReservaClubAdminPAge()),
     PlaceholderWidget(PrestacionPageAdmin()),
     PlaceholderWidget(RequestPage()),
-    PlaceholderWidget(ProfileClub())
+    PlaceholderWidget(ProfileUser())
   ];
 
   @override

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/photo_service_impl.dart';
+import 'package:uuid/uuid.dart';
 
 class PrestacionServiceImpl {
   final _pref = new UserPreferences();
@@ -21,18 +22,12 @@ class PrestacionServiceImpl {
     return _instance;
   }
 
-  Future<void> createPrestacionData(String uid, String email, String name,
-      String lastName, String telephone, String direction) async {
-    return await db.document(uid).setData({
-      'id': uid,
-      'email': email,
-      'role': 'prestacion',
-      'available': true,
-      'name': name,
-      'lastName': lastName,
-      'telefono': telephone,
-      'direccion': direction
-    });
+  Future<void> createPrestacionData(PrestacionModel prestacionModel) async {
+    var uuid = new Uuid();
+    prestacionModel.id = uuid.v1();
+    var json = prestacionModel.toJson();
+
+    return await db.document(prestacionModel.id).setData(json);
   }
 
   Future<List<PrestacionModel>> loadPrestacions() async {
@@ -69,8 +64,8 @@ class PrestacionServiceImpl {
   }
 
   Future<PrestacionModel> loadPrestacion(String uid) async {
-    return PrestacionModel.fromQuerySnapshot(
-        await db.where('id', isEqualTo: uid).getDocuments());
+    return PrestacionModel.fromSnapshot(
+        await db.document(uid).get());
   }
 
   Stream<PrestacionModel> loadPrestacionStream(String uid) {
@@ -80,10 +75,4 @@ class PrestacionServiceImpl {
 
   Stream<QuerySnapshot> getPrestacionSnap(String uid) =>
       db.where('id', isEqualTo: uid).snapshots();
-
-  createData(PrestacionModel prestacionModel) async {
-    DocumentReference ref = await db.add(prestacionModel.toJson());
-    print(ref.documentID);
-    return ref.documentID;
-  }
 }
