@@ -10,18 +10,19 @@ import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
 import 'draw/draw_widget_user.dart';
 
-class ReservaClubAdminPAge extends StatefulWidget {
+class ReservaClubAdminPage extends StatefulWidget {
   @override
-  ReservaClubAdminPAgeState createState() {
-    return ReservaClubAdminPAgeState();
+  ReservaClubAdminPageState createState() {
+    return ReservaClubAdminPageState();
   }
 }
 
-class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
+class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
   String _date;
   String _timeDesde;
   String _timeHasta;
   ReservationModel _reservaModel;
+  UserPreferences userPreferences;
   File _photo;
   ReservationBloc _reservasBloc;
 
@@ -92,9 +93,10 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
   }
 
   _getTimeDesde(BuildContext context) {
-    _timeDesde = _reservaModel.timeDesde == ""
-        ? 'Desde: No establecido'
-        : _reservaModel.timeDesde;
+    _timeDesde =
+        _reservaModel.timeDesde == "" || _reservaModel.timeDesde == null
+            ? 'Desde: No establecido'
+            : _reservaModel.timeDesde;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -130,9 +132,10 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
   }
 
   _getTimeHasta(BuildContext context) {
-    _timeHasta = _reservaModel.timeHasta == ""
-        ? 'Hasta: No establecido'
-        : _reservaModel.timeHasta;
+    _timeHasta =
+        _reservaModel.timeHasta == "" || _reservaModel.timeHasta == null
+            ? 'Hasta: No establecido'
+            : _reservaModel.timeHasta;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -252,6 +255,7 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
       _reservaModel.timeDesde = userPreferences.reservaTimeDesde;
       _reservaModel.timeHasta = userPreferences.reservaTimeHasta;
       _reservaModel.date = userPreferences.reservaDate;
+      _reservaModel.estado = userPreferences.reservaEstado;
       _reservaModel.available =
           userPreferences.reservaAvailable == "true" ? true : false;
     } else {
@@ -279,8 +283,7 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
                 SizedBox(height: 10.0),
                 _getTimeDesde(context),
                 _getTimeHasta(context),
-                _getAvailable(),
-                _getEditButton(),
+                _getAvailableAndButtom(),
               ],
             ),
           ),
@@ -324,14 +327,57 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
     );
   }
 
-  _getAvailable() {
-    return Container(
-        padding: EdgeInsets.only(right: 10, left: 10),
-        child: CheckboxListTile(
-          value: _reservaModel.available,
-          activeColor: Colors.lightBlueAccent,
-          title: Text('Disponible', style: Theme.of(context).textTheme.subhead),
-        ));
+  _getAvailableAndButtom() {
+    String solicitado = 'Solicitado';
+    String aceptado = 'Aceptado';
+
+    var estado = _reservaModel.estado == "" || _reservaModel.estado == null
+        ? 'Sin establecer'
+        : _reservaModel.estado;
+
+    Color color = Colors.blueAccent;
+    var richText = RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+              text: 'Estado: ' + estado,
+              style: TextStyle(
+                  color: color, fontSize: 25, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+
+    if (estado == solicitado) {
+      color = Colors.orange;
+
+      return Column(
+        children: <Widget>[richText, _getAceptarButtom()],
+      );
+    } else if (estado == aceptado) {
+      color = Colors.greenAccent;
+      return Column(
+        children: <Widget>[richText, _getEditButton()],
+      );
+    } else {
+      return Column(
+        children: <Widget>[richText, _getEditButton()],
+      );
+    }
+  }
+
+  Color handleColorState(String estado) {
+    Color color;
+    String noDispnible = 'No disponible';
+    String disponible = 'Disponible';
+    String reservado = 'Reservado';
+    if (estado == noDispnible || estado == reservado) {
+      color = Colors.red;
+    } else if (estado == disponible) {
+      color = Colors.green;
+    } else {
+      color = Colors.blueAccent;
+    }
+    return color;
   }
 
   Widget _getEditButton() {
@@ -343,6 +389,21 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
       icon: Icon(Icons.edit),
       onPressed: () => Navigator.pushNamed(context, 'reservasCRUD',
           arguments: _reservaModel),
+    );
+  }
+
+  Widget _getAceptarButtom() {
+    userPreferences = UserPreferences();
+    _reservaModel.user = userPreferences.user;
+
+    return RaisedButton.icon(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      color: Colors.blueAccent,
+      textColor: Colors.white,
+      label: Text(' Ver solicitud  '),
+      icon: Icon(Icons.check),
+      onPressed: () =>
+          Navigator.pushNamed(context, 'requestCRUD', arguments: _reservaModel),
     );
   }
 

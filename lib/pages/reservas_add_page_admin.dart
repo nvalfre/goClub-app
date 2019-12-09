@@ -88,19 +88,19 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
   }
 
   FutureBuilder<List<PrestacionModel>> _getPrestacionName() {
-    _prestacionBloc = Provider.prestacionBloc(context);
+      _prestacionBloc = Provider.prestacionBloc(context);
 
-    return FutureBuilder(
-      future: _prestacionBloc.loadPrestaciones(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          return _getPrestacion(snapshot);
-        }
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
+      return FutureBuilder(
+        future: _prestacionBloc.loadPrestaciones(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return _getPrestacion(snapshot);
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
   }
 
   _getPrestacion(AsyncSnapshot snapshot) {
@@ -128,8 +128,10 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
               );
             }).toList(),
             onChanged: (value) => setState(() {
-                  _reserva.prestacionId = selectIdByPrestacionName(value, temp);
-                  _prestacionValue = value;
+                  PrestacionModel prestacion = selectIdByPrestacionName(value, temp);
+                  _reserva.prestacionId = prestacion.id;
+                  _reserva.name = prestacion.name;
+                  _prestacionValue = prestacion.name;
                 }),
             hint: Text('Seleccionar prestacion'),
             value: _prestacionValue)
@@ -158,13 +160,13 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     return null;
   }
 
-  SwitchListTile _getAvailable() {
-    return SwitchListTile(
-      value: _reserva.available,
-      title: Text('Disponible'),
-      onChanged: (value) => setState(() {
-        _reserva.available = value;
-      }),
+  _getAvailable() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Text('Estado: Implementar estado.', style: TextStyle(
+          color: Colors.teal,
+          fontWeight: FontWeight.bold,
+          fontSize: 18.0),),
     );
   }
 
@@ -180,6 +182,8 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
       _reserva = reserva;
       _timeDesde = reserva.timeDesde;
       _timeHasta = reserva.timeHasta;
+      _date = reserva.date;
+      _prestacionValue = reserva.name;
     }
   }
 
@@ -211,7 +215,6 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
   }
 
   void _saveForID() {
-    print(_reserva.avatar);
     UserPreferences _pref = UserPreferences();
 
     if (_reserva.id == null) {
@@ -224,6 +227,7 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     } else {
       _reservasBloc.editPrestacion(_reserva);
       setState(() {
+        _pref.reserva = _reserva;
         _saving = false;
       });
       _showSnackbar('Registro actualizado correctamente.');
@@ -495,14 +499,14 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     );
   }
 
-  String selectIdByPrestacionName(String name, List<PrestacionModel> temp) {
-    String id;
+  PrestacionModel selectIdByPrestacionName(String name, List<PrestacionModel> temp) {
+    PrestacionModel pres;
     temp.forEach((prestacion) {
       if (prestacion.name == name) {
-        id = prestacion.id;
+        pres = prestacion;
       }
     });
-    return id;
+    return pres;
   }
 }
 

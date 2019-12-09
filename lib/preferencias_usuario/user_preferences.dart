@@ -96,6 +96,7 @@ class UserPreferences {
     _prefs.setString('reservaTimeDesde', reservaModel.timeDesde);
     _prefs.setString('reservaTimeHasta', reservaModel.timeHasta);
     _prefs.setString('reservaDate', reservaModel.date);
+    _prefs.setString('reservaEstado', reservaModel.estado);
     _prefs.setString('reservaAvailable', reservaModel.available ? "true" : "false");
   }
   get reservaName {
@@ -118,6 +119,9 @@ class UserPreferences {
   }
   get reservaTimeHasta {
     return _prefs.getString('reservaTimeHasta') ?? '';
+  }
+  get reservaEstado {
+    return _prefs.getString('reservaEstado') ?? '';
   }
   get prestacionId {
     return _prefs.getString('prestacionId') ?? '';

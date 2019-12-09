@@ -13,14 +13,14 @@ import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_view/photo_view.dart';
 
-class ReservasAddPageUser extends StatefulWidget {
+class RequestPage extends StatefulWidget {
   @override
-  _ReservasAddPageUserState createState() => _ReservasAddPageUserState();
+  _RequestPageState createState() => _RequestPageState();
 }
 
-const String RESERVA_HEADER = 'Reservas Admin';
+const String RESERVA_HEADER = 'Request Page Admin';
 
-class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
+class _RequestPageState extends State<RequestPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
   ReservationBloc _reservasBloc;
@@ -170,38 +170,56 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   }
 
   _getButtom() {
-    var raisedButton = RaisedButton.icon(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-        color: Colors.green,
-        textColor: Colors.white,
-        label: Text('Solicitar'),
-        icon: Icon(Icons.add_box),
-        onPressed: (_solicitando) ? null : _submitWithFormValidation,
-      );
+    var raisedButtonAccept = RaisedButton.icon(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      color: Colors.green,
+      textColor: Colors.white,
+      label: Text('Aceptar'),
+      icon: Icon(Icons.add_box),
+      onPressed: (_solicitando) ? null : _submitWithFormValidation,
+    );
+    var raisedButtonCancel = RaisedButton.icon(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      color: Colors.red,
+      textColor: Colors.white,
+      label: Text('Cancelar'),
+      icon: Icon(Icons.add_box),
+      onPressed: () => _cancelarReservaValidation(),
+    );
 
-    if (_reserva.estado != 'Disponible') {
-      _solicitando = true;
+    if (_reserva.estado == 'Solicitado') {
+      _solicitando = false;
       return Column(
         children: <Widget>[
           RichText(
             text: TextSpan(
               children: [
-                TextSpan(text: 'Estado: ' + _reserva.estado , style: TextStyle(color: Colors.red, fontSize: 25, fontWeight: FontWeight.bold)),
+                TextSpan(
+                    text: 'Estado: ' + _reserva.estado,
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold)),
               ],
             ),
           ),
-          SizedBox(height: 5,),
-          raisedButton
+          SizedBox(
+            height: 5,
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[raisedButtonAccept, SizedBox(width: 10,), raisedButtonCancel],
+          )
         ],
       );
+    } else {
+      return CircularProgressIndicator();
     }
-    return raisedButton;
-
+    return raisedButtonAccept;
   }
 
   void _submitWithFormValidation() async {
-    if (!formKey.currentState.validate()) return;
-
     formKey.currentState.save();
     setState(() {
       _solicitando = true;
@@ -213,14 +231,14 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   void _saveForID() {
     UserPreferences _pref = UserPreferences();
 
-    _reserva.estado = 'Solicitado';
+    _reserva.estado = 'Aceptado';
     if (_reserva.id != null) {
       _reservasBloc.editPrestacion(_reserva);
       setState(() {
         _pref.reserva = _reserva;
         _solicitando = false;
       });
-      _showSnackbar('Registro actualizado correctamente.');
+      _showSnackbar('Solicitud aceptada correctamente.');
     }
     Navigator.pop(context);
   }
@@ -479,6 +497,25 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       }
     });
     return pres;
+  }
+
+  _cancelarReservaValidation() {
+    formKey.currentState.save();
+    setState(() {
+      _solicitando = true;
+    });
+    UserPreferences _pref = UserPreferences();
+
+    _reserva.estado = 'Cancelado';
+    if (_reserva.id != null) {
+      _reservasBloc.editPrestacion(_reserva);
+      setState(() {
+        _pref.reserva = _reserva;
+        _solicitando = false;
+      });
+      _showSnackbar('Solicitud cancelada correctamente.');
+    }
+    Navigator.pop(context);
   }
 }
 

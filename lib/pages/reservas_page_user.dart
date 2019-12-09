@@ -11,14 +11,14 @@ import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
 import 'draw/draw_widget_user.dart';
 
-class ReservaClubAdminPAge extends StatefulWidget {
+class ReservaClubUserPage extends StatefulWidget {
   @override
-  ReservaClubAdminPAgeState createState() {
-    return ReservaClubAdminPAgeState();
+  ReservaClubUserPageState createState() {
+    return ReservaClubUserPageState();
   }
 }
 
-class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
+class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   String _date;
   String _timeDesde;
   String _timeHasta;
@@ -93,7 +93,7 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
   }
 
   _getTimeDesde(BuildContext context) {
-    _timeDesde = _reservaModel.timeDesde == ""
+    _timeDesde = _reservaModel.timeDesde == "" || _reservaModel.timeDesde == null
         ? 'Desde: No establecido'
         : _reservaModel.timeDesde;
     return Container(
@@ -131,7 +131,7 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
   }
 
   _getTimeHasta(BuildContext context) {
-    _timeHasta = _reservaModel.timeHasta == ""
+    _timeHasta = _reservaModel.timeHasta == "" || _reservaModel.timeHasta == null
         ? 'Hasta: No establecido'
         : _reservaModel.timeHasta;
     return Container(
@@ -170,7 +170,7 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
 
   _getDate(BuildContext context) {
     _date =
-        _reservaModel.date == "" ? 'Desde: No establecido' : _reservaModel.date;
+        _reservaModel.date == ""  || _reservaModel.date == null? 'Desde: No establecido' : _reservaModel.date;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -344,10 +344,11 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
   Color handleColorState(String estado) {
     Color color;
     String noDispnible = 'No disponible';
-    String Disponible = 'Disponible';
-    if (estado == noDispnible) {
+    String solicitado = 'Solicitado';
+    String disponible = 'Disponible';
+    if (estado == noDispnible || estado == solicitado) {
       color = Colors.red;
-    } else if (estado == Disponible) {
+    } else if (estado == disponible) {
       color = Colors.green;
     } else {
       color = Colors.blueAccent;
@@ -360,9 +361,9 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       color: Colors.blueAccent,
       textColor: Colors.white,
-      label: Text('     Editar         '),
+      label: Text('     Solicitar         '),
       icon: Icon(Icons.edit),
-      onPressed: () => Navigator.pushNamed(context, 'reservasCRUD',
+      onPressed: () => Navigator.pushNamed(context, 'reservasCRUD_user',
           arguments: _reservaModel),
     );
   }
