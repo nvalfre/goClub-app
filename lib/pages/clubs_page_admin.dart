@@ -107,7 +107,7 @@ class _ClubPageState extends State<ClubsPageAdmin> {
   }
 
   TextFormField _getDescription() {
-    var type = 'Description del club';
+    var type = 'Descripción del club';
     return TextFormField(
       initialValue: _club.description,
       decoration: InputDecoration(labelText: type),
@@ -326,7 +326,6 @@ class _ClubPageState extends State<ClubsPageAdmin> {
             child: CircularProgressIndicator(),
           );
         }
-        ;
       },
     );
   }

@@ -93,7 +93,8 @@ class UserPreferences {
     _prefs.setString('reservaDescription', reservaModel.description);
     _prefs.setString('reservaAvatar', reservaModel.avatar);
     _prefs.setString('prestacionId', reservaModel.prestacionId);
-    _prefs.setString('reservaTime', reservaModel.time);
+    _prefs.setString('reservaTimeDesde', reservaModel.timeDesde);
+    _prefs.setString('reservaTimeHasta', reservaModel.timeHasta);
     _prefs.setString('reservaDate', reservaModel.date);
     _prefs.setString('reservaAvailable', reservaModel.available ? "true" : "false");
   }
@@ -112,8 +113,11 @@ class UserPreferences {
   get reservaDate {
     return _prefs.getString('reservaDate') ?? '';
   }
-  get reservaTime {
-    return _prefs.getString('reservaTime') ?? '';
+  get reservaTimeDesde {
+    return _prefs.getString('reservaTimeDesde') ?? '';
+  }
+  get reservaTimeHasta {
+    return _prefs.getString('reservaTimeHasta') ?? '';
   }
   get prestacionId {
     return _prefs.getString('prestacionId') ?? '';

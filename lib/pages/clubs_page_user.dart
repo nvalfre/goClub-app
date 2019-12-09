@@ -105,7 +105,7 @@ class _ClubPageState extends State<ClubsPageUser> {
   }
 
   TextFormField _getDescription() {
-    var type = 'Description del club';
+    var type = 'Descripción del club';
     return TextFormField(
       initialValue: _club.description,
       decoration: InputDecoration(labelText: type),

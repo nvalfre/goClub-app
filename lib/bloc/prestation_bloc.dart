@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/src/widgets/async.dart';
+import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/prestacion_service_impl.dart';

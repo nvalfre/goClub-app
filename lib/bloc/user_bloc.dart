@@ -52,18 +52,6 @@ class UserBloc {
     _loadingController.close();
   }
 
-  List<UserModel> filterClubsByName(AsyncSnapshot snapshot, String query) {
-    List<UserModel> userList = List();
-    List<UserModel> userDocuments = snapshot.data;
-    userDocuments.forEach((userModel) {
-      if (userList.length < 6 &&
-          userModel.name.toLowerCase().substring(0, query.length) == query) {
-        userList.add(userModel);
-      }
-    });
-    return userList;
-  }
-
   Future<UserModel> loadUser(String uid) async {
     _loadingController.sink.add(true);
     UserModel user = await _userProvider.loadUser(uid);

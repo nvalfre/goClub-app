@@ -197,7 +197,7 @@ class MapScreenState extends State<ProfileClub>
   }
 
   TextFormField _getClubDescription() {
-    var type = 'Descripcion';
+    var type = 'Descripción';
     return TextFormField(
       initialValue: _club.name,
       enabled: !_status,

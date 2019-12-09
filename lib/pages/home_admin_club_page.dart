@@ -16,8 +16,8 @@ class HomeAdminScafold extends StatefulWidget {
 }
 
 class _HomeAdminScafoldState extends State<HomeAdminScafold> {
-  String _date = "No establecido";
-  String _time = "No establecido";
+  String _date = "Desde: No establecido";
+  String _time = "Desde: No establecido";
   var _change = "  Cambiar";
 
   @override

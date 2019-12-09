@@ -18,7 +18,9 @@ class ReservationModel {
   String avatar;
   String prestacionId;
   String uniqueId;
-  String time;
+  String timeDesde;
+  String timeHasta;
+  String estado;
   String date;
 
   ReservationModel({
@@ -31,8 +33,10 @@ class ReservationModel {
     this.idClub = '',
     this.available = false,
     this.avatar,
-    this.prestacionId,
-    this.time,
+    this.prestacionId='',
+    this.timeDesde,
+    this.timeHasta,
+    this.estado,
     this.date,
     this.uniqueId,
   });
@@ -48,7 +52,9 @@ class ReservationModel {
     available: json["available"],
     avatar: json["avatar"],
     prestacionId: json["prestacionId"],
-    time: json["time"],
+    timeDesde: json["timeDesde"],
+    timeHasta: json["timeHasta"],
+    estado: json["estado"],
     date: json["date"],
   );
 
@@ -63,7 +69,9 @@ class ReservationModel {
     "available": available,
     "avatar": avatar,
     "prestacionId": prestacionId,
-    "time": time,
+    "timeHasta": timeHasta,
+    "timeDesde": timeDesde,
+    "estado": estado,
     "date": date,
   };
 
@@ -78,7 +86,9 @@ class ReservationModel {
     available: snap.data["available"],
     avatar: snap.data["avatar"],
     prestacionId: snap.data["prestacionId"],
-    time: snap.data["time"],
+    timeHasta: snap.data["timeHasta"],
+    timeDesde: snap.data["timeDesde"],
+    estado: snap.data["estado"],
     date: snap.data["date"],
   );
   factory ReservationModel.fromQuerySnapshot(QuerySnapshot snap) {
@@ -94,7 +104,9 @@ class ReservationModel {
       available: document.data["available"],
       avatar: document.data["avatar"],
       prestacionId: document.data["prestacionId"],
-      time: document.data["time"],
+      timeHasta: document.data["timeHasta"],
+      timeDesde: document.data["timeDesde"],
+      estado: document.data["estado"],
       date: document.data["date"],
     );
   }

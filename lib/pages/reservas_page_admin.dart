@@ -20,7 +20,8 @@ class ReservaClubAdminPAge extends StatefulWidget {
 
 class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
   String _date;
-  String _time;
+  String _timeDesde;
+  String _timeHasta;
   ReservationModel _reservaModel;
   File _photo;
   ReservationBloc _reservasBloc;
@@ -91,8 +92,10 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
     );
   }
 
-  _getTime(BuildContext context) {
-    _time = _reservaModel.time == "" ? 'No esblecido' : _reservaModel.time;
+  _getTimeDesde(BuildContext context) {
+    _timeDesde = _reservaModel.timeDesde == ""
+        ? 'Desde: No establecido'
+        : _reservaModel.timeDesde;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -111,7 +114,45 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
                       color: Colors.teal,
                     ),
                     Text(
-                      "   $_time",
+                      "   $_timeDesde",
+                      style: TextStyle(
+                          color: Colors.teal,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  _getTimeHasta(BuildContext context) {
+    _timeHasta = _reservaModel.timeHasta == ""
+        ? 'Hasta: No establecido'
+        : _reservaModel.timeHasta;
+    return Container(
+      color: Colors.white,
+      alignment: Alignment.center,
+      height: 50.0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.access_time,
+                      size: 18.0,
+                      color: Colors.teal,
+                    ),
+                    Text(
+                      "   $_timeHasta",
                       style: TextStyle(
                           color: Colors.teal,
                           fontWeight: FontWeight.bold,
@@ -128,7 +169,8 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
   }
 
   _getDate(BuildContext context) {
-    _date = _reservaModel.date == "" ? 'No esblecido' : _reservaModel.date;
+    _date =
+        _reservaModel.date == "" ? 'Desde: No establecido' : _reservaModel.date;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -203,11 +245,13 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
     if (userPreferences.reserva != "" && userPreferences.reserva != null) {
       _reservaModel = new ReservationModel();
 
+      _reservaModel.id = userPreferences.reserva;
       _reservaModel.name = userPreferences.reservaName;
       _reservaModel.description = userPreferences.reservaDescription;
       _reservaModel.avatar = userPreferences.reservaAvatar;
       _reservaModel.prestacionId = userPreferences.prestacionId;
-      _reservaModel.time = userPreferences.reservaTime;
+      _reservaModel.timeDesde = userPreferences.reservaTimeDesde;
+      _reservaModel.timeHasta = userPreferences.reservaTimeHasta;
       _reservaModel.date = userPreferences.reservaDate;
       _reservaModel.available =
           userPreferences.reservaAvailable == "true" ? true : false;
@@ -234,7 +278,8 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
                 _getImageRow(),
                 _getDate(context),
                 SizedBox(height: 10.0),
-                _getTime(context),
+                _getTimeDesde(context),
+                _getTimeHasta(context),
                 _getAvailable(),
                 _getEditButton(),
               ],
@@ -336,14 +381,18 @@ class ReservaClubAdminPAgeState extends State<ReservaClubAdminPAge> {
   }
 
   Widget _fadeInImageFromNetworkWithJarHolder() {
-    return new Container(
-      width: 150.0,
-      height: 150.0,
-      alignment: Alignment.center,
-      decoration: new BoxDecoration(
-        image: DecorationImage(
-            image: NetworkImage(_reservaModel.avatar), fit: BoxFit.fill),
+    return InkWell(
+      child: new Container(
+        width: 100.0,
+        height: 100.0,
+        alignment: Alignment.center,
+        decoration: new BoxDecoration(
+          image: DecorationImage(
+              image: NetworkImage(_reservaModel.avatar), fit: BoxFit.fill),
+        ),
       ),
+      onTap: () => Navigator.pushNamed(context, 'reservasCRUD',
+          arguments: _reservaModel),
     );
   }
 }

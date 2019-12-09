@@ -7,9 +7,11 @@ import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/pages/draw/draw_widget_admin.dart';
+import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
+import 'package:photo_view/photo_view.dart';
 
 class ReservasAddPageAdmin extends StatefulWidget {
   @override
@@ -25,11 +27,14 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
   PrestacionBloc _prestacionBloc;
 
   String _date = "No establecida";
-  String _time = "No establecida";
+  String _timeDesde = "Desde: No establecida";
+  String _timeHasta = "Hasta: No establecida";
   bool _saving = false;
   File _photo;
   ReservationModel _reserva = ReservationModel();
-  PrestacionModel _prestacion;
+  PrestacionModel _prestacion = PrestacionModel();
+
+  String _prestacionValue = null;
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +74,8 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
                   SizedBox(
                     height: 10,
                   ),
-                  _hourSelector(context),
+                  _hourSelectorDesde(context),
+                  _hourSelectorHasta(context),
                   SizedBox(
                     height: 10,
                   ),
@@ -81,46 +87,58 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     );
   }
 
-  _getPrestacionName() {
-    var type = 'Nombre de la reserva';
-    var pretacion = _reserva.prestacionId;
-    if (pretacion != null && _prestacion != "") {
-      PrestacionBloc prestacionBloc = Provider.prestacionBloc(context);
-      return FutureBuilder(
-        future: prestacionBloc.loadPrestacion(pretacion),
-        builder:
-            (BuildContext context, AsyncSnapshot<PrestacionModel> snapshot) {
-          if (snapshot.hasData) {
-            PrestacionModel prestacionModel = snapshot.data;
-            return TextFormField(
-              enabled: false,
-              initialValue: prestacionModel.name,
-              decoration: InputDecoration(labelText: type),
-              textCapitalization: TextCapitalization.words,
-              keyboardType: TextInputType.text,
-            );
-          } else {
-            return Container(
-                height: 350.0,
-                child: Center(child: CircularProgressIndicator()));
-          }
-        },
-      );
-    }
-    return TextFormField(
-      initialValue: _reserva.name,
-      decoration: InputDecoration(labelText: type),
-      textCapitalization: TextCapitalization.words,
-      keyboardType: TextInputType.text,
-      onSaved: (value) => _reserva.name = value,
-      validator: (value) {
-        return _validateLenghtOf(value, type, 6);
+  FutureBuilder<List<PrestacionModel>> _getPrestacionName() {
+    _prestacionBloc = Provider.prestacionBloc(context);
+
+    return FutureBuilder(
+      future: _prestacionBloc.loadPrestaciones(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          return _getPrestacion(snapshot);
+        }
+        return Center(
+          child: CircularProgressIndicator(),
+        );
       },
     );
   }
 
+  _getPrestacion(AsyncSnapshot snapshot) {
+    List<PrestacionModel> temp = List();
+    final list = snapshot.data;
+    for (var f in list) {
+      temp.add(f);
+    }
+
+    return Row(
+      children: <Widget>[
+        Container(
+          child: Center(
+            child: Text(
+              "Prestacion: ",
+              style: TextStyle(color: Colors.blueGrey),
+            ),
+          ),
+        ),
+        DropdownButton<String>(
+            items: temp.map((PrestacionModel prestacion) {
+              return new DropdownMenuItem<String>(
+                value: prestacion.name,
+                child: new Text(prestacion.name),
+              );
+            }).toList(),
+            onChanged: (value) => setState(() {
+                  _reserva.prestacionId = selectIdByPrestacionName(value, temp);
+                  _prestacionValue = value;
+                }),
+            hint: Text('Seleccionar prestacion'),
+            value: _prestacionValue)
+      ],
+    );
+  }
+
   TextFormField _getDescription() {
-    var type = 'Description de la reserva';
+    var type = 'Descripción de la reserva';
     return TextFormField(
       initialValue: _reserva.description,
       decoration: InputDecoration(labelText: type),
@@ -156,7 +174,12 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
         .arguments; //tambien se puede recibir por constructor.
 
     if (reserva != null) {
+      if (reserva.id.contains('-poster')) {
+        reserva.id = reserva.id.replaceAll('-poster', '');
+      }
       _reserva = reserva;
+      _timeDesde = reserva.timeDesde;
+      _timeHasta = reserva.timeHasta;
     }
   }
 
@@ -189,10 +212,12 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
 
   void _saveForID() {
     print(_reserva.avatar);
+    UserPreferences _pref = UserPreferences();
 
     if (_reserva.id == null) {
       _reservasBloc.addPrestacion(_reserva);
       setState(() {
+        _pref.reserva = _reserva;
         _saving = false;
       });
       _showSnackbar('Nuevo registro guardado exitosamente.');
@@ -225,38 +250,43 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
 
   void _processImage(ImageSource source) async {
     File img = await ImagePicker.pickImage(source: source);
-    if (img == null) {
-      _reserva.avatar = null;
-    }
     setState(() {
-      _photo = img;
+      if (img != null) {
+        _reserva.avatar = img.path;
+        _photo = img;
+      }
     });
   }
 
   Widget _showLogo() {
-    if (_photo != null) {
+    if (_photo != null && _reserva.avatar != null) {
       return Container(
         margin: EdgeInsets.only(right: 10.0),
         child: Column(
-          children: <Widget>[
-            Hero(
-              tag: _reserva.uniqueId ?? '',
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15.0),
-                child: FadeInImage(
-                  image: FileImage(_photo),
-                  placeholder: AssetImage('assets/images/no-image.png'),
-                  fit: BoxFit.cover,
-                  width: 130,
+          children: <Widget>[ Hero(
+                  tag: _reserva.uniqueId ?? '',
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: FadeInImage(
+                      image: FileImage(_photo),
+                      placeholder: AssetImage('assets/images/no-image.png'),
+                      fit: BoxFit.cover,
+                      width: 130,
+                    ),
+                  ),
                 ),
-              ),
-            ),
           ],
         ),
       );
     }
     if (_reserva.avatar != null) {
-      return _fadeInImageFromNetworkWithJarHolder();
+      return InkWell(
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) {
+              return DetailScreen(_reserva);
+            }));
+          },
+          child: _fadeInImageFromNetworkWithJarHolder());
     } else {
       return Image(
         image: AssetImage('assets/images/no-image.png'),
@@ -284,7 +314,7 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     );
   }
 
-  RaisedButton _hourSelector(BuildContext context) {
+  RaisedButton _hourSelectorHasta(BuildContext context) {
     return RaisedButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
       elevation: 4.0,
@@ -295,9 +325,9 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
             ),
             showTitleActions: true, onConfirm: (time) {
           print('Confirmar $time');
-          _time = '${time.hour} : ${time.minute} : ${time.second}';
+          _timeHasta = '${time.hour} : ${time.minute}';
           setState(() {
-            _reserva.time = _time;
+            _reserva.timeHasta = _timeHasta;
           });
         }, currentTime: DateTime.now(), locale: LocaleType.es);
         setState(() {});
@@ -319,7 +349,67 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
                         color: Colors.teal,
                       ),
                       Text(
-                        " $_time",
+                        " $_timeHasta",
+                        style: TextStyle(
+                            color: Colors.teal,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            Text(
+              "  Cambiar",
+              style: TextStyle(
+                  color: Colors.teal,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0),
+            ),
+          ],
+        ),
+      ),
+      color: Colors.white,
+    );
+  }
+
+  RaisedButton _hourSelectorDesde(BuildContext context) {
+    return RaisedButton(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+      elevation: 4.0,
+      onPressed: () {
+        DatePicker.showTimePicker(context,
+            theme: DatePickerTheme(
+              containerHeight: 210.0,
+            ),
+            showTitleActions: true, onConfirm: (time) {
+          print('Confirmar $time');
+          _timeDesde = '${time.hour} : ${time.minute}';
+          setState(() {
+            _reserva.timeDesde = _timeDesde;
+          });
+        }, currentTime: DateTime.now(), locale: LocaleType.es);
+        setState(() {});
+      },
+      child: Container(
+        alignment: Alignment.center,
+        height: 50.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.access_time,
+                        size: 18.0,
+                        color: Colors.teal,
+                      ),
+                      Text(
+                        " $_timeDesde",
                         style: TextStyle(
                             color: Colors.teal,
                             fontWeight: FontWeight.bold,
@@ -402,6 +492,40 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
         ),
       ),
       color: Colors.white,
+    );
+  }
+
+  String selectIdByPrestacionName(String name, List<PrestacionModel> temp) {
+    String id;
+    temp.forEach((prestacion) {
+      if (prestacion.name == name) {
+        id = prestacion.id;
+      }
+    });
+    return id;
+  }
+}
+
+class DetailScreen extends StatelessWidget {
+  DetailScreen(ReservationModel reservationModel) {
+    this.reservationModel = reservationModel;
+  }
+
+  ReservationModel reservationModel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GestureDetector(
+        child: Center(
+          child: PhotoView(
+            imageProvider: NetworkImage(reservationModel.avatar)
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 }
