@@ -82,7 +82,7 @@ class _PrestacionAddPageAdminState extends State<PrestacionAddPageAdmin> {
   }
 
   TextFormField _getDescription() {
-    var type = 'Descripción de la prestacion';
+    var type = 'Descripción de la prestación';
     return TextFormField(
       initialValue: _prestacion.description,
       decoration: InputDecoration(labelText: type),
