@@ -23,20 +23,12 @@ void main() async {
 }
 
 //TODO: Validaciones perfil
+//TODO: Validaciones reservas
+//TODO: Validaciones prestaciones
 //TODO: Crear club admins
-//TODO: Crear prestaciones club
-//TODO: Crear reservas desde prestaciones por cada club
-//TODO: Ver prestaciones usuarios y clubes
-//TODO: Detalles prestaciones usuarios y clubes
-//TODO: Ver reservas usuarios y clubes, se cargan disponibilidades para reservas SIN convergencia
-//TODO: Detalles reserva usuarios y clubes
-//TODO: Solicitar reserva usuario
-//TODO: Aceptar reserva
-//TODO: Chat usuario reserva y club
-//TODO: Buscador en prestaciones
+//TODO: Mostrar reservas
 //TODO: Buscador en reservas
-//TODO: Buscador en clubes
-
+//TODO: Evitar convergencia de dia fecha y hora de misma prestacion para reserva.
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
