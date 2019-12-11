@@ -10,6 +10,8 @@ import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
 import 'package:flutter_go_club_app/pages/prestacion_add_page_admin.dart';
 import 'package:flutter_go_club_app/pages/register_page.dart';
 import 'package:flutter_go_club_app/pages/reservas_add_page_admin.dart';
+import 'package:flutter_go_club_app/pages/reservas_reqest_detail_page_user.dart';
+import 'package:flutter_go_club_app/pages/reservas_reqest_page_user.dart';
 import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/splash_page.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
@@ -59,6 +61,8 @@ class MyApp extends StatelessWidget {
           'prestacion': (BuildContext context) => ClubsPageAdmin(),
           'prestacionCRUD': (BuildContext context) => PrestacionAddPageAdmin(),
           'reservasCRUD': (BuildContext context) => ReservasAddPageAdmin(),
+          'reservasCRUD_user': (BuildContext context) => ReservasAddPageUser(),
+          'requestCRUD': (BuildContext context) => RequestPage(),
         },
         theme: ThemeData(primaryColor: Colors.green),
       ),

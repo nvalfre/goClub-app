@@ -36,7 +36,7 @@ class ReservationModel {
     this.prestacionId='',
     this.timeDesde,
     this.timeHasta,
-    this.estado,
+    this.estado = 'No disponible',
     this.date,
     this.uniqueId,
   });

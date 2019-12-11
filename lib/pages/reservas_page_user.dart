@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
@@ -10,19 +11,18 @@ import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
 import 'draw/draw_widget_user.dart';
 
-class ReservaClubAdminPage extends StatefulWidget {
+class ReservaClubUserPage extends StatefulWidget {
   @override
-  ReservaClubAdminPageState createState() {
-    return ReservaClubAdminPageState();
+  ReservaClubUserPageState createState() {
+    return ReservaClubUserPageState();
   }
 }
 
-class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
+class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   String _date;
   String _timeDesde;
   String _timeHasta;
   ReservationModel _reservaModel;
-  UserPreferences userPreferences;
   File _photo;
   ReservationBloc _reservasBloc;
 
@@ -93,10 +93,9 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
   }
 
   _getTimeDesde(BuildContext context) {
-    _timeDesde =
-        _reservaModel.timeDesde == "" || _reservaModel.timeDesde == null
-            ? 'Desde: No establecido'
-            : _reservaModel.timeDesde;
+    _timeDesde = _reservaModel.timeDesde == "" || _reservaModel.timeDesde == null
+        ? 'Desde: No establecido'
+        : _reservaModel.timeDesde;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -132,10 +131,9 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
   }
 
   _getTimeHasta(BuildContext context) {
-    _timeHasta =
-        _reservaModel.timeHasta == "" || _reservaModel.timeHasta == null
-            ? 'Hasta: No establecido'
-            : _reservaModel.timeHasta;
+    _timeHasta = _reservaModel.timeHasta == "" || _reservaModel.timeHasta == null
+        ? 'Hasta: No establecido'
+        : _reservaModel.timeHasta;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -172,7 +170,7 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
 
   _getDate(BuildContext context) {
     _date =
-        _reservaModel.date == "" ? 'Desde: No establecido' : _reservaModel.date;
+        _reservaModel.date == ""  || _reservaModel.date == null? 'Desde: No establecido' : _reservaModel.date;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -283,7 +281,8 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
                 SizedBox(height: 10.0),
                 _getTimeDesde(context),
                 _getTimeHasta(context),
-                _getAvailableAndButtom(),
+                _getAvailable(),
+                _getEditButton(),
               ],
             ),
           ),
@@ -327,50 +326,27 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
     );
   }
 
-  _getAvailableAndButtom() {
-    String solicitado = 'Solicitado';
-    String aceptado = 'Aceptado';
-
-    var estado = _reservaModel.estado == "" || _reservaModel.estado == null
-        ? 'Sin establecer'
-        : _reservaModel.estado;
-
-    Color color = Colors.blueAccent;
-    var richText = RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-              text: 'Estado: ' + estado,
-              style: TextStyle(
-                  color: color, fontSize: 25, fontWeight: FontWeight.bold)),
-        ],
+  _getAvailable() {
+    var estado = _reservaModel.estado == "" ||  _reservaModel.estado == null ? 'Sin establecer' :  _reservaModel.estado;
+    Color color = handleColorState(estado);
+    return Container(
+      padding: EdgeInsets.only(right: 10, left: 10),
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(text: 'Estado: ' + estado , style: TextStyle(color: color, fontSize: 25, fontWeight: FontWeight.bold)),
+          ],
+        ),
       ),
     );
-
-    if (estado == solicitado) {
-      color = Colors.orange;
-
-      return Column(
-        children: <Widget>[richText, _getAceptarButtom()],
-      );
-    } else if (estado == aceptado) {
-      color = Colors.greenAccent;
-      return Column(
-        children: <Widget>[richText, _getEditButton()],
-      );
-    } else {
-      return Column(
-        children: <Widget>[richText, _getEditButton()],
-      );
-    }
   }
 
   Color handleColorState(String estado) {
     Color color;
     String noDispnible = 'No disponible';
+    String solicitado = 'Solicitado';
     String disponible = 'Disponible';
-    String reservado = 'Reservado';
-    if (estado == noDispnible || estado == reservado) {
+    if (estado == noDispnible || estado == solicitado) {
       color = Colors.red;
     } else if (estado == disponible) {
       color = Colors.green;
@@ -385,25 +361,10 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       color: Colors.blueAccent,
       textColor: Colors.white,
-      label: Text('     Editar         '),
+      label: Text('     Solicitar         '),
       icon: Icon(Icons.edit),
-      onPressed: () => Navigator.pushNamed(context, 'reservasCRUD',
+      onPressed: () => Navigator.pushNamed(context, 'reservasCRUD_user',
           arguments: _reservaModel),
-    );
-  }
-
-  Widget _getAceptarButtom() {
-    userPreferences = UserPreferences();
-    _reservaModel.user = userPreferences.user;
-
-    return RaisedButton.icon(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-      color: Colors.blueAccent,
-      textColor: Colors.white,
-      label: Text(' Ver solicitud  '),
-      icon: Icon(Icons.check),
-      onPressed: () =>
-          Navigator.pushNamed(context, 'requestCRUD', arguments: _reservaModel),
     );
   }
 

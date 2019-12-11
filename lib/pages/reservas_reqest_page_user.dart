@@ -13,14 +13,14 @@ import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_view/photo_view.dart';
 
-class ReservasAddPageAdmin extends StatefulWidget {
+class ReservasAddPageUser extends StatefulWidget {
   @override
-  _ReservasAddPageAdminState createState() => _ReservasAddPageAdminState();
+  _ReservasAddPageUserState createState() => _ReservasAddPageUserState();
 }
 
-const String RESERVA_HEADER = 'Reservas Admin';
+const String RESERVA_HEADER = 'Reservas User';
 
-class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
+class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
   ReservationBloc _reservasBloc;
@@ -29,12 +29,12 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
   String _date = "No establecida";
   String _timeDesde = "Desde: No establecida";
   String _timeHasta = "Hasta: No establecida";
-  bool _saving = false;
+  bool _solicitando = false;
   File _photo;
   ReservationModel _reserva = ReservationModel();
   PrestacionModel _prestacion = PrestacionModel();
 
-  String _prestacionValue = null;
+  String _prestacionValue = '';
 
   @override
   Widget build(BuildContext context) {
@@ -47,16 +47,6 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
             onTap: () => Navigator.pop(context),
             child: Icon(Icons.arrow_back_ios)),
         title: Text(RESERVA_HEADER),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.photo_library),
-            onPressed: _selectPicture,
-          ),
-          IconButton(
-            icon: Icon(Icons.photo_camera),
-            onPressed: _takePhoto,
-          ),
-        ],
       ),
       drawer: UserDrawerAdmin(),
       body: SingleChildScrollView(
@@ -88,19 +78,19 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
   }
 
   FutureBuilder<List<PrestacionModel>> _getPrestacionName() {
-      _prestacionBloc = Provider.prestacionBloc(context);
+    _prestacionBloc = Provider.prestacionBloc(context);
 
-      return FutureBuilder(
-        future: _prestacionBloc.loadPrestaciones(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            return _getPrestacion(snapshot);
-          }
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-      );
+    return FutureBuilder(
+      future: _prestacionBloc.loadPrestaciones(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          return _getPrestacion(snapshot);
+        }
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
   }
 
   _getPrestacion(AsyncSnapshot snapshot) {
@@ -120,21 +110,13 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
             ),
           ),
         ),
-        DropdownButton<String>(
-            items: temp.map((PrestacionModel prestacion) {
-              return new DropdownMenuItem<String>(
-                value: prestacion.name,
-                child: new Text(prestacion.name),
-              );
-            }).toList(),
-            onChanged: (value) => setState(() {
-                  PrestacionModel prestacion = selectIdByPrestacionName(value, temp);
-                  _reserva.prestacionId = prestacion.id;
-                  _reserva.name = prestacion.name;
-                  _prestacionValue = prestacion.name;
-                }),
-            hint: Text('Seleccionar prestacion'),
-            value: _prestacionValue)
+        //TODO set form field with validation.
+        Text(_prestacionValue,
+            style: TextStyle(
+              color: Colors.teal,
+              fontWeight: FontWeight.bold,
+              fontSize: 18.0,
+            ))
       ],
     );
   }
@@ -160,13 +142,13 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     return null;
   }
 
-  _getAvailable() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 10),
-      child: Text('Estado: Implementar estado.', style: TextStyle(
-          color: Colors.teal,
-          fontWeight: FontWeight.bold,
-          fontSize: 18.0),),
+  SwitchListTile _getAvailable() {
+    return SwitchListTile(
+      value: _reserva.available,
+      title: Text('Disponible'),
+      onChanged: (value) => setState(() {
+        _reserva.available = value;
+      }),
     );
   }
 
@@ -187,15 +169,34 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     }
   }
 
-  RaisedButton _getButtom() {
-    return RaisedButton.icon(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-      color: Colors.green,
-      textColor: Colors.white,
-      label: Text('Guardar'),
-      icon: Icon(Icons.add_box),
-      onPressed: (_saving) ? null : _submitWithFormValidation,
-    );
+  _getButtom() {
+    var raisedButton = RaisedButton.icon(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+        color: Colors.green,
+        textColor: Colors.white,
+        label: Text('Solicitar'),
+        icon: Icon(Icons.add_box),
+        onPressed: (_solicitando) ? null : _submitWithFormValidation,
+      );
+
+    if (_reserva.estado != 'Disponible') {
+      _solicitando = true;
+      return Column(
+        children: <Widget>[
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(text: 'Estado: ' + _reserva.estado , style: TextStyle(color: Colors.red, fontSize: 25, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          SizedBox(height: 5,),
+          raisedButton
+        ],
+      );
+    }
+    return raisedButton;
+
   }
 
   void _submitWithFormValidation() async {
@@ -203,41 +204,31 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
 
     formKey.currentState.save();
     setState(() {
-      _saving = true;
+      _solicitando = true;
     });
 
-    if (_photo != null) {
-      _reserva.avatar = await _reservasBloc.uploadPhoto(_photo);
-    }
-
     _saveForID();
-    Navigator.pop(context);
   }
 
   void _saveForID() {
     UserPreferences _pref = UserPreferences();
 
-    if (_reserva.id == null) {
-      _reservasBloc.addPrestacion(_reserva);
-      setState(() {
-        _pref.reserva = _reserva;
-        _saving = false;
-      });
-      _showSnackbar('Nuevo registro guardado exitosamente.');
-    } else {
+    _reserva.estado = 'Solicitado';
+    if (_reserva.id != null) {
       _reservasBloc.editPrestacion(_reserva);
       setState(() {
         _pref.reserva = _reserva;
-        _saving = false;
+        _solicitando = false;
       });
       _showSnackbar('Registro actualizado correctamente.');
     }
+    Navigator.pop(context);
   }
 
   void _showSnackbar(String message) {
     final snackbar = SnackBar(
       content: Text(message),
-      duration: Duration(microseconds: 10000),
+      duration: Duration(milliseconds: 1500),
       backgroundColor: Colors.blue,
     );
 
@@ -267,18 +258,19 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
       return Container(
         margin: EdgeInsets.only(right: 10.0),
         child: Column(
-          children: <Widget>[ Hero(
-                  tag: _reserva.uniqueId ?? '',
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15.0),
-                    child: FadeInImage(
-                      image: FileImage(_photo),
-                      placeholder: AssetImage('assets/images/no-image.png'),
-                      fit: BoxFit.cover,
-                      width: 130,
-                    ),
-                  ),
+          children: <Widget>[
+            Hero(
+              tag: _reserva.uniqueId ?? '',
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15.0),
+                child: FadeInImage(
+                  image: FileImage(_photo),
+                  placeholder: AssetImage('assets/images/no-image.png'),
+                  fit: BoxFit.cover,
+                  width: 130,
                 ),
+              ),
+            ),
           ],
         ),
       );
@@ -364,13 +356,6 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
                 )
               ],
             ),
-            Text(
-              "  Cambiar",
-              style: TextStyle(
-                  color: Colors.teal,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.0),
-            ),
           ],
         ),
       ),
@@ -423,13 +408,6 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
                   ),
                 )
               ],
-            ),
-            Text(
-              "  Cambiar",
-              style: TextStyle(
-                  color: Colors.teal,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.0),
             ),
           ],
         ),
@@ -485,13 +463,6 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
                 )
               ],
             ),
-            Text(
-              "  Cambiar",
-              style: TextStyle(
-                  color: Colors.teal,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.0),
-            ),
           ],
         ),
       ),
@@ -499,7 +470,8 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     );
   }
 
-  PrestacionModel selectIdByPrestacionName(String name, List<PrestacionModel> temp) {
+  PrestacionModel selectIdByPrestacionName(
+      String name, List<PrestacionModel> temp) {
     PrestacionModel pres;
     temp.forEach((prestacion) {
       if (prestacion.name == name) {
@@ -522,9 +494,8 @@ class DetailScreen extends StatelessWidget {
     return Scaffold(
       body: GestureDetector(
         child: Center(
-          child: PhotoView(
-            imageProvider: NetworkImage(reservationModel.avatar)
-          ),
+          child:
+              PhotoView(imageProvider: NetworkImage(reservationModel.avatar)),
         ),
         onTap: () {
           Navigator.pop(context);
