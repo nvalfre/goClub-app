@@ -13,14 +13,14 @@ import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_view/photo_view.dart';
 
-class RequestPage extends StatefulWidget {
+class ReservasAddPageUser extends StatefulWidget {
   @override
-  _RequestPageState createState() => _RequestPageState();
+  _ReservasAddPageUserState createState() => _ReservasAddPageUserState();
 }
 
-const String RESERVA_HEADER = 'Request Page Admin';
+const String RESERVA_HEADER = 'Reservas Admin';
 
-class _RequestPageState extends State<RequestPage> {
+class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
   ReservationBloc _reservasBloc;
@@ -170,56 +170,38 @@ class _RequestPageState extends State<RequestPage> {
   }
 
   _getButtom() {
-    var raisedButtonAccept = RaisedButton.icon(
+    var raisedButton = RaisedButton.icon(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       color: Colors.green,
       textColor: Colors.white,
-      label: Text('Aceptar'),
+      label: Text('Solicitar'),
       icon: Icon(Icons.add_box),
       onPressed: (_solicitando) ? null : _submitWithFormValidation,
     );
-    var raisedButtonCancel = RaisedButton.icon(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-      color: Colors.red,
-      textColor: Colors.white,
-      label: Text('Cancelar'),
-      icon: Icon(Icons.add_box),
-      onPressed: () => _cancelarReservaValidation(),
-    );
 
-    if (_reserva.estado == 'Solicitado') {
-      _solicitando = false;
+    if (_reserva.estado != 'Disponible') {
+      _solicitando = true;
       return Column(
         children: <Widget>[
           RichText(
             text: TextSpan(
               children: [
-                TextSpan(
-                    text: 'Estado: ' + _reserva.estado,
-                    style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold)),
+                TextSpan(text: 'Estado: ' + _reserva.estado , style: TextStyle(color: Colors.red, fontSize: 25, fontWeight: FontWeight.bold)),
               ],
             ),
           ),
-          SizedBox(
-            height: 5,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[raisedButtonAccept, SizedBox(width: 10,), raisedButtonCancel],
-          )
+          SizedBox(height: 5,),
+          raisedButton
         ],
       );
-    } else {
-      return CircularProgressIndicator();
     }
-    return raisedButtonAccept;
+    return raisedButton;
+
   }
 
   void _submitWithFormValidation() async {
+    if (!formKey.currentState.validate()) return;
+
     formKey.currentState.save();
     setState(() {
       _solicitando = true;
@@ -231,14 +213,14 @@ class _RequestPageState extends State<RequestPage> {
   void _saveForID() {
     UserPreferences _pref = UserPreferences();
 
-    _reserva.estado = 'Aceptado';
+    _reserva.estado = 'Solicitado';
     if (_reserva.id != null) {
       _reservasBloc.editPrestacion(_reserva);
       setState(() {
         _pref.reserva = _reserva;
         _solicitando = false;
       });
-      _showSnackbar('Solicitud aceptada correctamente.');
+      _showSnackbar('Registro actualizado correctamente.');
     }
     Navigator.pop(context);
   }
@@ -318,12 +300,12 @@ class _RequestPageState extends State<RequestPage> {
       decoration: new BoxDecoration(
         image: _reserva.avatar == ""
             ? Image(
-                image: AssetImage('assets/images/no-image.png'),
-                height: 100.0,
-                fit: BoxFit.cover,
-              )
+          image: AssetImage('assets/images/no-image.png'),
+          height: 100.0,
+          fit: BoxFit.cover,
+        )
             : DecorationImage(
-                image: NetworkImage(_reserva.avatar), fit: BoxFit.fill),
+            image: NetworkImage(_reserva.avatar), fit: BoxFit.fill),
       ),
     );
   }
@@ -338,12 +320,12 @@ class _RequestPageState extends State<RequestPage> {
               containerHeight: 210.0,
             ),
             showTitleActions: true, onConfirm: (time) {
-          print('Confirmar $time');
-          _timeHasta = '${time.hour} : ${time.minute}';
-          setState(() {
-            _reserva.timeHasta = _timeHasta;
-          });
-        }, currentTime: DateTime.now(), locale: LocaleType.es);
+              print('Confirmar $time');
+              _timeHasta = '${time.hour} : ${time.minute}';
+              setState(() {
+                _reserva.timeHasta = _timeHasta;
+              });
+            }, currentTime: DateTime.now(), locale: LocaleType.es);
         setState(() {});
       },
       child: Container(
@@ -391,12 +373,12 @@ class _RequestPageState extends State<RequestPage> {
               containerHeight: 210.0,
             ),
             showTitleActions: true, onConfirm: (time) {
-          print('Confirmar $time');
-          _timeDesde = '${time.hour} : ${time.minute}';
-          setState(() {
-            _reserva.timeDesde = _timeDesde;
-          });
-        }, currentTime: DateTime.now(), locale: LocaleType.es);
+              print('Confirmar $time');
+              _timeDesde = '${time.hour} : ${time.minute}';
+              setState(() {
+                _reserva.timeDesde = _timeDesde;
+              });
+            }, currentTime: DateTime.now(), locale: LocaleType.es);
         setState(() {});
       },
       child: Container(
@@ -446,12 +428,12 @@ class _RequestPageState extends State<RequestPage> {
             showTitleActions: true,
             minTime: DateTime(2000, 1, 1),
             maxTime: DateTime(2022, 12, 31), onConfirm: (date) {
-          print('Confirmar $date');
-          _date = '${date.year} - ${date.month} - ${date.day}';
-          setState(() {
-            _reserva.date = _date;
-          });
-        }, currentTime: DateTime.now(), locale: LocaleType.es);
+              print('Confirmar $date');
+              _date = '${date.year} - ${date.month} - ${date.day}';
+              setState(() {
+                _reserva.date = _date;
+              });
+            }, currentTime: DateTime.now(), locale: LocaleType.es);
       },
       child: Container(
         alignment: Alignment.center,
@@ -498,25 +480,6 @@ class _RequestPageState extends State<RequestPage> {
     });
     return pres;
   }
-
-  _cancelarReservaValidation() {
-    formKey.currentState.save();
-    setState(() {
-      _solicitando = true;
-    });
-    UserPreferences _pref = UserPreferences();
-
-    _reserva.estado = 'Cancelado';
-    if (_reserva.id != null) {
-      _reservasBloc.editPrestacion(_reserva);
-      setState(() {
-        _pref.reserva = _reserva;
-        _solicitando = false;
-      });
-      _showSnackbar('Solicitud cancelada correctamente.');
-    }
-    Navigator.pop(context);
-  }
 }
 
 class DetailScreen extends StatelessWidget {
@@ -532,7 +495,7 @@ class DetailScreen extends StatelessWidget {
       body: GestureDetector(
         child: Center(
           child:
-              PhotoView(imageProvider: NetworkImage(reservationModel.avatar)),
+          PhotoView(imageProvider: NetworkImage(reservationModel.avatar)),
         ),
         onTap: () {
           Navigator.pop(context);
