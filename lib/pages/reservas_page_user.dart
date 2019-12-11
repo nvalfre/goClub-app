@@ -67,33 +67,33 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
       ),
       body: SingleChildScrollView(
           child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(1.0),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Container(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _swiperTarjetas(),
-                      _detailsColumn(),
-                    ],
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(1.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Container(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          _swiperTarjetas(),
+                          _detailsColumn(),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      )),
+          )),
     );
   }
 
   _getTimeDesde(BuildContext context) {
-    _timeDesde = _reservaModel.timeDesde == "" || _reservaModel.timeDesde == null
+    _timeDesde = _reservaModel.timeDesde == ""
         ? 'Desde: No establecido'
         : _reservaModel.timeDesde;
     return Container(
@@ -131,7 +131,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   }
 
   _getTimeHasta(BuildContext context) {
-    _timeHasta = _reservaModel.timeHasta == "" || _reservaModel.timeHasta == null
+    _timeHasta = _reservaModel.timeHasta == ""
         ? 'Hasta: No establecido'
         : _reservaModel.timeHasta;
     return Container(
@@ -170,7 +170,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
 
   _getDate(BuildContext context) {
     _date =
-        _reservaModel.date == ""  || _reservaModel.date == null? 'Desde: No establecido' : _reservaModel.date;
+    _reservaModel.date == "" ? 'Desde: No establecido' : _reservaModel.date;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -255,7 +255,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
       _reservaModel.date = userPreferences.reservaDate;
       _reservaModel.estado = userPreferences.reservaEstado;
       _reservaModel.available =
-          userPreferences.reservaAvailable == "true" ? true : false;
+      userPreferences.reservaAvailable == "true" ? true : false;
     } else {
       _reservaModel = new ReservationModel();
     }
@@ -344,11 +344,10 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   Color handleColorState(String estado) {
     Color color;
     String noDispnible = 'No disponible';
-    String solicitado = 'Solicitado';
-    String disponible = 'Disponible';
-    if (estado == noDispnible || estado == solicitado) {
+    String Disponible = 'Disponible';
+    if (estado == noDispnible) {
       color = Colors.red;
-    } else if (estado == disponible) {
+    } else if (estado == Disponible) {
       color = Colors.green;
     } else {
       color = Colors.blueAccent;
@@ -361,9 +360,9 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       color: Colors.blueAccent,
       textColor: Colors.white,
-      label: Text('     Solicitar         '),
+      label: Text('     Editar         '),
       icon: Icon(Icons.edit),
-      onPressed: () => Navigator.pushNamed(context, 'reservasCRUD_user',
+      onPressed: () => Navigator.pushNamed(context, 'reservasCRUD',
           arguments: _reservaModel),
     );
   }
@@ -425,7 +424,7 @@ class ReservasHorizontal extends StatelessWidget {
   ReservasHorizontal({@required this.reservas, @required this.siguientePagina});
 
   final _pageController =
-      new PageController(initialPage: 1, viewportFraction: 0.3);
+  new PageController(initialPage: 1, viewportFraction: 0.3);
 
   @override
   Widget build(BuildContext context) {
@@ -461,16 +460,16 @@ class ReservasHorizontal extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15.0),
                 child: reserva.avatar != null && reserva.avatar != ""
                     ? FadeInImage(
-                        image: NetworkImage(reserva.avatar),
-                        placeholder: AssetImage('assets/images/no-image.png'),
-                        fit: BoxFit.cover,
-                        height: 80.0,
-                      )
+                  image: NetworkImage(reserva.avatar),
+                  placeholder: AssetImage('assets/images/no-image.png'),
+                  fit: BoxFit.cover,
+                  height: 80.0,
+                )
                     : Image(
-                        image: AssetImage('assets/images/no-image.png'),
-                        height: 80.0,
-                        fit: BoxFit.cover,
-                      )),
+                  image: AssetImage('assets/images/no-image.png'),
+                  height: 80.0,
+                  fit: BoxFit.cover,
+                )),
           ),
           SizedBox(height: 5.0),
           Text(

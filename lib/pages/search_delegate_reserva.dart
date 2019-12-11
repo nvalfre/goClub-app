@@ -133,7 +133,7 @@ class DataSearchReservas extends SearchDelegate {
                         .textTheme
                         .subhead,
                     overflow: TextOverflow.ellipsis),
-                Text(reservation.estado,
+                Text(reservation.estado ?? '',
                     style: Theme
                         .of(context)
                         .textTheme

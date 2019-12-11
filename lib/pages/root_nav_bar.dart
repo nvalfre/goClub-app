@@ -5,8 +5,8 @@ import 'package:flutter_go_club_app/pages/home_user_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
 import 'package:flutter_go_club_app/pages/prestacion_admin_detalle_page.dart';
 import 'package:flutter_go_club_app/pages/prestacion_user_detalle_page.dart';
+import 'package:flutter_go_club_app/pages/request_admin_detalle_page2.dart';
 import 'package:flutter_go_club_app/pages/reservas_page_user.dart';
-import 'package:flutter_go_club_app/pages/reservas_reqest_detail_page_user.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 
 import '../place_holder_widget.dart';

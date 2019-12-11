@@ -22,15 +22,15 @@ class RequestPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Requests - Club Admin'),
         actions: <Widget>[
-            IconButton(
-              icon: Icon( Icons.search ),
-              onPressed: () {
-                showSearch(
-                  context: context,
-                  delegate: DataSearchReservas(),
-                );
-              },
-            )
+          IconButton(
+            icon: Icon( Icons.search ),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: DataSearchReservas(),
+              );
+            },
+          )
         ],
       ),
       body: _getListOfClubs(),
@@ -91,12 +91,12 @@ class RequestPage extends StatelessWidget {
     return (reservation.avatar == null)
         ? Image(image: AssetImage('assets/images/no-image.png'))
         : FadeInImage(
-            image: NetworkImage(reservation.avatar),
-            placeholder: AssetImage('assets/images/jar-loading.jpg'),
-            height: 300.0,
-            width: double.infinity,
-            fit: BoxFit.cover,
-          );
+      image: NetworkImage(reservation.avatar),
+      placeholder: AssetImage('assets/images/jar-loading.jpg'),
+      height: 300.0,
+      width: double.infinity,
+      fit: BoxFit.cover,
+    );
   }
 
   InkWell _getDescriptionContainer(
@@ -152,7 +152,7 @@ class RequestPage extends StatelessWidget {
   Container _largeDescription(
       ReservationModel reservation, BuildContext context) {
     var direction =
-        reservation.description != null ? reservation.description : '-';
+    reservation.description != null ? reservation.description : '-';
     var telefono = reservation.user != null ? reservation.user : '-';
     return Container(
         padding: EdgeInsets.all(10),
