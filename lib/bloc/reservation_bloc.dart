@@ -53,17 +53,21 @@ class ReservationBloc {
     _loadingController.close();
   }
 
-  List<ReservationModel> filterClubsByName(
-      AsyncSnapshot snapshot, String query) {
+  List<ReservationModel> filterReservationByName(
+      List<ReservationModel> reservationDocuments, String query) {
     List<ReservationModel> reservationList = List();
-    List<ReservationModel> reservationDocuments = snapshot.data;
-    reservationDocuments.forEach((reservationModel) {
-      if (reservationList.length < 6 &&
-          reservationModel.name.toLowerCase().substring(0, query.length) ==
-              query) {
-        reservationList.add(reservationModel);
-      }
-    });
+
+    try {
+      for (var reservation in reservationDocuments) {
+            if (reservationList.length < 6 && reservation.name.length > 0 &&
+                reservation.name.toLowerCase().substring(0, query.length) == query) {
+              reservationList.add(reservation);
+            }
+          }
+    } catch (e) {
+      print("exced");
+    }
+
     return reservationList;
   }
 
@@ -81,7 +85,7 @@ class ReservationBloc {
     return _reservationProvider.loadReservationStream(uid);
   }
 
-  void addPrestacion(ReservationModel reservaModel) async{
+  void addPrestacion(ReservationModel reservaModel) async {
     _loadingController.sink.add(true);
     await _reservationProvider.createReservationData(reservaModel);
     _loadingController.sink.add(false);
