@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
-import 'package:flutter_go_club_app/pages/search_delegate.dart';
+import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
@@ -42,7 +42,7 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
             onPressed: () {
               showSearch(
                 context: context,
-                delegate: DataSearchClubs(),
+                delegate: DataSearchReservas(),
               );
             },
           ),
