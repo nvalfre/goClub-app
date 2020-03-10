@@ -20,7 +20,7 @@ class RequestPage extends StatelessWidget {
   Scaffold buildScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Requests - Club Admin'),
+        title: Text('Reservas solicitadas'),
         actions: <Widget>[
           IconButton(
             icon: Icon( Icons.search ),

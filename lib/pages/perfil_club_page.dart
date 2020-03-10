@@ -27,8 +27,6 @@ class MapScreenState extends State<ProfileClub>
   final formKey = GlobalKey<FormState>();
   bool _saving = false;
   ClubModel _club = ClubModel();
-  PrestacionModel _prestacion = PrestacionModel();
-  ReservationModel _reservation = ReservationModel();
   UserPreferences _pref = UserPreferences();
   PrestacionBloc _pestacionBloc;
   ReservationBloc _reservationBloc;

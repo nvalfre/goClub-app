@@ -18,6 +18,7 @@ class PrestacionModel {
   bool isClass;
   String avatar;
   String role;
+  String estado;
 
   String uniqueId;
 
@@ -33,6 +34,7 @@ class PrestacionModel {
     this.isClass = false,
     this.avatar,
     this.role,
+    this.estado,
   });
 
   factory PrestacionModel.fromJson(Map<String, dynamic> json) => PrestacionModel(
@@ -47,6 +49,7 @@ class PrestacionModel {
     isClass: json["isClass"],
     avatar: json["avatar"],
     role: json["role"],
+    estado: json["estado"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -61,6 +64,7 @@ class PrestacionModel {
     "isClass": isClass,
     "avatar": avatar,
     "role": role,
+    "estado": estado,
   };
 
   factory PrestacionModel.fromSnapshot(DocumentSnapshot snap) => PrestacionModel(
@@ -75,6 +79,7 @@ class PrestacionModel {
     isClass: snap.data["isClass"],
     avatar: snap.data["avatar"],
     role: snap.data["role"],
+    estado: snap.data["estado"],
   );
   factory PrestacionModel.fromQuerySnapshot(QuerySnapshot snap) {
     var document = snap.documents[0];
@@ -90,6 +95,7 @@ class PrestacionModel {
       isClass: document.data["isClass"],
       avatar: document.data["avatar"],
       role: document.data["role"],
+      estado: document.data["estado"],
     );
   }
 

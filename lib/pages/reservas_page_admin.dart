@@ -34,7 +34,7 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Reservas'),
+        title: Text('Reservas Disponibles'),
         backgroundColor: Colors.green,
         actions: <Widget>[
           IconButton(

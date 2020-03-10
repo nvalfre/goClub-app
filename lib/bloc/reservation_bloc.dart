@@ -30,13 +30,13 @@ class ReservationBloc {
     return _reservationProvider.loadReservationListSnap();
   }
 
-  void editClub(ReservationModel reservationModel) {
+  void editReserva(ReservationModel reservationModel) {
     _loadingController.sink.add(true);
     _reservationProvider.updateData(reservationModel);
     _loadingController.sink.add(false);
   }
 
-  void deleteClub(String id) {
+  void deleteReserva(String id) {
     _reservationProvider.deleteData(id);
   }
 

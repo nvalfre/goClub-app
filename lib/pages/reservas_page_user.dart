@@ -33,7 +33,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Reservas'),
+        title: Text('Reservas Disponibles'),
         backgroundColor: Colors.green,
         actions: <Widget>[
           IconButton(
@@ -206,8 +206,8 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   Widget _swiperTarjetas() {
     return Container(
       padding: EdgeInsets.only(top: 10),
-      child: FutureBuilder(
-        future: _reservasBloc.loadReservations(),
+      child: StreamBuilder(
+        stream: _reservasBloc.loadReservationsSnap(),
         builder: (BuildContext context,
             AsyncSnapshot<List<ReservationModel>> snapshot) {
           if (snapshot.hasData) {
@@ -222,7 +222,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                   SizedBox(height: 5.0),
                   ReservasHorizontal(
                     reservas: snapshot.data,
-                    siguientePagina: _reservasBloc.loadReservations,
+                    siguientePagina: _reservasBloc.loadReservationsSnap,
                   ),
                 ],
               ),
