@@ -22,6 +22,9 @@ class UserPreferences {
   get user {
     return _prefs.getString('uuid') ?? '';
   }
+  get clubAdminId {
+    return _prefs.getString('clubAdminId') ?? '';
+  }
   get name {
     return _prefs.getString('name') ?? '';
   }
@@ -52,6 +55,7 @@ class UserPreferences {
     _prefs.setString('direccion', user.direccion);
     _prefs.setString('avatar', user.avatar);
     _prefs.setString('email', user.email);
+    _prefs.setString('clubAdminId', user.idClub);
   }
 
 

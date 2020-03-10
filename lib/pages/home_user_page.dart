@@ -113,7 +113,6 @@ class HomePage extends StatelessWidget {
                 Text((club.available) ? 'Disponible' : 'No disponible',
                     style: Theme.of(context).textTheme.display1,
                     overflow: TextOverflow.ellipsis),
-                _largeDescription(club, context),
               ],
             ),
           )
@@ -121,15 +120,4 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-
-  Container _largeDescription(ClubModel club, BuildContext context) =>
-      Container(
-          padding: EdgeInsets.all(10),
-          child: Text(
-            club.description +
-                ' +  +++++ +++++ +++++ +++ +++ ++ + ' +
-                club.description,
-            style: Theme.of(context).textTheme.subhead,
-            textAlign: TextAlign.justify,
-          ));
 }

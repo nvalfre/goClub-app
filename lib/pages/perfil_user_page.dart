@@ -249,7 +249,7 @@ class MapScreenState extends State<ProfileUser>
 
   _getUserClubs() {
     //TODO DEBERIA SER UN BOTON QUE TE LLEVE A LA PAGINA DE CLUBES DEL USUARIO SINO HAY MUCHA INFORMACION
-    var type = 'Clubs';
+    var type = 'Club Deportivo';
     return TextFormField(
       initialValue: _user.lastName,
       enabled: !_status,

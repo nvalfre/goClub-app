@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/pages/clubs_page_admin.dart';
-import 'package:flutter_go_club_app/pages/clubs_page_user.dart';
+import 'package:flutter_go_club_app/pages/clases_page_user.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
 import 'package:flutter_go_club_app/pages/mapas/mapa_page.dart';
 import 'package:flutter_go_club_app/pages/mapas/mapas_page.dart';
@@ -24,15 +24,19 @@ void main() async {
   runApp(MyApp());
 }
 
-//TODO: Validaciones perfil
-//TODO: Validaciones reservas
-//TODO: Validaciones prestaciones
-//TODO: Crear club admins
-//TODO: Mostrar reservas
-//TODO: Buscador en reservas
-//TODO: Evitar convergencia de dia fecha y hora de misma prestacion para reserva.
+//TODO: Agregar mock data en firebase. Hight priority.
+//TODO: Validaciones perfil. Low priority.
+//TODO: Validaciones reservas. Low priority.
+//TODO: Validaciones prestaciones. Low priority.
+//TODO: Crear club admins - vincular roles cuando el admin crea. Mid priority.
+//TODO: Mostrar home admin - clubes - ver clubes inscriptos. Hight priority.
+//TODO: Mostrar home user - ultimas reservas, noticias de clubes slide. Hight priority.
+//TODO: Mostrar home club - ultimas solicitudes, ver prestaciones. Hight priority.
+//TODO: Mostrar prestaciones y reservas - en el home de usuario y de los clubes como un slide. Hight priority.
+//TODO: Añadir filtro por ultimas creadas o reservadas, relevancia y precio. Hight priority.
+//TODO: Añadir buscador prestaciones / reservas / clubes. Low priority.
+//TODO: Evitar convergencia de dia fecha y hora de misma prestacion para reserva. Low priority. Nice to have.
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return Provider(
@@ -47,7 +51,7 @@ class MyApp extends StatelessWidget {
           'register': (BuildContext context) => RegisterPage(),
           'clubMapHome': (BuildContext context) => ClubMapPage(),
           'clubMapListHome': (BuildContext context) => ClubMapListPage(),
-          'detalle': (BuildContext context) => ClubsPageUser(),
+          'detalle': (BuildContext context) => ClasesPageUser(),
           'search': (BuildContext context) => RootHomeNavBar(0),
           'clubs': (BuildContext context) => ClubsPageAdmin(),
           'clubsAdmin': (BuildContext context) => ClubsPageAdmin(),

@@ -12,14 +12,14 @@ import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
 import 'draw/draw_widget_user.dart';
 
-class PrestacionPageUser extends StatefulWidget {
+class ClasesPageUser extends StatefulWidget {
   @override
-  PrestacionClubUserPageState createState() {
-    return PrestacionClubUserPageState();
+  ClasesPageUserState createState() {
+    return ClasesPageUserState();
   }
 }
 
-class PrestacionClubUserPageState extends State<PrestacionPageUser> {
+class ClasesPageUserState extends State<ClasesPageUser> {
   PrestacionModel _prestacionModel;
   File _photo;
   PrestacionBloc _prestacionBloc;
@@ -32,7 +32,7 @@ class PrestacionClubUserPageState extends State<PrestacionPageUser> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Prestaciones'),
+        title: Text('Clases'),
         backgroundColor: Colors.green,
         actions: <Widget>[
           IconButton(
@@ -104,10 +104,10 @@ class PrestacionClubUserPageState extends State<PrestacionPageUser> {
                 children: <Widget>[
                   Container(
                       padding: EdgeInsets.only(left: 20.0),
-                      child: Text('Prestaciones',
+                      child: Text('Clases',
                           style: Theme.of(context).textTheme.subhead)),
                   SizedBox(height: 5.0),
-                  PrestacionHorizontal(
+                  ClasesHorizontal(
                     prestaciones: snapshot.data,
                     siguientePagina: _prestacionBloc.loadPrestaciones,
                   ),
@@ -299,18 +299,18 @@ class PrestacionClubUserPageState extends State<PrestacionPageUser> {
   }
 }
 
-class PrestacionHorizontal extends StatelessWidget {
-  final List<PrestacionModel> prestaciones;
+class ClasesHorizontal extends StatelessWidget {
+  List<PrestacionModel> prestaciones;
   final Function siguientePagina;
 
-  PrestacionHorizontal({@required this.prestaciones, @required this.siguientePagina});
+  ClasesHorizontal({@required this.prestaciones, @required this.siguientePagina});
 
   final _pageController = new PageController(initialPage: 1, viewportFraction: 0.3);
 
   @override
   Widget build(BuildContext context) {
     final _screenSize = MediaQuery.of(context).size;
-
+    this.prestaciones = filterByClass(prestaciones);
     _pageController.addListener(() {
       if (_pageController.position.pixels >=
           _pageController.position.maxScrollExtent - 200) {
@@ -373,5 +373,13 @@ class PrestacionHorizontal extends StatelessWidget {
         );
       },
     );
+  }
+
+  List<PrestacionModel> filterByClass(List<PrestacionModel> prestaciones) {
+    List<PrestacionModel> filteredList = new List();
+    prestaciones.forEach((prestacion) {
+        if(prestacion.isClass) filteredList.add(prestacion);
+      });
+    return filteredList;
   }
 }

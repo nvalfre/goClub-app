@@ -1,11 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
-import 'package:flutter_go_club_app/pages/search_delegate.dart';
+import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
@@ -34,7 +33,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Reservas'),
+        title: Text('Reservas Disponibles'),
         backgroundColor: Colors.green,
         actions: <Widget>[
           IconButton(
@@ -42,7 +41,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
             onPressed: () {
               showSearch(
                 context: context,
-                delegate: DataSearchClubs(),
+                delegate: DataSearchReservas(),
               );
             },
           ),
@@ -67,28 +66,28 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
       ),
       body: SingleChildScrollView(
           child: Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(1.0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Container(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          _swiperTarjetas(),
-                          _detailsColumn(),
-                        ],
-                      ),
-                    ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(1.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      _swiperTarjetas(),
+                      _detailsColumn(),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
-          )),
+          ],
+        ),
+      )),
     );
   }
 
@@ -169,8 +168,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   }
 
   _getDate(BuildContext context) {
-    _date =
-    _reservaModel.date == "" ? 'Desde: No establecido' : _reservaModel.date;
+    _date = _reservaModel.date == "" ? 'Desde: No establecido' : _reservaModel.date;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -208,8 +206,8 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   Widget _swiperTarjetas() {
     return Container(
       padding: EdgeInsets.only(top: 10),
-      child: FutureBuilder(
-        future: _reservasBloc.loadReservations(),
+      child: StreamBuilder(
+        stream: _reservasBloc.loadReservationsSnap(),
         builder: (BuildContext context,
             AsyncSnapshot<List<ReservationModel>> snapshot) {
           if (snapshot.hasData) {
@@ -224,7 +222,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                   SizedBox(height: 5.0),
                   ReservasHorizontal(
                     reservas: snapshot.data,
-                    siguientePagina: _reservasBloc.loadReservations,
+                    siguientePagina: _reservasBloc.loadReservationsSnap,
                   ),
                 ],
               ),
@@ -254,8 +252,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
       _reservaModel.timeHasta = userPreferences.reservaTimeHasta;
       _reservaModel.date = userPreferences.reservaDate;
       _reservaModel.estado = userPreferences.reservaEstado;
-      _reservaModel.available =
-      userPreferences.reservaAvailable == "true" ? true : false;
+      _reservaModel.available = userPreferences.reservaAvailable == "true" ? true : false;
     } else {
       _reservaModel = new ReservationModel();
     }
@@ -327,14 +324,19 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   }
 
   _getAvailable() {
-    var estado = _reservaModel.estado == "" ||  _reservaModel.estado == null ? 'Sin establecer' :  _reservaModel.estado;
+    var estado = _reservaModel.estado == "" || _reservaModel.estado == null
+        ? 'Sin establecer'
+        : _reservaModel.estado;
     Color color = handleColorState(estado);
     return Container(
       padding: EdgeInsets.only(right: 10, left: 10),
       child: RichText(
         text: TextSpan(
           children: [
-            TextSpan(text: 'Estado: ' + estado , style: TextStyle(color: color, fontSize: 25, fontWeight: FontWeight.bold)),
+            TextSpan(
+                text: 'Estado: ' + estado,
+                style: TextStyle(
+                    color: color, fontSize: 25, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -423,8 +425,7 @@ class ReservasHorizontal extends StatelessWidget {
 
   ReservasHorizontal({@required this.reservas, @required this.siguientePagina});
 
-  final _pageController =
-  new PageController(initialPage: 1, viewportFraction: 0.3);
+  final _pageController = new PageController(initialPage: 1, viewportFraction: 0.3);
 
   @override
   Widget build(BuildContext context) {
@@ -460,16 +461,16 @@ class ReservasHorizontal extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15.0),
                 child: reserva.avatar != null && reserva.avatar != ""
                     ? FadeInImage(
-                  image: NetworkImage(reserva.avatar),
-                  placeholder: AssetImage('assets/images/no-image.png'),
-                  fit: BoxFit.cover,
-                  height: 80.0,
-                )
+                        image: NetworkImage(reserva.avatar),
+                        placeholder: AssetImage('assets/images/no-image.png'),
+                        fit: BoxFit.cover,
+                        height: 80.0,
+                      )
                     : Image(
-                  image: AssetImage('assets/images/no-image.png'),
-                  height: 80.0,
-                  fit: BoxFit.cover,
-                )),
+                        image: AssetImage('assets/images/no-image.png'),
+                        height: 80.0,
+                        fit: BoxFit.cover,
+                      )),
           ),
           SizedBox(height: 5.0),
           Text(
