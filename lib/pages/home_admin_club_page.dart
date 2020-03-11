@@ -36,7 +36,7 @@ class HomePageAdminClub extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return snapshot.data.id != null
-                ? populateClubAndUserData(snapshot.data)
+                ? populateClubAndUserData(snapshot.data, context)
                 : Text('Club sin direccion cargada.');
           } else {
             return Center(child: CircularProgressIndicator());
@@ -47,7 +47,7 @@ class HomePageAdminClub extends StatelessWidget {
     );
   }
 
-  populateClubAndUserData(data) {
+  populateClubAndUserData(data, BuildContext context) {
     UserModel _user = new UserModel();
     _user.name = prefs.name;
     _user.lastName = prefs.name;
@@ -61,6 +61,21 @@ class HomePageAdminClub extends StatelessWidget {
         Container(
           padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
           child: Divider(thickness: 2, height: 3, color: Colors.green),
+        ),
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.description, color: Colors.green,size: 35,),
+              Container(
+                padding: EdgeInsets.only(left: 30),
+                child: Text("Reservas:",
+                    style: Theme.of(context).textTheme.display1,
+                    overflow: TextOverflow.ellipsis),
+              ),
+            ],
+          )
         ),
         _getListOfReservas(reservasBloc),
       ],
@@ -151,7 +166,6 @@ class HomePageAdminClub extends StatelessWidget {
             _createreserva(context, reservas[0], reservationBloc),
             _createreserva(context, reservas[1], reservationBloc),
             _createreserva(context, reservas[2], reservationBloc),
-            _createreserva(context, reservas[3], reservationBloc),
             GestureDetector(
               child: RawMaterialButton(
                 fillColor: Colors.green,

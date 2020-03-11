@@ -22,6 +22,7 @@ class _ClubPageState extends State<ClubsPageAdmin> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
   ClubsBloc _bloc;
+  var selectedUser;
 
   bool _saving = false;
   File _photo;
@@ -331,14 +332,14 @@ class _ClubPageState extends State<ClubsPageAdmin> {
   }
 
   getUserList(AsyncSnapshot<List<UserModel>> snapshot) {
-    List<UserModel> temp = List();
+    List<String> temp = List();
+
     final list = snapshot.data;
     for (var f in list) {
-      if (f.role == 'user') {
-        temp.add(f);
+      if (f.role == 'club_admin') {
+        temp.add(f.name);
       }
     }
-
     return Row(
       children: <Widget>[
         Container(
@@ -349,18 +350,27 @@ class _ClubPageState extends State<ClubsPageAdmin> {
             ),
           ),
         ),
-        DropdownButton<String>(
-          items: temp.map((UserModel user) {
-            return new DropdownMenuItem<String>(
-              value: user.name,
-              child: new Text(user.name),
-            );
-          }).toList(),
-          onChanged: (value) => setState(() {
-            _club.clubAdminId = value;
-          }),
-          hint: Text('Seleccionar administrador de club'),
-          value: _club.clubAdminId,
+        DropdownButton(
+          items: temp
+              .map((user) => DropdownMenuItem(
+            child: Text(
+              user,
+              style: TextStyle(color: Colors.black),
+            ),
+            value: user,
+          ))
+              .toList(),
+          onChanged: (selectedUserValue) {
+            setState(() {
+              selectedUser = selectedUserValue.name;
+            });
+          },
+          value: selectedUser,
+          isExpanded: false,
+          hint: Text(
+            'Seleccionar Administrador de club',
+            style: TextStyle(color: Colors.black),
+          ),
         )
       ],
     );

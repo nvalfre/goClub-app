@@ -12,27 +12,30 @@ class LoginPage extends StatelessWidget {
   final String LOGIN_DESCRIPTION = 'Iniciar Sesión';
   final String USER_NAME = 'Nicolas Valfre';
 
-  final String EMAIL_HINT_TEXT = 'email@example.com';
+  final String EMAIL_HINT_TEXT = 'email@ejemplo.com';
   final String EMAIL_LABEL_TEXT = 'Correo Electrónico';
 
-  final String PASSWORD_HINT_TEXT = 'Insert your password';
+  final String PASSWORD_HINT_TEXT = 'Insertar contraseña';
   final String PASSWORD_LABEL_TEXT = 'Contraseña';
   UserBloc _bloc;
+
   @override
   Widget build(BuildContext context) {
     _bloc = Provider.userBloc(context);
     return Scaffold(
         body: Stack(
-      children: <Widget>[
-        _getBackground(context),
-        _getBackgroudLoginItems(context),
-        _loginForm(context)
-      ],
-    ));
+          children: <Widget>[
+            _getBackground(context),
+            _getBackgroudLoginItems(context),
+            _loginForm(context)
+          ],
+        ));
   }
 
   Widget _getBackground(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery
+        .of(context)
+        .size;
     return getBackgroundContainer(size);
   }
 
@@ -42,9 +45,9 @@ class LoginPage extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
           gradient: LinearGradient(colors: <Color>[
-        Color.fromRGBO(10, 180, 80, 1.0),
-        Color.fromRGBO(77, 255, 140, 1.0)
-      ])),
+            Color.fromRGBO(10, 180, 80, 1.0),
+            Color.fromRGBO(77, 255, 140, 1.0)
+          ])),
     );
   }
 
@@ -88,23 +91,23 @@ class LoginPage extends StatelessWidget {
 
   SingleChildScrollView _loginForm(BuildContext context) {
     final bloc = Provider.authBloc(context);
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery
+        .of(context)
+        .size;
 
     return getLoginBox(size, bloc, context);
   }
 
-  SingleChildScrollView getLoginBox(
-    Size size,
-    AuthBloc loginBloc,
-    BuildContext context,
-  ) {
+  SingleChildScrollView getLoginBox(Size size,
+      AuthBloc loginBloc,
+      BuildContext context,) {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
           SafeArea(
               child: Container(
-            height: 200.0,
-          )),
+                height: 200.0,
+              )),
           Container(
             width: size.width * 0.80,
             margin: EdgeInsets.symmetric(vertical: 30.0),
@@ -121,7 +124,10 @@ class LoginPage extends StatelessWidget {
                 ]),
             child: Column(
               children: <Widget>[
-                Text(LOGIN_DESCRIPTION),
+                Text(
+                  LOGIN_DESCRIPTION,
+                  style: TextStyle(color: Colors.black, fontSize: 18),
+                ),
                 SizedBox(height: 50.0),
                 _getEmailBox(loginBloc),
                 SizedBox(height: 20.0),
@@ -144,11 +150,14 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  InkWell inkWellNavigationButton(
-      BuildContext context, String page, String text) {
+  InkWell inkWellNavigationButton(BuildContext context, String page,
+      String text) {
     return InkWell(
       onTap: () => Navigator.pushNamed(context, page),
-      child: Text(text),
+      child: Text(
+        text,
+        style: TextStyle(color: Colors.black, fontSize: 18),
+      ),
     );
   }
 
@@ -171,6 +180,7 @@ class LoginPage extends StatelessWidget {
           icon: Icon(Icons.alternate_email, color: Colors.green),
           hintText: EMAIL_HINT_TEXT,
           labelText: EMAIL_LABEL_TEXT,
+          labelStyle: TextStyle(fontSize: 18),
 //          counterText: snapshot.data,
           errorText: snapshot.error,
         ),
@@ -198,6 +208,7 @@ class LoginPage extends StatelessWidget {
             icon: Icon(Icons.lock_outline, color: Colors.green),
             hintText: PASSWORD_HINT_TEXT,
             labelText: PASSWORD_LABEL_TEXT,
+            labelStyle: TextStyle(fontSize: 18),
 //            counterText: snapshot.data,
             errorText: snapshot.error),
         onChanged: loginBloc.changePassword,
@@ -214,12 +225,15 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  RaisedButton _getLoginRaissedButton(
-      AuthBloc loginBloc, AsyncSnapshot snapshot, BuildContext context) {
+  RaisedButton _getLoginRaissedButton(AuthBloc loginBloc,
+      AsyncSnapshot snapshot, BuildContext context) {
     return RaisedButton(
         child: Container(
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-            child: Text('Ingresar al sistema')),
+            child: Text(
+              'Ingresar al sistema',
+              style: TextStyle(fontSize: 18),
+            )),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2.5)),
         color: Color.fromRGBO(0, 153, 51, 0.8),
         textColor: Color.fromRGBO(204, 255, 200, 1),
@@ -230,9 +244,8 @@ class LoginPage extends StatelessWidget {
   _login(AuthBloc authBloc, BuildContext context) async {
     try {
       FirebaseUser info =
-          await authBloc.logIn(authBloc.email, authBloc.password);
+      await authBloc.logIn(authBloc.email, authBloc.password);
       if (info != null) {
-
         //TODO IMPLEMENT USER RETRIEVE.
         await setRoleUserPref(info);
         Navigator.push(
@@ -247,7 +260,7 @@ class LoginPage extends StatelessWidget {
     }
   }
 
-  setRoleUserPref(FirebaseUser info) async{
+  setRoleUserPref(FirebaseUser info) async {
     await _bloc.loadUser(info.uid);
   }
 }

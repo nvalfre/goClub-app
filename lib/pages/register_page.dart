@@ -128,7 +128,10 @@ class RegisterPage extends StatelessWidget {
                 ]),
             child: Column(
               children: <Widget>[
-                Text(REGISTER_DESCRIPTION),
+                Text(
+                  REGISTER_DESCRIPTION,
+                  style: TextStyle(fontSize: 18),
+                ),
                 _getEmailBox(_bloc),
                 SizedBox(height: 20.0),
                 _getPasswordBox(_bloc),
@@ -141,7 +144,7 @@ class RegisterPage extends StatelessWidget {
                 SizedBox(height: 20.0),
                 getDirRow(_bloc),
                 //TODO IMPLEMENT WHOLE FORM WITH NAME, LASTNAME, TEL.
-                SizedBox(height: 20.0),
+                SizedBox(height: 10.0),
                 _getRegisterButton(_bloc, context)
               ],
             ),
@@ -171,7 +174,10 @@ class RegisterPage extends StatelessWidget {
           ),
         ),
         SizedBox(height: 5.0),
-        Text(PERSONAL_INFO),
+        Text(
+          PERSONAL_INFO,
+          style: TextStyle(fontSize: 18),
+        ),
       ],
     );
   }
@@ -195,6 +201,7 @@ class RegisterPage extends StatelessWidget {
           icon: Icon(Icons.alternate_email, color: Colors.green),
           hintText: EMAIL_HINT_TEXT,
           labelText: EMAIL_LABEL_TEXT,
+          labelStyle: TextStyle(fontSize: 18),
           errorText: snapshot.error,
         ),
         onChanged: loginBloc.changeEmail,
@@ -221,6 +228,7 @@ class RegisterPage extends StatelessWidget {
             icon: Icon(Icons.lock_outline, color: Colors.green),
             hintText: PASSWORD_HINT_TEXT,
             labelText: PASSWORD_LABEL_TEXT,
+            labelStyle: TextStyle(fontSize: 18),
             errorText: snapshot.error),
         onChanged: loginBloc.changePassword,
       ),
@@ -245,6 +253,7 @@ class RegisterPage extends StatelessWidget {
             icon: Icon(Icons.person, color: Colors.green),
             hintText: NAME_HINT_TEXT,
             labelText: NAME_LABEL_TEXT,
+            labelStyle: TextStyle(fontSize: 18),
             errorText: snapshot.error),
         onChanged: loginBloc.changeName,
       ),
@@ -268,6 +277,7 @@ class RegisterPage extends StatelessWidget {
             contentPadding: EdgeInsets.only(left: 2.5),
             hintText: LASTNAME_HINT_TEXT,
             labelText: LASTNAME_LABEL_TEXT,
+            labelStyle: TextStyle(fontSize: 18),
             errorText: snapshot.error),
         onChanged: loginBloc.changeLastName,
       ),
@@ -292,6 +302,7 @@ class RegisterPage extends StatelessWidget {
             icon: Icon(Icons.phone, color: Colors.green),
             hintText: TELEPHONE_HINT_TEXT,
             labelText: TELEPHONE_LABEL_TEXT,
+            labelStyle: TextStyle(fontSize: 18),
             errorText: snapshot.error),
         onChanged: loginBloc.changeTelephone,
       ),
@@ -316,6 +327,7 @@ class RegisterPage extends StatelessWidget {
             icon: Icon(Icons.directions, color: Colors.green),
             hintText: DIRECTION_HINT_TEXT,
             labelText: DIRECTION_LABEL_TEXT,
+            labelStyle: TextStyle(fontSize: 18),
             errorText: snapshot.error),
         onChanged: loginBloc.changeDirection,
       ),
@@ -326,16 +338,16 @@ class RegisterPage extends StatelessWidget {
     return StreamBuilder(
       stream: loginBloc.isValidFormStreamRegister,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return _getLoginRaissedButton(loginBloc, snapshot, context);
+        return _getRegisterRaissedButton(loginBloc, snapshot, context);
       },
     );
   }
 
-  RaisedButton _getLoginRaissedButton(
+  RaisedButton _getRegisterRaissedButton(
       AuthBloc loginBloc, AsyncSnapshot snapshot, BuildContext context) {
     return RaisedButton(
         child: Container(
-            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+            padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 30.0),
             child: Text('Registrarse')),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2.5)),
         color: Color.fromRGBO(0, 153, 51, 0.8),
