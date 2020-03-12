@@ -5,6 +5,7 @@ import 'package:flutter_go_club_app/bloc/user_bloc.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:flutter_go_club_app/pages/draw/draw_widget_admin.dart';
+import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
@@ -22,6 +23,8 @@ class _ClubPageState extends State<ClubsPageAdmin> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
   ClubsBloc _bloc;
+  UserBloc _userBloc;
+
   var selectedUser;
 
   bool _saving = false;
@@ -31,6 +34,7 @@ class _ClubPageState extends State<ClubsPageAdmin> {
   @override
   Widget build(BuildContext context) {
     _bloc = Provider.clubsBloc(context);
+    _userBloc = Provider.userBloc(context);
 
     validateAndLoadArguments(context);
 
@@ -188,22 +192,32 @@ class _ClubPageState extends State<ClubsPageAdmin> {
     if (_photo != null) {
       _club.logoUrl = await _bloc.uploadPhoto(_photo);
     }
+    UserModel userModel;
+    if (selectedUser != null) {
+      userModel = await _userBloc.loadUserByNameForClub(selectedUser);
+      userModel.idClub = _club.id;
+      _club.clubAdminId = userModel.id;
+    }
 
-    _saveForID();
-    Navigator.pop(context);
+    _saveForID(userModel);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => RootHomeNavBar(0)),
+    );
   }
 
-  void _saveForID() {
-    print(_club.logoUrl);
-
+  void _saveForID(clubAdmin) {
     if (_club.id == null) {
       _bloc.addClub(_club);
       setState(() {
-        _saving = false;
+        _saving = true;
       });
       _showSnackbar('Nuevo registro guardado exitosamente.');
     } else {
       _bloc.editClub(_club);
+      if (clubAdmin != null) {
+        _userBloc.editUser(clubAdmin);
+      }
       setState(() {
         _saving = false;
       });
@@ -315,12 +329,13 @@ class _ClubPageState extends State<ClubsPageAdmin> {
   }
 
   FutureBuilder<List<UserModel>> _getUser() {
-    UserBloc userBloc = Provider.userBloc(context);
-
     return FutureBuilder(
-      future: userBloc.loadAllUsers(),
+      future: _userBloc.loadAllUsers(),
       builder: (BuildContext context, AsyncSnapshot<List<UserModel>> snapshot) {
         if (snapshot.hasData) {
+          if(_club != null && _club.clubAdminId != null){
+            selectedUser = _club.clubAdminName;
+          }
           return getUserList(snapshot);
         } else {
           return Center(
@@ -340,6 +355,7 @@ class _ClubPageState extends State<ClubsPageAdmin> {
         temp.add(f.name);
       }
     }
+
     return Row(
       children: <Widget>[
         Container(
@@ -353,16 +369,17 @@ class _ClubPageState extends State<ClubsPageAdmin> {
         DropdownButton(
           items: temp
               .map((user) => DropdownMenuItem(
-            child: Text(
-              user,
-              style: TextStyle(color: Colors.black),
-            ),
-            value: user,
-          ))
+                    child: Text(
+                      user,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    value: user,
+                  ))
               .toList(),
           onChanged: (selectedUserValue) {
             setState(() {
-              selectedUser = selectedUserValue.name;
+              selectedUser = selectedUserValue;
+              _club.clubAdminName = selectedUser;
             });
           },
           value: selectedUser,

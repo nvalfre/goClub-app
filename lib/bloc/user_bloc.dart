@@ -52,10 +52,18 @@ class UserBloc {
     _loadingController.close();
   }
 
-  Future<UserModel> loadUser(String uid) async {
+  Future<UserModel> loadUser(String name) async {
     _loadingController.sink.add(true);
-    UserModel user = await _userProvider.loadUser(uid);
+    UserModel user = await _userProvider.loadUser(name);
     _prefs.user = user;
+    _loadingController.sink.add(false);
+
+    return user;
+  }
+
+  Future<UserModel> loadUserByNameForClub(String name) async {
+    _loadingController.sink.add(true);
+    UserModel user = await _userProvider.loadUserByName(name);
     _loadingController.sink.add(false);
 
     return user;
