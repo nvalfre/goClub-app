@@ -27,6 +27,7 @@ class ClubModel {
   String uniqueId;
   String latlng;
   String clubAdminId = '';
+  String clubAdminName;
 
   List listClass = List();
 
@@ -49,6 +50,7 @@ class ClubModel {
     this.uniqueId,
     this.latlng,
     this.clubAdminId,
+    this.clubAdminName,
   });
 
   factory ClubModel.fromJson(Map<String, dynamic> json, [String documentID]) =>
@@ -71,6 +73,7 @@ class ClubModel {
         uniqueId: json["uniqueId"],
         latlng: json["latlng"],
         clubAdminId: json["clubAdminId"],
+        clubAdminName: json["clubAdminName"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -92,6 +95,7 @@ class ClubModel {
         "uniqueId": uniqueId,
         "latlng": latlng,
         "clubAdminId": clubAdminId,
+        "clubAdminName": clubAdminName,
       };
 
   factory ClubModel.fromSnapshot(DocumentSnapshot snap) => ClubModel(
@@ -113,6 +117,7 @@ class ClubModel {
         uniqueId: snap.data["uniqueId"],
         latlng: snap.data["latlng"],
         clubAdminId: snap.data["clubAdminId"],
+    clubAdminName: snap.data["clubAdminName"],
       );
 
   factory ClubModel.fromQuerySnapshot(QuerySnapshot snap) {
@@ -136,6 +141,7 @@ class ClubModel {
       uniqueId: document.data["uniqueId"],
       latlng: document.data["latlng"],
       clubAdminId: document.data["clubAdminId"],
+      clubAdminName: document.data["clubAdminName"],
     );
   }
 

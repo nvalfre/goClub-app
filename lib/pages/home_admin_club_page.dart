@@ -11,11 +11,20 @@ import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
 import 'draw/draw_widget_user.dart';
 
-class HomePageAdminClub extends StatelessWidget {
+class HomePageAdminClub extends StatefulWidget {
+  @override
+  _HomePageAdminClubState createState() => _HomePageAdminClubState();
+}
+
+class _HomePageAdminClubState extends State<HomePageAdminClub> {
   final prefs = new UserPreferences();
+
   ClubModel clubModel;
+
   ClubsBloc clubBloc;
+
   ReservationBloc reservasBloc;
+
   File _photo;
 
   @override
@@ -23,10 +32,6 @@ class HomePageAdminClub extends StatelessWidget {
     reservasBloc = Provider.reservationBloc(context);
     clubBloc = Provider.clubsBloc(context);
 
-    return buildScaffold(reservasBloc, context);
-  }
-
-  Scaffold buildScaffold(ReservationBloc reservasBloc, BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Inicio'),
@@ -59,24 +64,30 @@ class HomePageAdminClub extends StatelessWidget {
           child: rowUser(_user),
         ),
         Container(
-          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-          child: Divider(thickness: 2, height: 3, color: Colors.green),
+          padding: EdgeInsets.symmetric(horizontal: 5),
+          child: Divider(thickness: 1, height: 3, color: Colors.green),
         ),
         Container(
-          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(Icons.description, color: Colors.green,size: 35,),
-              Container(
-                padding: EdgeInsets.only(left: 30),
-                child: Text("Reservas:",
-                    style: Theme.of(context).textTheme.display1,
-                    overflow: TextOverflow.ellipsis),
-              ),
-            ],
-          )
-        ),
+            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(
+                  Icons.description,
+                  color: Colors.green,
+                  size: 35,
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text("Reservas:",
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .display1,
+                      overflow: TextOverflow.ellipsis),
+                ),
+              ],
+            )),
         _getListOfReservas(reservasBloc),
       ],
     );
@@ -88,12 +99,12 @@ class HomePageAdminClub extends StatelessWidget {
       child: Row(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.only(left: 20.0, top: 20.0),
+            padding: EdgeInsets.only(left: 5.0, top: 0.0),
             child: userLogo(_user),
           ),
           Container(
             alignment: Alignment.center,
-            padding: EdgeInsets.only(left: 25, top: 45),
+            padding: EdgeInsets.only(left: 10, top: 30),
             child: Column(
               children: <Widget>[
                 Text(
@@ -117,8 +128,8 @@ class HomePageAdminClub extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         new Container(
-            width: 60.0,
-            height: 60.0,
+            width: 50.0,
+            height: 50.0,
             decoration: new BoxDecoration(
               shape: BoxShape.circle,
               image: _showLogo(_user),
@@ -154,8 +165,7 @@ class HomePageAdminClub extends StatelessWidget {
     );
   }
 
-  Widget _getListOffreservaBuilder(
-      BuildContext context,
+  Widget _getListOffreservaBuilder(BuildContext context,
       AsyncSnapshot<List<ReservationModel>> snapshot,
       ReservationBloc reservationBloc) {
     if (snapshot.hasData) {
@@ -163,9 +173,9 @@ class HomePageAdminClub extends StatelessWidget {
       return Expanded(
         child: Column(
           children: <Widget>[
-            _createreserva(context, reservas[0], reservationBloc),
-            _createreserva(context, reservas[1], reservationBloc),
-            _createreserva(context, reservas[2], reservationBloc),
+            getReservaRowWithAction(context, reservas[0], reservationBloc),
+            getReservaRowWithAction(context, reservas[1], reservationBloc),
+            getReservaRowWithAction(context, reservas[2], reservationBloc),
             GestureDetector(
               child: RawMaterialButton(
                 fillColor: Colors.green,
@@ -191,6 +201,15 @@ class HomePageAdminClub extends StatelessWidget {
     }
   }
 
+  GestureDetector getReservaRowWithAction(BuildContext context,
+      ReservationModel reserv, ReservationBloc reservationBloc) {
+    return reserv != null ?
+    GestureDetector(
+        child: _createreserva(context, reserv, reservationBloc),
+        onTap: () => Navigator.pushNamed(context, 'requestCRUD', arguments: reserv))
+        : Container();
+  }
+
   Widget _createreserva(BuildContext context, ReservationModel reserva,
       ReservationBloc reservationBloc) {
     if (reserva != null) {
@@ -199,16 +218,16 @@ class HomePageAdminClub extends StatelessWidget {
     return Container();
   }
 
-  InkWell _getDescriptionContainer(
-      BuildContext context, ReservationModel reserva) {
+  InkWell _getDescriptionContainer(BuildContext context,
+      ReservationModel reserva) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, 'reservas', arguments: reserva),
+      onTap: () => Navigator.pushNamed(context, 'reservasCRUD', arguments: reserva),
       child: _rowWidgetWithNameAndDescriptions(reserva, context),
     );
   }
 
-  Container _rowWidgetWithNameAndDescriptions(
-      ReservationModel reserva, BuildContext context) {
+  Container _rowWidgetWithNameAndDescriptions(ReservationModel reserva,
+      BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
       child: Row(
@@ -231,13 +250,22 @@ class HomePageAdminClub extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Text(reserva.name,
-                    style: Theme.of(context).textTheme.title,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .title,
                     overflow: TextOverflow.ellipsis),
                 Text(reserva.description,
-                    style: Theme.of(context).textTheme.subhead,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .subhead,
                     overflow: TextOverflow.ellipsis),
                 Text(reserva.user,
-                    style: Theme.of(context).textTheme.display1,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .display1,
                     overflow: TextOverflow.ellipsis),
               ],
             ),
