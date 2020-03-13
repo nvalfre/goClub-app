@@ -84,6 +84,7 @@ class UserPreferences {
 
   set prestacion ( PrestacionModel prestacionModel ) {
     _prefs.setString('prestacion', prestacionModel.id);
+    _prefs.setString('prestacionId', prestacionModel.id);
     _prefs.setString('prestacionName', prestacionModel.name);
     _prefs.setString('prestacionDescription', prestacionModel.description);
     _prefs.setString('prestacionAvatar', prestacionModel.avatar);

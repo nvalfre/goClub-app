@@ -113,6 +113,7 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
     var userPreferences = UserPreferences();
 
     if (userPreferences.prestacion != null) {
+      _prestacionModel.id = userPreferences.prestacion;
       _prestacionModel.name = userPreferences.prestacionName;
       _prestacionModel.description = userPreferences.prestacionDescription;
       _prestacionModel.avatar = userPreferences.prestacionAvatar;
@@ -269,8 +270,9 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
       textColor: Colors.white,
       label: Text('Ver Reservas'),
       icon: Icon(Icons.details),
-      onPressed: () => Navigator.pushNamed(context, 'reservaDetalle',
-          arguments: _prestacionModel),
+      onPressed: () => {
+        Navigator.pushNamed(context, 'reservaDetalle', arguments: _prestacionModel)
+      },
     );
   }
 

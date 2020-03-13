@@ -85,13 +85,13 @@ class ReservationBloc {
     return _reservationProvider.loadReservationStream(uid);
   }
 
-  void addPrestacion(ReservationModel reservaModel) async {
+  void addReserva(ReservationModel reservaModel) async {
     _loadingController.sink.add(true);
     await _reservationProvider.createReservationData(reservaModel);
     _loadingController.sink.add(false);
   }
 
-  void editPrestacion(ReservationModel reservaModel) {
+  void editReservation(ReservationModel reservaModel) {
     _loadingController.sink.add(true);
     _reservationProvider.updateData(reservaModel);
     _loadingController.sink.add(false);

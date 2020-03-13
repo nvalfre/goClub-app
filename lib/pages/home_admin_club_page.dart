@@ -68,7 +68,7 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
           child: Divider(thickness: 1, height: 3, color: Colors.green),
         ),
         Container(
-            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+            padding: EdgeInsets.symmetric(vertical: 0.15, horizontal: 5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -80,10 +80,7 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
                 Container(
                   padding: EdgeInsets.only(left: 10),
                   child: Text("Reservas:",
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .display1,
+                      style: Theme.of(context).textTheme.display1,
                       overflow: TextOverflow.ellipsis),
                 ),
               ],
@@ -165,11 +162,12 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
     );
   }
 
-  Widget _getListOffreservaBuilder(BuildContext context,
+  Widget _getListOffreservaBuilder(
+      BuildContext context,
       AsyncSnapshot<List<ReservationModel>> snapshot,
       ReservationBloc reservationBloc) {
     if (snapshot.hasData) {
-      final reservas = snapshot.data; //sort by date?
+      final reservas = snapshot.data; //TODO Should filter by club id.
       return Expanded(
         child: Column(
           children: <Widget>[
@@ -177,22 +175,22 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
             getReservaRowWithAction(context, reservas[1], reservationBloc),
             getReservaRowWithAction(context, reservas[2], reservationBloc),
             GestureDetector(
-              child: RawMaterialButton(
-                fillColor: Colors.green,
-                shape: new CircleBorder(),
-                elevation: 0.0,
-                child: new Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RootHomeNavBar(3)),
-                );
-              },
-            )
+                child: RaisedButton.icon(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                    color: Colors.green,
+                    textColor: Colors.white,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RootHomeNavBar(3)),
+                      );
+                    },
+                    icon: new Icon(
+                      Icons.subdirectory_arrow_right,
+                      color: Colors.white,
+                    ),
+                    label: Text("Ver más"))),
           ],
         ),
       );
@@ -203,10 +201,11 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
 
   GestureDetector getReservaRowWithAction(BuildContext context,
       ReservationModel reserv, ReservationBloc reservationBloc) {
-    return reserv != null ?
-    GestureDetector(
-        child: _createreserva(context, reserv, reservationBloc),
-        onTap: () => Navigator.pushNamed(context, 'requestCRUD', arguments: reserv))
+    return reserv != null
+        ? GestureDetector(
+            child: _createreserva(context, reserv, reservationBloc),
+            onTap: () =>
+                Navigator.pushNamed(context, 'requestCRUD', arguments: reserv))
         : Container();
   }
 
@@ -218,16 +217,17 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
     return Container();
   }
 
-  InkWell _getDescriptionContainer(BuildContext context,
-      ReservationModel reserva) {
+  InkWell _getDescriptionContainer(
+      BuildContext context, ReservationModel reserva) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, 'reservasCRUD', arguments: reserva),
+      onTap: () =>
+          Navigator.pushNamed(context, 'reservasCRUD', arguments: reserva),
       child: _rowWidgetWithNameAndDescriptions(reserva, context),
     );
   }
 
-  Container _rowWidgetWithNameAndDescriptions(ReservationModel reserva,
-      BuildContext context) {
+  Container _rowWidgetWithNameAndDescriptions(
+      ReservationModel reserva, BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
       child: Row(
@@ -250,22 +250,13 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
             child: Column(
               children: <Widget>[
                 Text(reserva.name,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .title,
+                    style: Theme.of(context).textTheme.title,
                     overflow: TextOverflow.ellipsis),
                 Text(reserva.description,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .subhead,
+                    style: Theme.of(context).textTheme.subhead,
                     overflow: TextOverflow.ellipsis),
                 Text(reserva.user,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .display1,
+                    style: Theme.of(context).textTheme.display1,
                     overflow: TextOverflow.ellipsis),
               ],
             ),

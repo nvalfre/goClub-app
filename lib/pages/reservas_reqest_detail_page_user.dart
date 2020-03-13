@@ -215,7 +215,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
 
     _reserva.estado = 'Solicitado';
     if (_reserva.id != null) {
-      _reservasBloc.editPrestacion(_reserva);
+      _reservasBloc.editReservation(_reserva);
       setState(() {
         _pref.reserva = _reserva;
         _solicitando = false;

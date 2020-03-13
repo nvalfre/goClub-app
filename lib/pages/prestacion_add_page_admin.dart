@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/prestation_bloc.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/pages/draw/draw_widget_admin.dart';
+import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
@@ -159,8 +160,10 @@ class _PrestacionAddPageAdminState extends State<PrestacionAddPageAdmin> {
   }
 
   void _saveForID() {
-    print(_prestacion.avatar);
+    UserPreferences _pref = UserPreferences();
 
+    print(_prestacion.avatar);
+    _prestacion.idClub = _pref.clubAdminId;
     if (_prestacion.id == null) {
       _bloc.addPrestacion(_prestacion);
       setState(() {
