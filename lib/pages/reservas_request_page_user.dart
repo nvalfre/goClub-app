@@ -220,14 +220,14 @@ class _ReservasAddPageUserState
     UserPreferences _pref = UserPreferences();
 
     if (_reserva.id == null) {
-      _reservasBloc.addPrestacion(_reserva);
+      _reservasBloc.addReserva(_reserva);
       setState(() {
         _pref.reserva = _reserva;
         _saving = false;
       });
       _showSnackbar('Nuevo registro guardado exitosamente.');
     } else {
-      _reservasBloc.editPrestacion(_reserva);
+      _reservasBloc.editReservation(_reserva);
       setState(() {
         _pref.reserva = _reserva;
         _saving = false;

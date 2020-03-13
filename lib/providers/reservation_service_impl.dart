@@ -24,7 +24,7 @@ class ReservationServiceImpl {
 
   Future<void> createReservationData(ReservationModel reservationModel) async {
     var uuid = new Uuid();
-    reservationModel.id = uuid.v1();
+    reservationModel.id = "reserva-" + uuid.v1();
     var json = reservationModel.toJson();
 
     return await db.document(reservationModel.id).setData(json);

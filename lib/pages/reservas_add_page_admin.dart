@@ -88,19 +88,19 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
   }
 
   FutureBuilder<List<PrestacionModel>> _getPrestacionName() {
-      _prestacionBloc = Provider.prestacionBloc(context);
+    _prestacionBloc = Provider.prestacionBloc(context);
 
-      return FutureBuilder(
-        future: _prestacionBloc.loadPrestaciones(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            return _getPrestacion(snapshot);
-          }
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-      );
+    return FutureBuilder(
+      future: _prestacionBloc.loadPrestaciones(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          return _getPrestacion(snapshot);
+        }
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
   }
 
   _getPrestacion(AsyncSnapshot snapshot) {
@@ -128,7 +128,8 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
               );
             }).toList(),
             onChanged: (value) => setState(() {
-                  PrestacionModel prestacion = selectIdByPrestacionName(value, temp);
+                  PrestacionModel prestacion =
+                      selectIdByPrestacionName(value, temp);
                   _reserva.prestacionId = prestacion.id;
                   _reserva.name = prestacion.name;
                   _prestacionValue = prestacion.name;
@@ -163,10 +164,11 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
   _getAvailable() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10),
-      child: Text('Estado: Implementar estado.', style: TextStyle(
-          color: Colors.teal,
-          fontWeight: FontWeight.bold,
-          fontSize: 18.0),),
+      child: Text(
+        'Estado: Implementar estado.',
+        style: TextStyle(
+            color: Colors.teal, fontWeight: FontWeight.bold, fontSize: 18.0),
+      ),
     );
   }
 
@@ -217,15 +219,16 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
   void _saveForID() {
     UserPreferences _pref = UserPreferences();
 
-    if (_reserva.id == null) {
-      _reservasBloc.addPrestacion(_reserva);
+    if (_reserva.id == null && _pref.clubAdminId != null) {
+      _reserva.clubAdminId = _pref.clubAdminId;
+      _reservasBloc.addReserva(_reserva);
       setState(() {
         _pref.reserva = _reserva;
         _saving = false;
       });
       _showSnackbar('Nuevo registro guardado exitosamente.');
     } else {
-      _reservasBloc.editPrestacion(_reserva);
+      _reservasBloc.editReservation(_reserva);
       setState(() {
         _pref.reserva = _reserva;
         _saving = false;
@@ -267,18 +270,19 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
       return Container(
         margin: EdgeInsets.only(right: 10.0),
         child: Column(
-          children: <Widget>[ Hero(
-                  tag: _reserva.uniqueId ?? '',
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15.0),
-                    child: FadeInImage(
-                      image: FileImage(_photo),
-                      placeholder: AssetImage('assets/images/no-image.png'),
-                      fit: BoxFit.cover,
-                      width: 130,
-                    ),
-                  ),
+          children: <Widget>[
+            Hero(
+              tag: _reserva.uniqueId ?? '',
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15.0),
+                child: FadeInImage(
+                  image: FileImage(_photo),
+                  placeholder: AssetImage('assets/images/no-image.png'),
+                  fit: BoxFit.cover,
+                  width: 130,
                 ),
+              ),
+            ),
           ],
         ),
       );
@@ -307,10 +311,9 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
       alignment: Alignment.center,
       decoration: new BoxDecoration(
         image: _reserva.avatar == ""
-            ? Image(
-                image: AssetImage('assets/images/no-image.png'),
-                height: 100.0,
+            ? new DecorationImage(
                 fit: BoxFit.cover,
+                image: AssetImage('assets/images/no-image.png'),
               )
             : DecorationImage(
                 image: NetworkImage(_reserva.avatar), fit: BoxFit.fill),
@@ -499,7 +502,8 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     );
   }
 
-  PrestacionModel selectIdByPrestacionName(String name, List<PrestacionModel> temp) {
+  PrestacionModel selectIdByPrestacionName(
+      String name, List<PrestacionModel> temp) {
     PrestacionModel pres;
     temp.forEach((prestacion) {
       if (prestacion.name == name) {
@@ -522,9 +526,8 @@ class DetailScreen extends StatelessWidget {
     return Scaffold(
       body: GestureDetector(
         child: Center(
-          child: PhotoView(
-            imageProvider: NetworkImage(reservationModel.avatar)
-          ),
+          child:
+              PhotoView(imageProvider: NetworkImage(reservationModel.avatar)),
         ),
         onTap: () {
           Navigator.pop(context);

@@ -24,7 +24,7 @@ class PrestacionServiceImpl {
 
   Future<void> createPrestacionData(PrestacionModel prestacionModel) async {
     var uuid = new Uuid();
-    prestacionModel.id = uuid.v1();
+    prestacionModel.id =  "prestacion-" + uuid.v1();
     var json = prestacionModel.toJson();
 
     return await db.document(prestacionModel.id).setData(json);

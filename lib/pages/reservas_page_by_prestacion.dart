@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
+import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
@@ -10,33 +11,32 @@ import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
 import 'draw/draw_widget_user.dart';
 
-class ReservaClubAdminPage extends StatefulWidget {
+class ReservaClubUserPageByPrestacion extends StatefulWidget {
   @override
-  ReservaClubAdminPageState createState() {
-    return ReservaClubAdminPageState();
+  ReservaClubUserPageByPrestacionState createState() {
+    return ReservaClubUserPageByPrestacionState();
   }
 }
 
-class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
+class ReservaClubUserPageByPrestacionState
+    extends State<ReservaClubUserPageByPrestacion> {
   String _date;
   String _timeDesde;
   String _timeHasta;
   ReservationModel _reservaModel;
-  UserPreferences _userPreferences;
   File _photo;
   ReservationBloc _reservasBloc;
+  PrestacionModel _prestacionModel;
   List<ReservationModel> _reservationList;
-
   @override
   Widget build(BuildContext context) {
-    _userPreferences = UserPreferences();
-
     validateAndLoadArguments(context);
+
     _reservasBloc = Provider.reservationBloc(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Reservas Disponibles'),
+        title: Text('Reservas - ${_prestacionModel.name}'),
         backgroundColor: Colors.green,
         actions: <Widget>[
           IconButton(
@@ -50,7 +50,6 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
           ),
         ],
       ),
-      drawer: UserDrawer(),
       floatingActionButton: Container(
         width: 40.0,
         height: 40.0,
@@ -68,37 +67,37 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
         ),
       ),
       body: SingleChildScrollView(
-          child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(1.0),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Container(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _swiperTarjetas(),
-                      _detailsColumn(),
-                    ],
+        child: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(1.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        _swiperTarjetas(),
+                        _detailsColumn(),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      )),
+      ),
     );
   }
 
   _getTimeDesde(BuildContext context) {
-    _timeDesde =
-        _reservaModel.timeDesde == "" || _reservaModel.timeDesde == null
-            ? 'Desde: No establecido'
-            : _reservaModel.timeDesde;
+    _timeDesde = _reservaModel.timeDesde == ""
+        ? 'Desde: No establecido'
+        : _reservaModel.timeDesde;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -134,10 +133,9 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
   }
 
   _getTimeHasta(BuildContext context) {
-    _timeHasta =
-        _reservaModel.timeHasta == "" || _reservaModel.timeHasta == null
-            ? 'Hasta: No establecido'
-            : _reservaModel.timeHasta;
+    _timeHasta = _reservaModel.timeHasta == ""
+        ? 'Hasta: No establecido'
+        : _reservaModel.timeHasta;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -212,13 +210,12 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
   Widget _swiperTarjetas() {
     return Container(
       padding: EdgeInsets.only(top: 10),
-      child: FutureBuilder(
-        future: _reservasBloc.loadReservations(),
+      child: StreamBuilder(
+        stream: _reservasBloc.loadReservationsSnap(),
         builder: (BuildContext context,
             AsyncSnapshot<List<ReservationModel>> snapshot) {
           if (snapshot.hasData) {
-            _reservationList = filterByClubId(snapshot.data);
-
+            _reservationList = filterByPrestacionId(snapshot.data);
             return Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,9 +225,11 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
                       child: Text('Reservas',
                           style: Theme.of(context).textTheme.subhead)),
                   SizedBox(height: 5.0),
+                  SizedBox(height: 5.0),
                   ReservasHorizontal(
                     reservas: _reservationList,
-                    siguientePagina: _reservasBloc.loadReservations,
+                    siguientePagina: _reservasBloc.loadReservationsSnap,
+                    prestacionId: _prestacionModel.id,
                   ),
                 ],
               ),
@@ -246,23 +245,15 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
   }
 
   void validateAndLoadArguments(BuildContext context) async {
+    final PrestacionModel prestacionModel =
+        ModalRoute.of(context).settings.arguments;
 
-    if (_userPreferences.reserva != "" && _userPreferences.reserva != null) {
-      _reservaModel = new ReservationModel();
-
-      _reservaModel.id = _userPreferences.reserva;
-      _reservaModel.name = _userPreferences.reservaName;
-      _reservaModel.description = _userPreferences.reservaDescription;
-      _reservaModel.avatar = _userPreferences.reservaAvatar;
-      _reservaModel.prestacionId = _userPreferences.prestacionId;
-      _reservaModel.timeDesde = _userPreferences.reservaTimeDesde;
-      _reservaModel.timeHasta = _userPreferences.reservaTimeHasta;
-      _reservaModel.date = _userPreferences.reservaDate;
-      _reservaModel.estado = _userPreferences.reservaEstado;
-      _reservaModel.available = _userPreferences.reservaAvailable == "true" ? true : false;
-    } else {
-      _reservaModel = new ReservationModel();
+    if (prestacionModel != null) {
+      _prestacionModel = prestacionModel;
     }
+
+      _reservaModel = new ReservationModel();
+
   }
 
   Widget _detailsColumn() {
@@ -285,7 +276,8 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
                 SizedBox(height: 10.0),
                 _getTimeDesde(context),
                 _getTimeHasta(context),
-                _getAvailableAndButtom(),
+                _getAvailable(),
+                _getEditButton(),
               ],
             ),
           ),
@@ -305,9 +297,9 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
                   padding: EdgeInsets.only(left: 10),
                   child: Column(
                     children: <Widget>[
-                      Text("Reserva:",
+                      Text("Prestación:",
                           style: Theme.of(context).textTheme.headline),
-                      Text(_reservaModel.name,
+                      Text(_prestacionModel.name,
                           style: TextStyle(color: Colors.black, fontSize: 20),
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.justify),
@@ -317,7 +309,7 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
                       Text("Descripcion:",
                           style: Theme.of(context).textTheme.headline),
                       Text(
-                        _reservaModel.description,
+                        _prestacionModel.description,
                         style: TextStyle(color: Colors.black, fontSize: 20),
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.justify,
@@ -329,52 +321,33 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
     );
   }
 
-  _getAvailableAndButtom() {
-    String solicitado = 'Solicitado';
-    String aceptado = 'Aceptado';
-
+  _getAvailable() {
     var estado = _reservaModel.estado == "" || _reservaModel.estado == null
         ? 'Sin establecer'
         : _reservaModel.estado;
-
-    Color color = Colors.blueAccent;
-    var richText = RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-              text: 'Estado: ' + estado,
-              style: TextStyle(
-                  color: color, fontSize: 25, fontWeight: FontWeight.bold)),
-        ],
+    Color color = handleColorState(estado);
+    return Container(
+      padding: EdgeInsets.only(right: 10, left: 10),
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+                text: 'Estado: ' + estado,
+                style: TextStyle(
+                    color: color, fontSize: 25, fontWeight: FontWeight.bold)),
+          ],
+        ),
       ),
     );
-
-    if (estado == solicitado) {
-      color = Colors.orange;
-
-      return Column(
-        children: <Widget>[richText, _getAceptarButtom()],
-      );
-    } else if (estado == aceptado) {
-      color = Colors.greenAccent;
-      return Column(
-        children: <Widget>[richText, _getEditButton()],
-      );
-    } else {
-      return Column(
-        children: <Widget>[richText, _getEditButton()],
-      );
-    }
   }
 
   Color handleColorState(String estado) {
     Color color;
     String noDispnible = 'No disponible';
-    String disponible = 'Disponible';
-    String reservado = 'Reservado';
-    if (estado == noDispnible || estado == reservado) {
+    String Disponible = 'Disponible';
+    if (estado == noDispnible) {
       color = Colors.red;
-    } else if (estado == disponible) {
+    } else if (estado == Disponible) {
       color = Colors.green;
     } else {
       color = Colors.blueAccent;
@@ -394,21 +367,6 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
     );
   }
 
-  Widget _getAceptarButtom() {
-    _userPreferences = UserPreferences();
-    _reservaModel.user = _userPreferences.user;
-
-    return RaisedButton.icon(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-      color: Colors.blueAccent,
-      textColor: Colors.white,
-      label: Text(' Ver solicitud  '),
-      icon: Icon(Icons.check),
-      onPressed: () =>
-          Navigator.pushNamed(context, 'requestCRUD', arguments: _reservaModel),
-    );
-  }
-
   Widget _showLogo() {
     if (_photo != null) {
       return Container(
@@ -416,7 +374,7 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
         child: Column(
           children: <Widget>[
             Hero(
-              tag: _reservaModel.uniqueId ?? '',
+              tag: _prestacionModel.uniqueId ?? '',
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15.0),
                 child: FadeInImage(
@@ -431,17 +389,13 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
         ),
       );
     }
-    if (_reservaModel.avatar != null && _reservaModel.avatar != "") {
+    if (_prestacionModel.avatar != null && _prestacionModel.avatar != "") {
       return _fadeInImageFromNetworkWithJarHolder();
     } else {
-      return GestureDetector(
-        child: Image(
-          image: AssetImage('assets/images/no-image.png'),
-          height: 50.0,
-          fit: BoxFit.cover,
-        ),
-        onTap: () => Navigator.pushNamed(context, 'reservasCRUD',
-            arguments: _reservaModel),
+      return Image(
+        image: AssetImage('assets/images/no-image.png'),
+        height: 50.0,
+        fit: BoxFit.cover,
       );
     }
   }
@@ -454,30 +408,32 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
         alignment: Alignment.center,
         decoration: new BoxDecoration(
           image: DecorationImage(
-              image: NetworkImage(_reservaModel.avatar), fit: BoxFit.fill),
+              image: NetworkImage(_prestacionModel.avatar), fit: BoxFit.fill),
         ),
       ),
-      onTap: () => Navigator.pushNamed(context, 'reservasCRUD',
-          arguments: _reservaModel),
+      onTap: () => Navigator.pushNamed(context, 'prestacionCRUD',
+          arguments: _prestacionModel),
     );
   }
 
-  filterByClubId(List<ReservationModel> list) {
-    var clubAdminId = _userPreferences.clubAdminId;
+  filterByPrestacionId(List<ReservationModel> list) {
+    var idNoPoster = _prestacionModel.id.split("-poster");
     List<ReservationModel> temp = new List();
     for (var reserva in list) {
-      if(reserva.clubAdminId == clubAdminId){
+      if(reserva.prestacionId == idNoPoster[0]){
         temp.add(reserva);
       }
     }
     return temp;
   }
-  }
+}
+
 class ReservasHorizontal extends StatelessWidget {
   final List<ReservationModel> reservas;
   final Function siguientePagina;
+  final String prestacionId;
 
-  ReservasHorizontal({@required this.reservas, @required this.siguientePagina});
+  ReservasHorizontal({@required this.reservas, @required this.siguientePagina, @required this.prestacionId});
 
   final _pageController =
       new PageController(initialPage: 1, viewportFraction: 0.3);
