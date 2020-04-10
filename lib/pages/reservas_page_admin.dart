@@ -25,7 +25,6 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
   UserPreferences _userPreferences;
   File _photo;
   ReservationBloc _reservasBloc;
-  List<ReservationModel> _reservationList;
 
   @override
   Widget build(BuildContext context) {
@@ -212,13 +211,11 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
   Widget _swiperTarjetas() {
     return Container(
       padding: EdgeInsets.only(top: 10),
-      child: FutureBuilder(
-        future: _reservasBloc.loadReservations(),
+      child: StreamBuilder(
+        stream: _reservasBloc.loadReservationsSnap(),
         builder: (BuildContext context,
             AsyncSnapshot<List<ReservationModel>> snapshot) {
           if (snapshot.hasData) {
-            _reservationList = filterByClubId(snapshot.data);
-
             return Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,9 +225,48 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
                       child: Text('Reservas',
                           style: Theme.of(context).textTheme.subhead)),
                   SizedBox(height: 5.0),
-                  ReservasHorizontal(
-                    reservas: _reservationList,
-                    siguientePagina: _reservasBloc.loadReservations,
+                  snapshot.data.length == 1 ?
+                  GestureDetector(child: Container(
+                    margin: EdgeInsets.only(right: 10.0),
+                    child: Column(
+                      children: <Widget>[
+                        Hero(
+                          tag: snapshot.data[0].id,
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child: snapshot.data[0].avatar != null && snapshot.data[0].avatar != ""
+                                  ? FadeInImage(
+                                image: NetworkImage(snapshot.data[0].avatar),
+                                placeholder: AssetImage('assets/images/no-image.png'),
+                                fit: BoxFit.cover,
+                                height: 80.0,
+                              )
+                                  : Image(
+                                image: AssetImage('assets/images/no-image.png'),
+                                height: 80.0,
+                                fit: BoxFit.cover,
+                              )),
+                        ),
+                        SizedBox(height: 5.0),
+                        Text(
+                          snapshot.data[0].name,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.caption,
+                        ),
+                      ],
+                    ),
+                  ),
+                    onTap: () {
+                      var userPreferences = UserPreferences();
+                      userPreferences.reserva = snapshot.data[0];
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RootHomeNavBar(1)),
+                      );
+                    },)
+                  : ReservasHorizontal(
+                    reservas: snapshot.data,
+                    siguientePagina: _reservasBloc.loadReservationsSnap,
                   ),
                 ],
               ),
@@ -462,19 +498,10 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
     );
   }
 
-  filterByClubId(List<ReservationModel> list) {
-    var clubAdminId = _userPreferences.clubAdminId;
-    List<ReservationModel> temp = new List();
-    for (var reserva in list) {
-      if(reserva.clubAdminId == clubAdminId){
-        temp.add(reserva);
-      }
-    }
-    return temp;
-  }
+
   }
 class ReservasHorizontal extends StatelessWidget {
-  final List<ReservationModel> reservas;
+  List<ReservationModel> reservas;
   final Function siguientePagina;
 
   ReservasHorizontal({@required this.reservas, @required this.siguientePagina});
@@ -485,7 +512,6 @@ class ReservasHorizontal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _screenSize = MediaQuery.of(context).size;
-
     _pageController.addListener(() {
       if (_pageController.position.pixels >=
           _pageController.position.maxScrollExtent - 200) {
@@ -506,39 +532,37 @@ class ReservasHorizontal extends StatelessWidget {
   Widget _tarjeta(BuildContext context, ReservationModel reserva) {
     reserva.id = '${reserva.id}-poster';
 
-    final tarjeta = Container(
-      margin: EdgeInsets.only(right: 10.0),
-      child: Column(
-        children: <Widget>[
-          Hero(
-            tag: reserva.id,
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(15.0),
-                child: reserva.avatar != null && reserva.avatar != ""
-                    ? FadeInImage(
-                        image: NetworkImage(reserva.avatar),
-                        placeholder: AssetImage('assets/images/no-image.png'),
-                        fit: BoxFit.cover,
-                        height: 80.0,
-                      )
-                    : Image(
-                        image: AssetImage('assets/images/no-image.png'),
-                        height: 80.0,
-                        fit: BoxFit.cover,
-                      )),
-          ),
-          SizedBox(height: 5.0),
-          Text(
-            reserva.name,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.caption,
-          ),
-        ],
-      ),
-    );
-
     return GestureDetector(
-      child: tarjeta,
+      child: Container(
+        margin: EdgeInsets.only(right: 10.0),
+        child: Column(
+          children: <Widget>[
+            Hero(
+              tag: reserva.id,
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15.0),
+                  child: reserva.avatar != null && reserva.avatar != ""
+                      ? FadeInImage(
+                    image: NetworkImage(reserva.avatar),
+                    placeholder: AssetImage('assets/images/no-image.png'),
+                    fit: BoxFit.cover,
+                    height: 80.0,
+                  )
+                      : Image(
+                    image: AssetImage('assets/images/no-image.png'),
+                    height: 80.0,
+                    fit: BoxFit.cover,
+                  )),
+            ),
+            SizedBox(height: 5.0),
+            Text(
+              reserva.name,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.caption,
+            ),
+          ],
+        ),
+      ),
       onTap: () {
         var userPreferences = UserPreferences();
         userPreferences.reserva = reserva;

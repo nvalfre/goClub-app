@@ -69,6 +69,7 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
                   _showLogo(),
                   _getPrestacionName(),
                   _getDescription(),
+                  _getPrice(),
                   _getAvailable(),
                   _dateSelector(context),
                   SizedBox(
@@ -154,6 +155,20 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     );
   }
 
+  TextFormField _getPrice() {
+    var type = 'Precio';
+    return TextFormField(
+      initialValue: _reserva.precio,
+      decoration: InputDecoration(labelText: type),
+      textCapitalization: TextCapitalization.sentences,
+      keyboardType: TextInputType.number,
+      onSaved: (value) => _reserva.precio = value,
+      validator: (value) {
+        return _validateLenghtOf(value, type, 1);
+      },
+    );
+  }
+
   String _validateLenghtOf(String value, String type, int lenght) {
     if (!utils.hasMoreLenghtThan(value, lenght)) {
       return 'Deberia tener más de ${lenght} caracteres para la ${type}.';
@@ -218,23 +233,26 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
 
   void _saveForID() {
     UserPreferences _pref = UserPreferences();
+if(_pref.clubAdminId != null){
+  if (_reserva.id == null ) {
+    _reserva.clubAdminId = _pref.clubAdminId;
+    _reservasBloc.addReserva(_reserva);
+    setState(() {
+      _pref.reserva = _reserva;
+      _saving = false;
+    });
+    _showSnackbar('Nuevo registro guardado exitosamente.');
+  } else {
+    _reserva.clubAdminId = _pref.clubAdminId;
+    _reservasBloc.editReservation(_reserva);
+    setState(() {
+      _pref.reserva = _reserva;
+      _saving = false;
+    });
+    _showSnackbar('Registro actualizado correctamente.');
+  }
+}
 
-    if (_reserva.id == null && _pref.clubAdminId != null) {
-      _reserva.clubAdminId = _pref.clubAdminId;
-      _reservasBloc.addReserva(_reserva);
-      setState(() {
-        _pref.reserva = _reserva;
-        _saving = false;
-      });
-      _showSnackbar('Nuevo registro guardado exitosamente.');
-    } else {
-      _reservasBloc.editReservation(_reserva);
-      setState(() {
-        _pref.reserva = _reserva;
-        _saving = false;
-      });
-      _showSnackbar('Registro actualizado correctamente.');
-    }
   }
 
   void _showSnackbar(String message) {

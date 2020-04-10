@@ -18,13 +18,14 @@ class ReservasAddPageUser extends StatefulWidget {
   _ReservasAddPageUserState createState() => _ReservasAddPageUserState();
 }
 
-const String RESERVA_HEADER = 'Reservas Admin';
+const String RESERVA_HEADER = 'Detalles Reservas';
 
 class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
   ReservationBloc _reservasBloc;
   PrestacionBloc _prestacionBloc;
+  String _role;
 
   String _date = "No establecida";
   String _timeDesde = "Desde: No establecida";
@@ -51,23 +52,27 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       drawer: UserDrawerAdmin(),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.all(12.0),
+          padding: EdgeInsets.all(7.0),
           child: Form(
               key: formKey,
               child: Column(
                 children: <Widget>[
                   _showLogo(),
+                  SizedBox(
+                    height: 5,
+                  ),
                   _getPrestacionName(),
                   _getDescription(),
+                  _getPrecio(),
                   _getAvailable(),
                   _dateSelector(context),
                   SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
                   _hourSelectorDesde(context),
                   _hourSelectorHasta(context),
                   SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
                   _getButtom()
                 ],
@@ -84,7 +89,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       future: _prestacionBloc.loadPrestaciones(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          return _getPrestacion(snapshot);
+          return _getPrestacionPorReserva(snapshot);
         }
         return Center(
           child: CircularProgressIndicator(),
@@ -93,7 +98,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     );
   }
 
-  _getPrestacion(AsyncSnapshot snapshot) {
+  _getPrestacionPorReserva(AsyncSnapshot snapshot) {
     List<PrestacionModel> temp = List();
     final list = snapshot.data;
     for (var f in list) {
@@ -106,7 +111,11 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
           child: Center(
             child: Text(
               "Prestacion: ",
-              style: TextStyle(color: Colors.blueGrey),
+              style: TextStyle(
+                color: Colors.teal,
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+              ),
             ),
           ),
         ),
@@ -114,24 +123,64 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
         Text(_prestacionValue,
             style: TextStyle(
               color: Colors.teal,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
               fontSize: 18.0,
             ))
       ],
     );
   }
 
-  TextFormField _getDescription() {
-    var type = 'Descripción de la reserva';
-    return TextFormField(
-      initialValue: _reserva.description,
-      decoration: InputDecoration(labelText: type),
-      textCapitalization: TextCapitalization.sentences,
-      keyboardType: TextInputType.text,
-      onSaved: (value) => _reserva.description = value,
-      validator: (value) {
-        return _validateLenghtOf(value, type, 12);
-      },
+  Row _getDescription() {
+    var type = 'Descripción: ';
+    return Row(
+      children: <Widget>[
+        Container(
+          child: Center(
+            child: Text(
+              type,
+              style: TextStyle(
+                color: Colors.teal,
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+              ),
+            ),
+          ),
+        ),
+        //TODO set form field with validation.
+        Text(_reserva.description,
+            style: TextStyle(
+              color: Colors.teal,
+              fontWeight: FontWeight.normal,
+              fontSize: 18.0,
+            ))
+      ],
+    );
+  }
+
+  Row _getPrecio() {
+    var type = 'Precio: ';
+    return Row(
+      children: <Widget>[
+        Container(
+          child: Center(
+            child: Text(
+              type,
+              style: TextStyle(
+                color: Colors.teal,
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+              ),
+            ),
+          ),
+        ),
+        //TODO set form field with validation.
+        Text(_reserva.precio != null ? r"$"+_reserva.precio : r"$",
+            style: TextStyle(
+              color: Colors.teal,
+              fontWeight: FontWeight.normal,
+              fontSize: 18.0,
+            ))
+      ],
     );
   }
 
@@ -183,13 +232,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       _solicitando = true;
       return Column(
         children: <Widget>[
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(text: 'Estado: ' + _reserva.estado , style: TextStyle(color: Colors.red, fontSize: 25, fontWeight: FontWeight.bold)),
-              ],
-            ),
-          ),
+          getStateText(),
           SizedBox(height: 5,),
           raisedButton
         ],
@@ -197,6 +240,40 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     }
     return raisedButton;
 
+  }
+
+  Widget getStateText() {
+    var color;
+    var icon = Icons.donut_large;
+
+    switch (_reserva.estado) {
+      case 'Solicitado':
+        color=Colors.lightBlue;
+        icon = Icons.done;
+        break;
+
+      case 'Disponible':
+      case 'Aceptado':
+        color=Colors.green;
+        icon=Icons.done_all;
+        break;
+      case 'Sin establecer':
+        color=Colors.blue;
+        break;
+
+      case 'No disponible':
+        color=Colors.red;
+        break;
+      default:
+        return Container();
+    }
+    return RaisedButton.icon(
+      color: Colors.white,
+      textColor: color,
+      label: Text(_reserva.estado),
+      icon: Icon(icon),
+      onPressed: () =>{},
+    );
   }
 
   void _submitWithFormValidation() async {

@@ -52,7 +52,7 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
 
   final List<Widget> _childrenRoutesClub = [
     PlaceholderWidget(HomePageAdminClub()),
-    PlaceholderWidget(ReservaClubAdminPage()),
+    PlaceholderWidget(ReservaClubUserPage()),
     PlaceholderWidget(PrestacionPageAdmin()),
     PlaceholderWidget(RequestPage()),
     PlaceholderWidget(ProfileUser())

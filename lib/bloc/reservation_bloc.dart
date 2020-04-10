@@ -26,6 +26,23 @@ class ReservationBloc {
     return querySnapshot;
   }
 
+  Future<List<ReservationModel>> loadReservationsByClub() async {
+    _loadingController.sink.add(true);
+    var querySnapshot = await _reservationProvider.loadReservations();
+    var _userPreferences = UserPreferences();
+
+    var clubAdminId = _userPreferences.clubAdminId;
+    List<ReservationModel> temp = new List();
+    for (var reserva in querySnapshot) {
+      if (reserva.clubAdminId == clubAdminId) {
+        temp.add(reserva);
+      }
+    }
+    _loadingController.sink.add(false);
+
+    return temp;
+  }
+
   Stream<List<ReservationModel>> loadReservationsSnap() {
     return _reservationProvider.loadReservationListSnap();
   }
