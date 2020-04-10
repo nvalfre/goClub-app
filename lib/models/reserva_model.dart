@@ -21,6 +21,7 @@ class ReservationModel {
   String timeDesde;
   String timeHasta;
   String estado;
+  String precio;
   String date;
   String clubAdminId;
 
@@ -41,6 +42,7 @@ class ReservationModel {
     this.date,
     this.uniqueId,
     this.clubAdminId,
+    this.precio,
   });
 
   factory ReservationModel.fromJson(Map<String, dynamic> json) => ReservationModel(
@@ -59,6 +61,7 @@ class ReservationModel {
     estado: json["estado"],
     date: json["date"],
     clubAdminId: json["clubAdminId"],
+    precio: json["precio"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -77,6 +80,7 @@ class ReservationModel {
     "estado": estado,
     "date": date,
     "clubAdminId": clubAdminId,
+    "precio": precio,
   };
 
   factory ReservationModel.fromSnapshot(DocumentSnapshot snap) => ReservationModel(
@@ -95,6 +99,7 @@ class ReservationModel {
     estado: snap.data["estado"],
     date: snap.data["date"],
     clubAdminId: snap.data["clubAdminId"],
+    precio: snap.data["precio"],
   );
   factory ReservationModel.fromQuerySnapshot(QuerySnapshot snap) {
     var document = snap.documents[0];
@@ -114,6 +119,7 @@ class ReservationModel {
       estado: document.data["estado"],
       date: document.data["date"],
       clubAdminId: document.data["clubAdminId"],
+      precio: document.data["precio"],
     );
   }
 

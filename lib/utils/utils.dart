@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_go_club_app/models/user_model.dart';
 
 bool isNumeric(String s) {
   if (s.isEmpty) return false;
@@ -15,6 +16,14 @@ bool hasMoreLenghtThan(String s, int lenght) {
   } else {
     return false;
   }
+}
+GetUserByName(List<UserModel> users ,name) {
+  var value;
+  for (var user in users) {
+    if(user.name == name)
+    value = user;
+  }
+  return value;
 }
 
 void showAlert(BuildContext context, String message) {

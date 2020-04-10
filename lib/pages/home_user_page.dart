@@ -86,6 +86,7 @@ class HomePage extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           Container(
             height: 125,
@@ -111,7 +112,7 @@ class HomePage extends StatelessWidget {
                     style: Theme.of(context).textTheme.subhead,
                     overflow: TextOverflow.ellipsis),
                 Text((club.available) ? 'Disponible' : 'No disponible',
-                    style: Theme.of(context).textTheme.display1,
+                    style: Theme.of(context).textTheme.body1,
                     overflow: TextOverflow.ellipsis),
               ],
             ),

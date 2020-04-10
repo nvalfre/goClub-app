@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
+import 'package:flutter_go_club_app/models/access_role_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
@@ -18,6 +19,7 @@ class ReservaClubUserPage extends StatefulWidget {
 }
 
 class ReservaClubUserPageState extends State<ReservaClubUserPage> {
+  String _role;
   String _date;
   String _timeDesde;
   String _timeHasta;
@@ -48,22 +50,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
         ],
       ),
       drawer: UserDrawer(),
-      floatingActionButton: Container(
-        width: 40.0,
-        height: 40.0,
-        child: new RawMaterialButton(
-          fillColor: Colors.blueAccent,
-          shape: new CircleBorder(),
-          elevation: 0.0,
-          child: new Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.pushNamed(context, 'reservasCRUD');
-          },
-        ),
-      ),
+      floatingActionButton: buildFloatingActionButton(context),
       body: SingleChildScrollView(
           child: Container(
         child: Column(
@@ -89,6 +76,29 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
         ),
       )),
     );
+  }
+
+  Container buildFloatingActionButton(BuildContext context) {
+    if(_role != null && _role==AccessStatus.CLUB_ADMIN){
+      return Container(
+        width: 40.0,
+        height: 40.0,
+        child: new RawMaterialButton(
+          fillColor: Colors.blueAccent,
+          shape: new CircleBorder(),
+          elevation: 0.0,
+          child: new Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pushNamed(context, 'reservasCRUD');
+          },
+        ),
+      );
+    }
+    return null;
+
   }
 
   _getTimeDesde(BuildContext context) {
@@ -239,20 +249,21 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
 
   void validateAndLoadArguments(BuildContext context) async {
     var userPreferences = UserPreferences();
-
+    _role = userPreferences.role;
     if (userPreferences.reserva != "" && userPreferences.reserva != null) {
       _reservaModel = new ReservationModel();
 
-      _reservaModel.id = userPreferences.reserva;
-      _reservaModel.name = userPreferences.reservaName;
-      _reservaModel.description = userPreferences.reservaDescription;
-      _reservaModel.avatar = userPreferences.reservaAvatar;
-      _reservaModel.prestacionId = userPreferences.prestacionId;
-      _reservaModel.timeDesde = userPreferences.reservaTimeDesde;
-      _reservaModel.timeHasta = userPreferences.reservaTimeHasta;
-      _reservaModel.date = userPreferences.reservaDate;
-      _reservaModel.estado = userPreferences.reservaEstado;
-      _reservaModel.available = userPreferences.reservaAvailable == "true" ? true : false;
+      _reservaModel.id = userPreferences.reserva != null ? userPreferences.reserva : "";
+      _reservaModel.name = userPreferences.reservaName != null ? userPreferences.reservaName : "";
+      _reservaModel.description = userPreferences.reservaDescription != null ? userPreferences.reservaDescription : "";
+      _reservaModel.avatar = userPreferences.reservaAvatar != null ? userPreferences.reservaAvatar : "";
+      _reservaModel.prestacionId = userPreferences.prestacionId != null ? userPreferences.prestacionId : "";
+      _reservaModel.timeDesde = userPreferences.reservaTimeDesde != null ? userPreferences.reservaTimeDesde : "";
+      _reservaModel.timeHasta = userPreferences.reservaTimeHasta != null ? userPreferences.reservaTimeHasta : "";
+      _reservaModel.date = userPreferences.reservaDate != null ? userPreferences.reservaDate : "";
+      _reservaModel.estado = userPreferences.reservaEstado != null ? userPreferences.reservaEstado : "";
+      _reservaModel.precio = userPreferences.reservaPrecio != null ? userPreferences.reservaPrecio : "";
+      _reservaModel.available = userPreferences.reservaAvailable == "true" || userPreferences.reservaAvailable == true ? true : false;
     } else {
       _reservaModel = new ReservationModel();
     }
@@ -279,7 +290,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                 _getTimeDesde(context),
                 _getTimeHasta(context),
                 _getAvailable(),
-                _getEditButton(),
+                _getReservaSolicitudButton(),
               ],
             ),
           ),
@@ -306,7 +317,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.justify),
                       SizedBox(
-                        height: 5,
+                        height: 2,
                       ),
                       Text("Descripcion:",
                           style: Theme.of(context).textTheme.headline),
@@ -316,6 +327,24 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.justify,
                       ),
+                      SizedBox(
+                        height: 2,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                        Text(r"Precio: $",
+                            style: Theme.of(context).textTheme.headline),
+                          SizedBox(
+                            width: 5,
+                          ),
+                        Text(
+                          _reservaModel.precio,
+                          style: TextStyle(color: Colors.black, fontSize: 22),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.justify,
+                        ),
+                      ],)
                     ],
                   )))
         ],
@@ -357,16 +386,70 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
     return color;
   }
 
-  Widget _getEditButton() {
-    return RaisedButton.icon(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-      color: Colors.blueAccent,
-      textColor: Colors.white,
-      label: Text('     Editar         '),
-      icon: Icon(Icons.edit),
-      onPressed: () => Navigator.pushNamed(context, 'reservasCRUD',
-          arguments: _reservaModel),
-    );
+  Widget _getReservaSolicitudButton() {
+    if(_role != null){
+      switch (_role) {
+        case AccessStatus.CLUB_ADMIN:
+          switch (_reservaModel.estado) {
+            case 'Solicitado':
+              return RaisedButton.icon(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                color: Colors.blueAccent,
+                textColor: Colors.white,
+                label: Text('     Ver solicitud      '),
+                icon: Icon(Icons.edit),
+                onPressed: () => Navigator.pushNamed(context, 'reservasCRUD',
+                    arguments: _reservaModel),
+              );
+            case '':
+              break;
+            default:
+              return Container();
+          }
+        break;
+
+        case AccessStatus.USER:
+          switch (_reservaModel.estado) {
+            case 'Solicitado':
+            case 'Aceptado':
+              return RaisedButton.icon(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                color: Colors.blueAccent,
+                textColor: Colors.white,
+                label: Text('     Ver solicitud      '),
+                icon: Icon(Icons.arrow_forward),
+                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser',
+                    arguments: _reservaModel),
+              );
+            case 'Sin establecer':
+              return RaisedButton.icon(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                color: Colors.blueAccent,
+                textColor: Colors.white,
+                label: Text('  Solicitar Reserva  '),
+                icon: Icon(Icons.edit),
+                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser',
+                    arguments: _reservaModel),
+              );
+              break;
+            case 'Disponible':
+              return RaisedButton.icon(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                color: Colors.blueAccent,
+                textColor: Colors.white,
+                label: Text('  Solicitar Reserva  '),
+                icon: Icon(Icons.edit),
+                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser',
+                    arguments: _reservaModel),
+              );
+              break;
+            case 'No disponible':
+            default:
+              return Container();
+          }
+      }
+      return Container();
+    }
   }
 
   Widget _showLogo() {
