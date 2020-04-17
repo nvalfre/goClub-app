@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/models/access_role_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
-import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
+import 'package:flutter_go_club_app/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
@@ -339,7 +339,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                             width: 5,
                           ),
                         Text(
-                          _reservaModel.precio,
+                          _reservaModel.precio != null ? _reservaModel.precio : "",
                           style: TextStyle(color: Colors.black, fontSize: 22),
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.justify,

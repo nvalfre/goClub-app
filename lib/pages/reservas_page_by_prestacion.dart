@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
-import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
+import 'package:flutter_go_club_app/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
@@ -28,15 +28,19 @@ class ReservaClubUserPageByPrestacionState
   ReservationBloc _reservasBloc;
   PrestacionModel _prestacionModel;
   List<ReservationModel> _reservationList;
+  var prestacionId;
+  var prestacionName;
+
   @override
   Widget build(BuildContext context) {
     validateAndLoadArguments(context);
 
     _reservasBloc = Provider.reservationBloc(context);
     return Scaffold(
+      drawer: UserDrawer(),
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Reservas - ${_prestacionModel.name}'),
+        title: Text('Reservas - ${prestacionName}'),
         backgroundColor: Colors.green,
         actions: <Widget>[
           IconButton(
@@ -82,6 +86,7 @@ class ReservaClubUserPageByPrestacionState
                       children: <Widget>[
                         _swiperTarjetas(),
                         _detailsColumn(),
+                        _getBackButton(),
                       ],
                     ),
                   ),
@@ -95,7 +100,7 @@ class ReservaClubUserPageByPrestacionState
   }
 
   _getTimeDesde(BuildContext context) {
-    _timeDesde = _reservaModel.timeDesde == ""
+    _timeDesde = _reservaModel.timeDesde == "" || _reservaModel.timeDesde == null
         ? 'Desde: No establecido'
         : _reservaModel.timeDesde;
     return Container(
@@ -133,7 +138,7 @@ class ReservaClubUserPageByPrestacionState
   }
 
   _getTimeHasta(BuildContext context) {
-    _timeHasta = _reservaModel.timeHasta == ""
+    _timeHasta = _reservaModel.timeHasta == "" || _reservaModel.timeHasta == null
         ? 'Hasta: No establecido'
         : _reservaModel.timeHasta;
     return Container(
@@ -172,7 +177,7 @@ class ReservaClubUserPageByPrestacionState
 
   _getDate(BuildContext context) {
     _date =
-        _reservaModel.date == "" ? 'Desde: No establecido' : _reservaModel.date;
+        _reservaModel.date == "" || _reservaModel.date == null ? 'Desde: No establecido' : _reservaModel.date;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -229,7 +234,7 @@ class ReservaClubUserPageByPrestacionState
                   ReservasHorizontal(
                     reservas: _reservationList,
                     siguientePagina: _reservasBloc.loadReservationsSnap,
-                    prestacionId: _prestacionModel.id,
+                    prestacionId: _reservaModel.id,
                   ),
                 ],
               ),
@@ -245,14 +250,17 @@ class ReservaClubUserPageByPrestacionState
   }
 
   void validateAndLoadArguments(BuildContext context) async {
-    final PrestacionModel prestacionModel =
-        ModalRoute.of(context).settings.arguments;
+    final ReservationModel reservaModel =  ModalRoute.of(context).settings.arguments;
 
-    if (prestacionModel != null) {
-      _prestacionModel = prestacionModel;
+    var userPreferences = UserPreferences();
+    prestacionId = userPreferences.prestacionId;
+    prestacionName = userPreferences.prestacionName;
+
+    if (reservaModel != null) {
+      _reservaModel = reservaModel;
+    } else {
+      _reservaModel = ReservationModel();
     }
-
-      _reservaModel = new ReservationModel();
 
   }
 
@@ -297,19 +305,19 @@ class ReservaClubUserPageByPrestacionState
                   padding: EdgeInsets.only(left: 10),
                   child: Column(
                     children: <Widget>[
-                      Text("Prestación:",
+                      Text("Reserva:",
                           style: Theme.of(context).textTheme.headline),
-                      Text(_prestacionModel.name,
+                      Text(_reservaModel.name,
                           style: TextStyle(color: Colors.black, fontSize: 20),
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.justify),
                       SizedBox(
                         height: 5,
                       ),
-                      Text("Descripcion:",
+                      Text("Descripción:",
                           style: Theme.of(context).textTheme.headline),
                       Text(
-                        _prestacionModel.description,
+                        _reservaModel.description,
                         style: TextStyle(color: Colors.black, fontSize: 20),
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.justify,
@@ -374,7 +382,7 @@ class ReservaClubUserPageByPrestacionState
         child: Column(
           children: <Widget>[
             Hero(
-              tag: _prestacionModel.uniqueId ?? '',
+              tag: _reservaModel.uniqueId ?? '',
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15.0),
                 child: FadeInImage(
@@ -389,7 +397,7 @@ class ReservaClubUserPageByPrestacionState
         ),
       );
     }
-    if (_prestacionModel.avatar != null && _prestacionModel.avatar != "") {
+    if (_reservaModel.avatar != null && _reservaModel.avatar != "") {
       return _fadeInImageFromNetworkWithJarHolder();
     } else {
       return Image(
@@ -408,16 +416,16 @@ class ReservaClubUserPageByPrestacionState
         alignment: Alignment.center,
         decoration: new BoxDecoration(
           image: DecorationImage(
-              image: NetworkImage(_prestacionModel.avatar), fit: BoxFit.fill),
+              image: NetworkImage(_reservaModel.avatar), fit: BoxFit.fill),
         ),
       ),
-      onTap: () => Navigator.pushNamed(context, 'prestacionCRUD',
-          arguments: _prestacionModel),
+      onTap: () => Navigator.pushNamed(context, 'reservasCRUD',
+          arguments: _reservaModel),
     );
   }
 
   filterByPrestacionId(List<ReservationModel> list) {
-    var idNoPoster = _prestacionModel.id.split("-poster");
+    var idNoPoster = prestacionId.split("-poster");
     List<ReservationModel> temp = new List();
     for (var reserva in list) {
       if(reserva.prestacionId == idNoPoster[0]){
@@ -425,6 +433,20 @@ class ReservaClubUserPageByPrestacionState
       }
     }
     return temp;
+  }
+
+  _getBackButton() {
+    return RaisedButton.icon(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      color: Colors.blueAccent,
+      textColor: Colors.white,
+      label: Text('Volver'),
+      icon: Icon(Icons.arrow_back),
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => RootHomeNavBar(2)),
+      ),
+    );
   }
 }
 
@@ -498,11 +520,8 @@ class ReservasHorizontal extends StatelessWidget {
       onTap: () {
         var userPreferences = UserPreferences();
         userPreferences.reserva = reserva;
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => RootHomeNavBar(1)),
-        );
-      },
+        Navigator.pushNamed(context, 'reservaDetalle', arguments: reserva);
+      }
     );
   }
 }

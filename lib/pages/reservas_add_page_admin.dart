@@ -235,6 +235,7 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     UserPreferences _pref = UserPreferences();
 if(_pref.clubAdminId != null){
   if (_reserva.id == null ) {
+    _reserva.estado = 'Disponible';
     _reserva.clubAdminId = _pref.clubAdminId;
     _reservasBloc.addReserva(_reserva);
     setState(() {

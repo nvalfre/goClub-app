@@ -61,6 +61,12 @@ class ClubServiceImpl {
   Stream<ClubModel> loadClubStream(String uid)  {
     return getUserSnap(uid).map((user) => ClubModel.fromQuerySnapshot(user));
   }
-
   Stream<QuerySnapshot> getUserSnap(String uid) => db.where('id', isEqualTo: uid).snapshots();
+
+
+
+  Stream<ClubModel> loadClubStreamByClubId(String clubAdminId)  {
+    return getUserSnapByClubId(clubAdminId).map((user) => ClubModel.fromQuerySnapshot(user));
+  }
+  Stream<QuerySnapshot> getUserSnapByClubId(String clubAdminId) => db.where('clubAdminId', isEqualTo: clubAdminId).snapshots();
 }
