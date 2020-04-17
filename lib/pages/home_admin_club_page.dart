@@ -5,7 +5,7 @@ import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/models/user_model.dart';
-import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
+import 'package:flutter_go_club_app/root_nav_bar.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
@@ -44,11 +44,148 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
                 ? populateClubAndUserData(snapshot.data, context)
                 : Text('Club sin direccion cargada.');
           } else {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+              child: _createClub(context, prefs.user, clubBloc),
+            );
           }
         },
       ),
       drawer: UserDrawer(),
+    );
+  }
+
+  Widget _createClub(BuildContext context, String user, ClubsBloc clubsBloc) {
+    return StreamBuilder(
+      stream: clubsBloc.loadClubStreamByClubId(user),
+      builder: (BuildContext context, AsyncSnapshot<ClubModel> snapshot) {
+        if (snapshot.hasData) {
+          ClubModel club = snapshot.data;
+          return _getDescriptionContainerClub(context, club);
+        }
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  Widget getImageUrlWidget(ClubModel club) {
+    return (club.logoUrl == null)
+        ? Image(image: AssetImage('assets/images/no-image.png'))
+        : FadeInImage(
+            image: NetworkImage(club.logoUrl),
+            placeholder: AssetImage('assets/images/jar-loading.jpg'),
+            height: 300.0,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          );
+  }
+
+  Widget _getDescriptionContainerClub(BuildContext context, ClubModel club) {
+    return _rowWidgetWithNameAndDescriptionsClub(club, context);
+
+//      InkWell(
+//      onTap: () => Navigator.pushNamed(context, 'clubs', arguments: club),
+//      child: _rowWidgetWithNameAndDescriptionsClub(club, context),
+//    );
+  }
+
+  Container _rowWidgetWithNameAndDescriptionsClub(
+      ClubModel club, BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 80, vertical: 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Container(
+            height: 200,
+            width: 100,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Image(
+                  image: (club.logoUrl == null)
+                      ? AssetImage('assets/images/no-image.png')
+                      : NetworkImage(club.logoUrl),
+                  height: 110,
+                  fit: BoxFit.contain),
+            ),
+          ),
+          SizedBox(width: 5),
+          Flexible(
+            child: Column(
+              children: <Widget>[
+                Text(club.name,
+                    style: Theme.of(context).textTheme.title,
+                    overflow: TextOverflow.ellipsis),
+                Text(club.description,
+                    style: Theme.of(context).textTheme.subhead,
+                    overflow: TextOverflow.ellipsis),
+                Text((club.available) ? 'Disponible' : 'No disponible',
+                    style: Theme.of(context).textTheme.body1,
+                    overflow: TextOverflow.ellipsis),
+              ],
+            ),
+          ),
+          Divider(
+            thickness: 1,
+            height: 3,
+          ),
+          ButtonTheme(
+            minWidth: 150.0,
+            height: 35.0,
+            child: RaisedButton.icon(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0)),
+              color: Colors.green,
+              textColor: Colors.white,
+              label: Text('Reservas'),
+              icon: Icon(Icons.collections_bookmark),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RootHomeNavBar(1)),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 3,
+          ),
+          ButtonTheme(
+            minWidth: 150.0,
+            height: 35.0,
+            child: RaisedButton.icon(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0)),
+              color: Colors.green,
+              textColor: Colors.white,
+              label: Text('Prestaciones'),
+              icon: Icon(Icons.schedule),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RootHomeNavBar(2)),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 3,
+          ),
+          ButtonTheme(
+            minWidth: 150.0,
+            height: 35.0,
+            child: RaisedButton.icon(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0)),
+              color: Colors.green,
+              textColor: Colors.white,
+              label: Text('Solicitudes'),
+              icon: Icon(Icons.room_service),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RootHomeNavBar(3)),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -91,6 +228,7 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
   }
 
   Container rowUser(UserModel _user) {
+    var data = _user.name + ' ' + _user.lastName;
     return Container(
       height: 100.0,
       child: Row(
@@ -102,17 +240,13 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
           Container(
             alignment: Alignment.center,
             padding: EdgeInsets.only(left: 10, top: 30),
-            child: Column(
-              children: <Widget>[
-                Text(
-                  _user.name + ' ' + _user.lastName,
+            child: Text(
+                  data.substring(0,20),
                   style: TextStyle(
                       fontSize: 30.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.black),
                 ),
-              ],
-            ),
           )
         ],
       ),
@@ -176,7 +310,8 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
             getReservaRowWithAction(context, reservas[2], reservationBloc),
             GestureDetector(
                 child: RaisedButton.icon(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0)),
                     color: Colors.green,
                     textColor: Colors.white,
                     onPressed: () {

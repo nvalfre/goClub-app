@@ -3,12 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/prestation_bloc.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
-import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
+import 'package:flutter_go_club_app/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/search_delegate.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
-import 'package:flutter_go_club_app/utils/utils.dart' as utils;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'draw/draw_widget_user.dart';
 
@@ -20,18 +18,19 @@ class PrestacionPageAdmin extends StatefulWidget {
 class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
   PrestacionBloc _prestacionBloc;
 
-  PrestacionModel _prestacionModel = PrestacionModel();
+  PrestacionModel _prestacionModel;
 
   File _photo;
 
   @override
   Widget build(BuildContext context) {
+    _prestacionModel = PrestacionModel();
     _prestacionBloc = Provider.prestacionBloc(context);
     validateAndLoadArguments(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Prestacion'),
+        title: Text('Prestaciones del club'),
         backgroundColor: Colors.green,
         actions: <Widget>[
           IconButton(
@@ -64,25 +63,39 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
       ),
       body: SingleChildScrollView(
           child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            _swiperTarjetas(),
-            _detailsColumn(),
-          ],
-        ),
-      )),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                _swiperTarjetas(),
+                _detailsColumn(),
+              ],
+            ),
+          )),
     );
+  }
+
+  List<PrestacionModel> filterPrestacionesByClub(
+      List<PrestacionModel> prestaciones) {
+    var _userPreferences = UserPreferences();
+    var clubAdminId = _userPreferences.clubAdminId;
+    var response = new List<PrestacionModel>();
+    prestaciones.forEach((prestacion) {
+      if (prestacion.idClub == clubAdminId) {
+        response.add(prestacion);
+      }
+    });
+    return response;
   }
 
   Widget _swiperTarjetas() {
     return Container(
       padding: EdgeInsets.only(top: 10),
-      child: FutureBuilder(
-        future: _prestacionBloc.loadPrestaciones(),
+      child: StreamBuilder(
+        stream: _prestacionBloc.loadPrestacionesSnap(),
         builder: (BuildContext context,
             AsyncSnapshot<List<PrestacionModel>> snapshot) {
           if (snapshot.hasData) {
+            var prestaciones = filterPrestacionesByClub(snapshot.data);
             return Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,8 +106,8 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
                           style: Theme.of(context).textTheme.subhead)),
                   SizedBox(height: 5.0),
                   PrestacionHorizontal(
-                    prestaciones: snapshot.data,
-                    siguientePagina: _prestacionBloc.loadPrestaciones,
+                    prestaciones: prestaciones,
+                    siguientePagina: _prestacionBloc.loadPrestacionesSnap,
                   ),
                 ],
               ),
@@ -118,9 +131,9 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
       _prestacionModel.description = userPreferences.prestacionDescription;
       _prestacionModel.avatar = userPreferences.prestacionAvatar;
       _prestacionModel.available =
-          userPreferences.prestacionAvailable == "true" ? true : false;
+      userPreferences.prestacionAvailable == "true" ? true : false;
       _prestacionModel.isClass =
-          userPreferences.prestacionIsClass == "true" ? true : false;
+      userPreferences.prestacionIsClass == "true" ? true : false;
     } else {
       _prestacionModel = new PrestacionModel();
     }
@@ -202,6 +215,7 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
     return Container(
         padding: EdgeInsets.only(right: 10, left: 10),
         child: CheckboxListTile(
+          onChanged: null,
           value: _prestacionModel.available,
           activeColor: Colors.lightBlueAccent,
           title: Text('Disponible', style: Theme.of(context).textTheme.subhead),
@@ -212,6 +226,7 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
     return Container(
         padding: EdgeInsets.only(right: 10, left: 10),
         child: CheckboxListTile(
+          onChanged: null,
           value: _prestacionModel.isClass,
           activeColor: Colors.lightBlueAccent,
           title: Text('Clase', style: Theme.of(context).textTheme.subhead),
@@ -270,10 +285,17 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
       textColor: Colors.white,
       label: Text('Ver Reservas'),
       icon: Icon(Icons.details),
-      onPressed: () => {
-        Navigator.pushNamed(context, 'reservaDetalle', arguments: _prestacionModel)
+      onPressed: () =>
+      {
+        pushToReservasDetails()
       },
     );
+  }
+
+  Future<Object> pushToReservasDetails() {
+    var userPreferences = UserPreferences();
+    userPreferences.prestacion = _prestacionModel;
+    return Navigator.pushNamed(context, 'reservaDetalle');
   }
 
   Widget _getEditButton() {
@@ -283,8 +305,9 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
       textColor: Colors.white,
       label: Text('     Editar         '),
       icon: Icon(Icons.edit),
-      onPressed: () => Navigator.pushNamed(context, 'prestacionCRUD',
-          arguments: _prestacionModel),
+      onPressed: () =>
+          Navigator.pushNamed(context, 'prestacionCRUD',
+              arguments: _prestacionModel),
     );
   }
 }
@@ -297,7 +320,7 @@ class PrestacionHorizontal extends StatelessWidget {
       {@required this.prestaciones, @required this.siguientePagina});
 
   final _pageController =
-      new PageController(initialPage: 1, viewportFraction: 0.3);
+  new PageController(initialPage: 1, viewportFraction: 0.3);
 
   @override
   Widget build(BuildContext context) {
@@ -311,13 +334,21 @@ class PrestacionHorizontal extends StatelessWidget {
     });
 
     return Container(
-        height: _screenSize.height * 0.15,
-        child: PageView.builder(
-          pageSnapping: false,
-          controller: _pageController,
-          itemCount: prestaciones.length,
-          itemBuilder: (context, i) => _tarjeta(context, prestaciones[i]),
-        ));
+      height: _screenSize.height * 0.15,
+      child: PageView.builder(
+        pageSnapping: false,
+        controller: _pageController,
+        itemCount: prestaciones != null ? prestaciones.length : 1,
+        itemBuilder: (context, i) => prestaciones != null
+            ? _tarjeta(context, prestaciones[i])
+            : Container(
+                alignment: Alignment.center,
+                child: new Text('Sin reservas',
+                    style: Theme.of(context).textTheme.title,
+                overflow: TextOverflow.ellipsis),
+              ),
+      ),
+    );
   }
 
   Widget _tarjeta(BuildContext context, PrestacionModel prestacion) {
@@ -333,16 +364,16 @@ class PrestacionHorizontal extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15.0),
                 child: prestacion.avatar != null && prestacion.avatar != ""
                     ? FadeInImage(
-                        image: NetworkImage(prestacion.avatar),
-                        placeholder: AssetImage('assets/images/no-image.png'),
-                        fit: BoxFit.cover,
-                        height: 80.0,
-                      )
+                      image: NetworkImage(prestacion.avatar),
+                      placeholder: AssetImage('assets/images/no-image.png'),
+                      fit: BoxFit.cover,
+                      height: 80.0,
+                    )
                     : Image(
-                        image: AssetImage('assets/images/no-image.png'),
-                        height: 80.0,
-                        fit: BoxFit.cover,
-                      )),
+                      image: AssetImage('assets/images/no-image.png'),
+                      height: 80.0,
+                      fit: BoxFit.cover,
+                    )),
           ),
           SizedBox(height: 5.0),
           Text(

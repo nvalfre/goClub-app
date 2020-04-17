@@ -225,7 +225,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       textColor: Colors.white,
       label: Text('Solicitar'),
       icon: Icon(Icons.add_box),
-      onPressed: (_solicitando) ? null : _submitWithFormValidation,
+      onPressed: (_solicitando || _reserva.estado == 'Aceptado') ? null : _submitWithFormValidation,
     );
 
     if (_reserva.estado != 'Disponible') {
@@ -290,10 +290,10 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   void _saveForID() {
     UserPreferences _pref = UserPreferences();
 
-    _reserva.estado = 'Solicitado';
     if (_reserva.id != null) {
       _reservasBloc.editReservation(_reserva);
       setState(() {
+        _reserva.estado = 'Solicitado';
         _pref.reserva = _reserva;
         _solicitando = false;
       });

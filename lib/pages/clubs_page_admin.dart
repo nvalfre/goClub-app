@@ -7,7 +7,7 @@ import 'package:flutter_go_club_app/models/access_role_model.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:flutter_go_club_app/pages/draw/draw_widget_admin.dart';
-import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
+import 'package:flutter_go_club_app/root_nav_bar.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:flutter_go_club_app/utils/utils.dart';
@@ -186,7 +186,7 @@ class _ClubPageState extends State<ClubsPageAdmin> {
   }
 
   void _submitWithFormValidation() async {
-    if (!formKey.currentState.validate()) return;
+//    if (!formKey.currentState.validate()) return;
 
     formKey.currentState.save();
     setState(() {
@@ -197,8 +197,8 @@ class _ClubPageState extends State<ClubsPageAdmin> {
       _club.logoUrl = await _bloc.uploadPhoto(_photo);
     }
     UserModel userModel;
-    if (selectedUser != null) {
-      userModel = selectedUser;
+    if (selectedUser != null || selectedUserName != null ) {
+      userModel = selectedUser != null ? selectedUser : GetUserByName(userList, selectedUserName);
       userModel.idClub = _club.id;
       userModel.role = AccessStatus.CLUB_ADMIN;
       _club.clubAdminId = userModel.id;
@@ -358,7 +358,7 @@ class _ClubPageState extends State<ClubsPageAdmin> {
     List<String> temp = List();
     final list = snapshot.data;
     for (var users in list) {
-      if (users.role == AccessStatus.USER) {
+      if (users.role != AccessStatus.ADMIN) {
         temp.add(users.name);
         userList.add(users);
       }

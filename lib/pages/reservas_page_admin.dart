@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
-import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
+import 'package:flutter_go_club_app/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
@@ -172,8 +172,9 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
   }
 
   _getDate(BuildContext context) {
-    _date =
-        _reservaModel.date == "" ? 'Desde: No establecido' : _reservaModel.date;
+    _date = _reservaModel.date == "" || _reservaModel.date == null
+        ? 'Desde: No establecido'
+        : _reservaModel.date;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -208,6 +209,18 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
     );
   }
 
+  List<ReservationModel> filterReservasByClub(List<ReservationModel> reservas) {
+    var _userPreferences = UserPreferences();
+    var clubAdminId = _userPreferences.clubAdminId;
+    var response = new List<ReservationModel>();
+    reservas.forEach((reserva) {
+      if (reserva.clubAdminId == clubAdminId) {
+        response.add(reserva);
+      }
+    });
+    return response;
+  }
+
   Widget _swiperTarjetas() {
     return Container(
       padding: EdgeInsets.only(top: 10),
@@ -216,6 +229,8 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
         builder: (BuildContext context,
             AsyncSnapshot<List<ReservationModel>> snapshot) {
           if (snapshot.hasData) {
+            var reservas = filterReservasByClub(snapshot.data);
+
             return Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,47 +240,8 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
                       child: Text('Reservas',
                           style: Theme.of(context).textTheme.subhead)),
                   SizedBox(height: 5.0),
-                  snapshot.data.length == 1 ?
-                  GestureDetector(child: Container(
-                    margin: EdgeInsets.only(right: 10.0),
-                    child: Column(
-                      children: <Widget>[
-                        Hero(
-                          tag: snapshot.data[0].id,
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(15.0),
-                              child: snapshot.data[0].avatar != null && snapshot.data[0].avatar != ""
-                                  ? FadeInImage(
-                                image: NetworkImage(snapshot.data[0].avatar),
-                                placeholder: AssetImage('assets/images/no-image.png'),
-                                fit: BoxFit.cover,
-                                height: 80.0,
-                              )
-                                  : Image(
-                                image: AssetImage('assets/images/no-image.png'),
-                                height: 80.0,
-                                fit: BoxFit.cover,
-                              )),
-                        ),
-                        SizedBox(height: 5.0),
-                        Text(
-                          snapshot.data[0].name,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.caption,
-                        ),
-                      ],
-                    ),
-                  ),
-                    onTap: () {
-                      var userPreferences = UserPreferences();
-                      userPreferences.reserva = snapshot.data[0];
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RootHomeNavBar(1)),
-                      );
-                    },)
-                  : ReservasHorizontal(
-                    reservas: snapshot.data,
+                  ReservasHorizontal(
+                    reservas: reservas,
                     siguientePagina: _reservasBloc.loadReservationsSnap,
                   ),
                 ],
@@ -282,7 +258,6 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
   }
 
   void validateAndLoadArguments(BuildContext context) async {
-
     if (_userPreferences.reserva != "" && _userPreferences.reserva != null) {
       _reservaModel = new ReservationModel();
 
@@ -295,7 +270,8 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
       _reservaModel.timeHasta = _userPreferences.reservaTimeHasta;
       _reservaModel.date = _userPreferences.reservaDate;
       _reservaModel.estado = _userPreferences.reservaEstado;
-      _reservaModel.available = _userPreferences.reservaAvailable == "true" ? true : false;
+      _reservaModel.available =
+          _userPreferences.reservaAvailable == "true" ? true : false;
     } else {
       _reservaModel = new ReservationModel();
     }
@@ -321,7 +297,10 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
                 SizedBox(height: 10.0),
                 _getTimeDesde(context),
                 _getTimeHasta(context),
-                _getAvailableAndButtom(),
+                Container(
+                  padding: EdgeInsets.only(top: 10),
+                  child: _getAvailableAndButtom(),
+                ),
               ],
             ),
           ),
@@ -371,10 +350,36 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
 
     var estado = _reservaModel.estado == "" || _reservaModel.estado == null
         ? 'Sin establecer'
-        : _reservaModel.estado;
+        : _reservaModel.id == null ? '   -   ' : _reservaModel.estado;
 
     Color color = Colors.blueAccent;
-    var richText = RichText(
+
+    if (estado == solicitado) {
+      color = Colors.orange;
+
+      return Column(
+        children: <Widget>[
+          _getRichTextState(estado, color),
+          _getAceptarButtom()
+        ],
+      );
+    } else if (estado.contains('-')) {
+      color = Colors.grey;
+      return _getRichTextState(estado, color);
+    } else if (estado == aceptado) {
+      color = Colors.greenAccent;
+      return Column(
+        children: <Widget>[_getRichTextState(estado, color), _getEditButton()],
+      );
+    } else {
+      return Column(
+        children: <Widget>[_getRichTextState(estado, color), _getEditButton()],
+      );
+    }
+  }
+
+  RichText _getRichTextState(String estado, Color color) {
+    return RichText(
       text: TextSpan(
         children: [
           TextSpan(
@@ -384,38 +389,6 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
         ],
       ),
     );
-
-    if (estado == solicitado) {
-      color = Colors.orange;
-
-      return Column(
-        children: <Widget>[richText, _getAceptarButtom()],
-      );
-    } else if (estado == aceptado) {
-      color = Colors.greenAccent;
-      return Column(
-        children: <Widget>[richText, _getEditButton()],
-      );
-    } else {
-      return Column(
-        children: <Widget>[richText, _getEditButton()],
-      );
-    }
-  }
-
-  Color handleColorState(String estado) {
-    Color color;
-    String noDispnible = 'No disponible';
-    String disponible = 'Disponible';
-    String reservado = 'Reservado';
-    if (estado == noDispnible || estado == reservado) {
-      color = Colors.red;
-    } else if (estado == disponible) {
-      color = Colors.green;
-    } else {
-      color = Colors.blueAccent;
-    }
-    return color;
   }
 
   Widget _getEditButton() {
@@ -497,9 +470,8 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
           arguments: _reservaModel),
     );
   }
+}
 
-
-  }
 class ReservasHorizontal extends StatelessWidget {
   List<ReservationModel> reservas;
   final Function siguientePagina;
@@ -524,8 +496,15 @@ class ReservasHorizontal extends StatelessWidget {
         child: PageView.builder(
           pageSnapping: false,
           controller: _pageController,
-          itemCount: reservas.length,
-          itemBuilder: (context, i) => _tarjeta(context, reservas[i]),
+          itemCount: reservas != null ? reservas.length : 1,
+          itemBuilder: (context, i) => reservas != null
+              ? _tarjeta(context, reservas[i])
+              : Container(
+                  alignment: Alignment.center,
+                  child: new Text('Sin reservas',
+                      style: Theme.of(context).textTheme.title,
+                      overflow: TextOverflow.ellipsis),
+                ),
         ));
   }
 
@@ -543,16 +522,16 @@ class ReservasHorizontal extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15.0),
                   child: reserva.avatar != null && reserva.avatar != ""
                       ? FadeInImage(
-                    image: NetworkImage(reserva.avatar),
-                    placeholder: AssetImage('assets/images/no-image.png'),
-                    fit: BoxFit.cover,
-                    height: 80.0,
-                  )
+                          image: NetworkImage(reserva.avatar),
+                          placeholder: AssetImage('assets/images/no-image.png'),
+                          fit: BoxFit.cover,
+                          height: 80.0,
+                        )
                       : Image(
-                    image: AssetImage('assets/images/no-image.png'),
-                    height: 80.0,
-                    fit: BoxFit.cover,
-                  )),
+                          image: AssetImage('assets/images/no-image.png'),
+                          height: 80.0,
+                          fit: BoxFit.cover,
+                        )),
             ),
             SizedBox(height: 5.0),
             Text(

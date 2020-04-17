@@ -5,7 +5,7 @@ import 'package:flutter_go_club_app/bloc/prestation_bloc.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/pages/prestacion_admin_detalle_page.dart';
-import 'package:flutter_go_club_app/pages/root_nav_bar.dart';
+import 'package:flutter_go_club_app/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';

@@ -167,12 +167,19 @@ class _PrestacionAddPageAdminState extends State<PrestacionAddPageAdmin> {
     if (_prestacion.id == null) {
       _bloc.addPrestacion(_prestacion);
       setState(() {
+        var userPreferences = UserPreferences();
+        userPreferences.prestacion = _prestacion;
         _saving = false;
       });
       _showSnackbar('Nuevo registro guardado exitosamente.');
     } else {
+      if(_prestacion.id.contains("-poster")){
+        _prestacion.id = _prestacion.id.replaceAll("-poster", "");
+      }
       _bloc.editPrestacion(_prestacion);
       setState(() {
+        var userPreferences = UserPreferences();
+        userPreferences.prestacion = _prestacion;
         _saving = false;
       });
       _showSnackbar('Registro actualizado correctamente.');
@@ -229,7 +236,7 @@ class _PrestacionAddPageAdminState extends State<PrestacionAddPageAdmin> {
         ),
       );
     }
-    if (_prestacion.avatar != null) {
+    if (_prestacion.avatar != null && _prestacion.avatar != "") {
       return _fadeInImageFromNetworkWithJarHolder();
     } else {
       return Image(

@@ -38,7 +38,7 @@ class ReservationModel {
     this.prestacionId='',
     this.timeDesde,
     this.timeHasta,
-    this.estado = 'No disponible',
+    this.estado = '',
     this.date,
     this.uniqueId,
     this.clubAdminId,

@@ -190,7 +190,7 @@ class MapScreenState extends State<ProfileAdmin>
         _user.name = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 6);
+        return _validateLenghtOf(value, type, 3);
       },
     );
   }
@@ -207,7 +207,7 @@ class MapScreenState extends State<ProfileAdmin>
         _user.lastName = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 12);
+        return _validateLenghtOf(value, type, 3);
       },
     );
   }
@@ -224,7 +224,7 @@ class MapScreenState extends State<ProfileAdmin>
         _user.direccion = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 12);
+        return _validateLenghtOf(value, type, 5);
       },
     );
   }
@@ -241,7 +241,7 @@ class MapScreenState extends State<ProfileAdmin>
         _user.telefono = value;
       }),
       validator: (value) {
-        return _validateLenghtOf(value, type, 12);
+        return _validateLenghtOf(value, type, 8);
       },
     );
   }
@@ -311,14 +311,12 @@ class MapScreenState extends State<ProfileAdmin>
       uploadPhoto = await _bloc.uploadPhoto(_photo);
     }
 
-    if (uploadPhoto != null){
-      _user.avatar = uploadPhoto;
-      _saveForID();
-      Navigator.pop(context);
-    }
+    _user.avatar = uploadPhoto;
+    _saveEditForID();
+    Navigator.pop(context);
   }
 
-  void _saveForID() {
+  void _saveEditForID() {
     //TODO Validate proper work.
     print(_user.avatar);
 
@@ -327,7 +325,7 @@ class MapScreenState extends State<ProfileAdmin>
       _saving = false;
       _status = true;
     });
-    _showSnackbar('Register updated successfull');
+    _showSnackbar('Registro editado correctamente');
   }
 
   void _showSnackbar(String message) {

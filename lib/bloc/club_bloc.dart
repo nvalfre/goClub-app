@@ -71,4 +71,8 @@ class ClubsBloc {
   Stream<ClubModel> loadClubStream(String uid)  {
     return _clubsProvider.loadClubStream(uid);
   }
+
+  Stream<ClubModel> loadClubStreamByClubId(String clubAdminId)  {
+    return _clubsProvider.loadClubStreamByClubId(clubAdminId);
+  }
 }

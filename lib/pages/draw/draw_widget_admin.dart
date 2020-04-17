@@ -5,7 +5,7 @@ import 'package:flutter_go_club_app/pages/home_admin_page.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
-import '../root_nav_bar.dart';
+import '../../root_nav_bar.dart';
 
 class UserDrawerAdmin extends StatelessWidget {
   final String APP_NAME = 'goClub';

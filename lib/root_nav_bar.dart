@@ -9,11 +9,11 @@ import 'package:flutter_go_club_app/pages/request_admin_detalle_page2.dart';
 import 'package:flutter_go_club_app/pages/reservas_page_user.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 
-import '../place_holder_widget.dart';
-import 'clubs_page_admin.dart';
-import 'clases_page_user.dart';
-import 'home_admin_club_page.dart';
-import 'reservas_page_admin.dart';
+import 'place_holder_widget.dart';
+import 'pages/clubs_page_admin.dart';
+import 'pages/clases_page_user.dart';
+import 'pages/home_admin_club_page.dart';
+import 'pages/reservas_page_admin.dart';
 
 class RootHomeNavBar extends StatefulWidget {
   int lastPage;
@@ -52,7 +52,7 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
 
   final List<Widget> _childrenRoutesClub = [
     PlaceholderWidget(HomePageAdminClub()),
-    PlaceholderWidget(ReservaClubUserPage()),
+    PlaceholderWidget(ReservaClubAdminPage()),
     PlaceholderWidget(PrestacionPageAdmin()),
     PlaceholderWidget(RequestPage()),
     PlaceholderWidget(ProfileUser())
