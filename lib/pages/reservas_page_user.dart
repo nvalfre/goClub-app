@@ -398,7 +398,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                 textColor: Colors.white,
                 label: Text('     Ver solicitud      '),
                 icon: Icon(Icons.edit),
-                onPressed: () => Navigator.pushNamed(context, 'reservasCRUD',
+                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser',
                     arguments: _reservaModel),
               );
             case '':
@@ -477,10 +477,19 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
     if (_reservaModel.avatar != null && _reservaModel.avatar != "") {
       return _fadeInImageFromNetworkWithJarHolder();
     } else {
-      return Image(
-        image: AssetImage('assets/images/no-image.png'),
-        height: 50.0,
-        fit: BoxFit.cover,
+      return InkWell(
+        child: new Container(
+          width: 100.0,
+          height: 100.0,
+          alignment: Alignment.center,
+          child: Image(
+            image: AssetImage('assets/images/no-image.png'),
+            height: 50.0,
+            fit: BoxFit.cover,
+          ),
+        ),
+        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
+            arguments: _reservaModel),
       );
     }
   }
@@ -496,7 +505,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
               image: NetworkImage(_reservaModel.avatar), fit: BoxFit.fill),
         ),
       ),
-      onTap: () => Navigator.pushNamed(context, 'reservasCRUD',
+      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
           arguments: _reservaModel),
     );
   }

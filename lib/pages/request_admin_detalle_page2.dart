@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
+import 'package:flutter_go_club_app/bloc/solicitud_bloc.dart';
+import 'package:flutter_go_club_app/models/access_role_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
+import 'package:flutter_go_club_app/models/solicitud_model.dart';
 import 'package:flutter_go_club_app/pages/draw/draw_widget_user.dart';
 import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
@@ -9,10 +14,18 @@ import 'package:flutter_go_club_app/providers/provider_impl.dart';
 class RequestPage extends StatelessWidget {
   final prefs = new UserPreferences();
   ReservationBloc _reservationBloc;
+  SolicitudBloc _solicitudBloc;
+
+  String _role;
+  String _date;
+  String _timeDesde;
+  String _timeHasta;
+  File _photo;
 
   @override
   Widget build(BuildContext context) {
     _reservationBloc = Provider.reservationBloc(context);
+    _solicitudBloc = Provider.solicitudBloc(context);
 
     return buildScaffold(context);
   }
@@ -33,9 +46,9 @@ class RequestPage extends StatelessWidget {
           )
         ],
       ),
-      body: _getListOfClubs(),
+      body: _getListOfRequests(context),
       drawer: UserDrawer(),
-      floatingActionButton: Container(
+      floatingActionButton: prefs.role == AccessStatus.USER  ? null : Container(
         width: 40.0,
         height: 40.0,
         child: new RawMaterialButton(
@@ -54,36 +67,91 @@ class RequestPage extends StatelessWidget {
     );
   }
 
-  Widget _getListOfClubs() {
+  Widget _getListOfRequests(BuildContext context) {
     return StreamBuilder(
-      stream: _reservationBloc.loadReservationsSnap(),
+      stream: _solicitudBloc.loadSolicitudSnap(),
       builder: (BuildContext context,
-          AsyncSnapshot<List<ReservationModel>> snapshot) {
-        return _getListOffClubBuilder(context, snapshot);
+          AsyncSnapshot<List<SolicitudModel>> snapshot) {
+        return _getListOffRequestsBuilder(context, snapshot);
       },
     );
   }
 
-  Widget _getListOffClubBuilder(
-      BuildContext context, AsyncSnapshot<List<ReservationModel>> snapshot) {
+  Widget _getListOffRequestsBuilder(BuildContext context, AsyncSnapshot<List<SolicitudModel>> snapshot) {
     if (snapshot.hasData) {
-      final reservations = snapshot.data;
+      final solicitud = snapshot.data;
       return ListView.builder(
-        itemCount: reservations.length,
-        itemBuilder: (context, i) => _createClub(context, reservations[i]),
+        itemCount: solicitud.length,
+        itemBuilder: (context, i) => _createRequest(context, solicitud[i]),
       );
     } else {
       return Center(child: CircularProgressIndicator());
     }
   }
 
-  Widget _createClub(BuildContext context, ReservationModel reservation) {
-    return Dismissible(
-      key: UniqueKey(),
-      background: Container(
-        color: Colors.redAccent,
+  Widget _createRequest(BuildContext context, SolicitudModel solicitud) {
+    return InkWell(
+        onTap: () => Navigator.pushNamed(context, 'requests',
+            arguments: solicitud),
+        child: _rowWidgetWithNameAndDescriptions(solicitud, context),
+    );
+  }
+
+  Widget _showLogo(BuildContext context, dynamic _reservaModel) {
+    if (_photo != null) {
+      return Container(
+        margin: EdgeInsets.only(right: 10.0),
+        child: Column(
+          children: <Widget>[
+            Hero(
+              tag: _reservaModel.uniqueId ?? '',
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15.0),
+                child: FadeInImage(
+                  image: FileImage(_photo),
+                  placeholder: AssetImage('assets/images/no-image.png'),
+                  fit: BoxFit.cover,
+                  width: 50,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    if (_reservaModel.avatar != null && _reservaModel.avatar != "") {
+      return _fadeInImageFromNetworkWithJarHolder(context, _reservaModel);
+    } else {
+      return InkWell(
+        child: new Container(
+          width: 100.0,
+          height: 100.0,
+          alignment: Alignment.center,
+          child: Image(
+            image: AssetImage('assets/images/no-image.png'),
+            height: 50.0,
+            fit: BoxFit.cover,
+          ),
+        ),
+        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
+            arguments: _reservaModel),
+      );
+    }
+  }
+
+  Widget _fadeInImageFromNetworkWithJarHolder(BuildContext context, dynamic _reservaModel) {
+    return InkWell(
+      child: new Container(
+        width: 100.0,
+        height: 100.0,
+        alignment: Alignment.center,
+        decoration: new BoxDecoration(
+          image: DecorationImage(
+              image: NetworkImage(_reservaModel.avatar), fit: BoxFit.fill),
+        ),
       ),
-      child: _getDescriptionContainer(context, reservation),
+      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
+          arguments: _reservaModel),
     );
   }
 
@@ -99,54 +167,58 @@ class RequestPage extends StatelessWidget {
     );
   }
 
-  InkWell _getDescriptionContainer(
-      BuildContext context, ReservationModel reservation) {
-    return InkWell(
-      onTap: () => Navigator.pushNamed(context, 'reservationsAdmin',
-          arguments: reservation),
-      child: _rowWidgetWithNameAndDescriptions(reservation, context),
-    );
-  }
-
-  Container _rowWidgetWithNameAndDescriptions(
-      ReservationModel reservation, BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-      child: Row(
-        children: <Widget>[
-          Container(
-            height: 125,
-            width: 100,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image(
-                  image: (reservation.avatar == null)
-                      ? AssetImage('assets/images/no-image.png')
-                      : NetworkImage(reservation.avatar),
-                  height: 110,
-                  fit: BoxFit.contain),
-            ),
-          ),
-          SizedBox(width: 10),
-          Flexible(
-            child: Column(
+  Container _rowWidgetWithNameAndDescriptions(SolicitudModel solicitud, BuildContext context) {
+          ReservationModel _reservaModel = ReservationModel.fromMap(solicitud.reserva);
+          return Container(
+            padding: EdgeInsets.only(right: 5, left: 5),
+            child: Row(
               children: <Widget>[
-                Text(reservation.name,
-                    style: Theme.of(context).textTheme.title,
-                    overflow: TextOverflow.ellipsis),
-                Text(reservation.description,
-                    style: Theme.of(context).textTheme.subhead,
-                    overflow: TextOverflow.ellipsis),
-                Text((reservation.available) ? 'Disponible' : 'No disponible',
-                    style: Theme.of(context).textTheme.display1,
-                    overflow: TextOverflow.ellipsis),
-                _largeDescription(reservation, context),
+                _showLogo(context, _reservaModel),
+                Flexible(
+                    child: Container(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Column(
+                          children: <Widget>[
+                            Text("Reserva:",
+                                style: Theme.of(context).textTheme.headline),
+                            Text(_reservaModel.name,
+                                style: TextStyle(color: Colors.black, fontSize: 20),
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.justify),
+                            SizedBox(
+                              height: 2,
+                            ),
+                            Text("Descripcion:",
+                                style: Theme.of(context).textTheme.headline),
+                            Text(
+                              _reservaModel.description,
+                              style: TextStyle(color: Colors.black, fontSize: 20),
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.justify,
+                            ),
+                            SizedBox(
+                              height: 2,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(r"Precio: $",
+                                    style: Theme.of(context).textTheme.headline),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  _reservaModel.precio != null ? _reservaModel.precio : "",
+                                  style: TextStyle(color: Colors.black, fontSize: 22),
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.justify,
+                                ),
+                              ],)
+                          ],
+                        )))
               ],
             ),
-          )
-        ],
-      ),
-    );
+          );
   }
 
   Container _largeDescription(

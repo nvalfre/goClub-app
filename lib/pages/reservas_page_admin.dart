@@ -347,6 +347,8 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
   _getAvailableAndButtom() {
     String solicitado = 'Solicitado';
     String aceptado = 'Aceptado';
+    String disponible = 'Disponible';
+    String empty = "";
 
     var estado = _reservaModel.estado == "" || _reservaModel.estado == null
         ? 'Sin establecer'
@@ -371,9 +373,9 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
       return Column(
         children: <Widget>[_getRichTextState(estado, color), _getEditButton()],
       );
-    } else {
+    } else if(estado==solicitado || estado==disponible || estado==empty) {
       return Column(
-        children: <Widget>[_getRichTextState(estado, color), _getEditButton()],
+        children: <Widget>[_getRichTextState(estado, color), _getVerSolicitud()],
       );
     }
   }
@@ -397,6 +399,18 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
       color: Colors.blueAccent,
       textColor: Colors.white,
       label: Text('     Editar         '),
+      icon: Icon(Icons.edit),
+      onPressed: () => Navigator.pushNamed(context, 'reservasCRUD',
+          arguments: _reservaModel),
+    );
+  }
+
+  Widget _getVerSolicitud() {
+    return RaisedButton.icon(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      color: Colors.blueAccent,
+      textColor: Colors.white,
+      label: Text('     Ver Solicitud      '),
       icon: Icon(Icons.edit),
       onPressed: () => Navigator.pushNamed(context, 'reservasCRUD',
           arguments: _reservaModel),
@@ -470,6 +484,7 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
           arguments: _reservaModel),
     );
   }
+
 }
 
 class ReservasHorizontal extends StatelessWidget {
