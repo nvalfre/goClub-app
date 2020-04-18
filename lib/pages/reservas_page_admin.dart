@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
+import 'package:flutter_go_club_app/models/solicitud_model.dart';
 import 'package:flutter_go_club_app/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
@@ -224,12 +225,13 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
   Widget _swiperTarjetas() {
     return Container(
       padding: EdgeInsets.only(top: 10),
-      child: StreamBuilder(
-        stream: _reservasBloc.loadReservationsSnap(),
+      child: FutureBuilder(
+        future: _reservasBloc.loadReservationsByClub(),
         builder: (BuildContext context,
             AsyncSnapshot<List<ReservationModel>> snapshot) {
           if (snapshot.hasData) {
-            var reservas = filterReservasByClub(snapshot.data);
+            var reservas = snapshot.data;
+//            var reservas = filterReservasByClub(snapshot.data);
 
             return Container(
               child: Column(
@@ -242,7 +244,7 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
                   SizedBox(height: 5.0),
                   ReservasHorizontal(
                     reservas: reservas,
-                    siguientePagina: _reservasBloc.loadReservationsSnap,
+                    siguientePagina: _reservasBloc.loadReservationsByClub,
                   ),
                 ],
               ),
@@ -269,9 +271,10 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
       _reservaModel.timeDesde = _userPreferences.reservaTimeDesde;
       _reservaModel.timeHasta = _userPreferences.reservaTimeHasta;
       _reservaModel.date = _userPreferences.reservaDate;
+      _reservaModel.solicitud = _userPreferences.solicitud;
       _reservaModel.estado = _userPreferences.reservaEstado;
       _reservaModel.available =
-          _userPreferences.reservaAvailable == "true" ? true : false;
+      _userPreferences.reservaAvailable == "true" ? true : false;
     } else {
       _reservaModel = new ReservationModel();
     }
@@ -560,6 +563,7 @@ class ReservasHorizontal extends StatelessWidget {
       onTap: () {
         var userPreferences = UserPreferences();
         userPreferences.reserva = reserva;
+        UserPreferences.reservaSolicitud = SolicitudModel.fromJson(reserva.solicitud);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => RootHomeNavBar(1)),

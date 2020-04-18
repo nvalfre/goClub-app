@@ -1,11 +1,13 @@
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
+import 'package:flutter_go_club_app/models/solicitud_model.dart';
 import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserPreferences {
 
   static final UserPreferences _instance = new UserPreferences._internal();
+  static SolicitudModel reservaSolicitud;
 
   factory UserPreferences() {
     return _instance;
@@ -104,6 +106,7 @@ class UserPreferences {
     _prefs.setString('reservaEstado', reservaModel.estado);
     _prefs.setString('reservaPrecio', reservaModel.precio);
     _prefs.setString('reservaAvailable', reservaModel.available ? "true" : "false");
+//    _prefs.setString('solicitud', reservaModel.solicitud);
   }
   get reservaName {
     return _prefs.getString('reservaName') ?? '';
@@ -131,6 +134,9 @@ class UserPreferences {
   }
   get reservaPrecio {
     return _prefs.getString('reservaPrecio') ?? '';
+  }
+  get solicitud {
+    return _prefs.getString('solicitud') ?? '';
   }
   get prestacionId {
     return _prefs.getString('prestacionId') ?? '';

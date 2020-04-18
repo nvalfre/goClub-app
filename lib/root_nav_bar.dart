@@ -5,7 +5,7 @@ import 'package:flutter_go_club_app/pages/home_user_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
 import 'package:flutter_go_club_app/pages/prestacion_admin_detalle_page.dart';
 import 'package:flutter_go_club_app/pages/prestacion_user_detalle_page.dart';
-import 'package:flutter_go_club_app/pages/request_admin_detalle_page2.dart';
+import 'package:flutter_go_club_app/pages/reservas_request_list_page_user-admin.dart';
 import 'package:flutter_go_club_app/pages/reservas_page_user.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 
@@ -41,7 +41,7 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
     PlaceholderWidget(HomePage()),
     PlaceholderWidget(ReservaClubUserPage()),
     PlaceholderWidget(PrestacionPageUser()),
-    PlaceholderWidget(RequestPage()),
+    PlaceholderWidget(RequestListPage()),
     PlaceholderWidget(ClasesPageUser()), // TODO deberia ser la lista de clubes que te lleven al profile.
   ];
 
@@ -54,7 +54,7 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
     PlaceholderWidget(HomePageAdminClub()),
     PlaceholderWidget(ReservaClubAdminPage()),
     PlaceholderWidget(PrestacionPageAdmin()),
-    PlaceholderWidget(RequestPage()),
+    PlaceholderWidget(RequestListPage()),
     PlaceholderWidget(ProfileUser())
   ];
 

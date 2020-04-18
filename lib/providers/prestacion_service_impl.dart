@@ -7,7 +7,7 @@ import 'package:flutter_go_club_app/providers/photo_service_impl.dart';
 import 'package:uuid/uuid.dart';
 
 class PrestacionServiceImpl {
-  final _pref = new UserPreferences();
+  final _prefs = new UserPreferences();
   final _photoProvider = new PhotoService();
   static PrestacionServiceImpl _instance;
   final db = Firestore.instance.collection('prestacion');
@@ -34,6 +34,21 @@ class PrestacionServiceImpl {
     QuerySnapshot snapshots = await db.getDocuments();
     List<PrestacionModel> clubList = toPrestacionList(snapshots.documents);
     return clubList;
+  }
+
+
+  Future<List<PrestacionModel>> loadPrestacionesByClub() async {
+    QuerySnapshot snapshots = await db.getDocuments();
+    List<PrestacionModel> clubList = toPrestacionList(snapshots.documents);
+
+    List<PrestacionModel> temp = List();
+    for (var prestacion in clubList) {
+      if(prestacion.idClub == _prefs.clubAdminId){
+        temp.add(prestacion);
+      }
+    }
+
+    return temp;
   }
 
   Stream<List<PrestacionModel>> loadPrestacionListSnap() {
@@ -75,4 +90,12 @@ class PrestacionServiceImpl {
 
   Stream<QuerySnapshot> getPrestacionSnap(String uid) =>
       db.where('id', isEqualTo: uid).snapshots();
+
+  Stream<PrestacionModel> loadPrestacionStreamByClub() {
+    return getPrestacionSnapByClub()
+        .map((prestacion) => PrestacionModel.fromQuerySnapshot(prestacion));
+  }
+
+  Stream<QuerySnapshot> getPrestacionSnapByClub() =>
+      db.where('idClub', isEqualTo: _prefs.clubAdminId).snapshots();
 }

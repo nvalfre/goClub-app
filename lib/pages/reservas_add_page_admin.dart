@@ -25,6 +25,7 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
   final formKey = GlobalKey<FormState>();
   ReservationBloc _reservasBloc;
   PrestacionBloc _prestacionBloc;
+  UserPreferences _pref;
 
   String _date = "No establecida";
   String _timeDesde = "Desde: No establecida";
@@ -39,6 +40,8 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
   @override
   Widget build(BuildContext context) {
     _reservasBloc = Provider.reservationBloc(context);
+    _pref = UserPreferences();
+
     validateAndLoadArguments(context);
     return Scaffold(
       key: scaffoldKey,
@@ -92,7 +95,7 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     _prestacionBloc = Provider.prestacionBloc(context);
 
     return FutureBuilder(
-      future: _prestacionBloc.loadPrestaciones(),
+      future: _prestacionBloc.loadPrestacionesByClub(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
           return _getPrestacion(snapshot);
@@ -104,13 +107,8 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     );
   }
 
-  _getPrestacion(AsyncSnapshot snapshot) {
-    List<PrestacionModel> temp = List();
-    final list = snapshot.data;
-    for (var f in list) {
-      temp.add(f);
-    }
-
+  _getPrestacion(AsyncSnapshot<List<PrestacionModel>> snapshot) {
+    List<PrestacionModel> temp = snapshot.data;
     return Row(
       children: <Widget>[
         Container(
@@ -133,6 +131,7 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
                       selectIdByPrestacionName(value, temp);
                   _reserva.prestacionId = prestacion.id;
                   _reserva.name = prestacion.name;
+                  _reserva.avatar =  prestacion.avatar;
                   _prestacionValue = prestacion.name;
                 }),
             hint: Text('Seleccionar prestacion'),
@@ -180,7 +179,7 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10),
       child: Text(
-        'Estado: Implementar estado.',
+        'Estado: ' + (_reserva.estado!=null && _reserva.estado != '' ? _reserva.estado : "-"),
         style: TextStyle(
             color: Colors.teal, fontWeight: FontWeight.bold, fontSize: 18.0),
       ),
@@ -201,6 +200,7 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
       _timeHasta = reserva.timeHasta;
       _date = reserva.date;
       _prestacionValue = reserva.name;
+      _reserva.avatar = _reserva.avatar != null &&  _reserva.avatar != '' ?  _reserva.avatar : _prestacion.avatar;
     }
   }
 
@@ -232,7 +232,6 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
   }
 
   void _saveForID() {
-    UserPreferences _pref = UserPreferences();
 if(_pref.clubAdminId != null){
   if (_reserva.id == null ) {
     _reserva.estado = 'Disponible';

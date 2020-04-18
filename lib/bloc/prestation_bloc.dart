@@ -27,6 +27,14 @@ class PrestacionBloc {
     return querySnapshot;
   }
 
+  Future<List<PrestacionModel>> loadPrestacionesByClub() async {
+    _loadingController.sink.add(true);
+    var querySnapshot = await _prestacionProvider.loadPrestacionesByClub();
+    _loadingController.sink.add(false);
+
+    return querySnapshot;
+  }
+
   Stream<List<PrestacionModel>> loadPrestacionesSnap() {
     return _prestacionProvider.loadPrestacionListSnap();
   }

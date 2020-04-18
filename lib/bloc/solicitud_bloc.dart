@@ -1,19 +1,20 @@
 import 'dart:io';
 
+import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/models/solicitud_model.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/solicitud_service_impl.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SolicitudBloc {
-  final _reservationController = new BehaviorSubject<List<SolicitudModel>>();
+  final _solicitudController = new BehaviorSubject<List<SolicitudModel>>();
   final _loadingController = new BehaviorSubject<bool>();
-  final _prefs = new UserPreferences();
+  var _userPreferences = UserPreferences();
 
   final _solicitudProvider = SolicitudServiceImpl.getState();
 
   Stream<List<SolicitudModel>> get reservationStream =>
-      _reservationController.stream;
+      _solicitudController.stream;
 
   Stream<bool> get loadingStream => _loadingController.stream;
 
@@ -28,12 +29,28 @@ class SolicitudBloc {
   Future<List<SolicitudModel>> loadSolicitudByClub() async {
     _loadingController.sink.add(true);
     var querySnapshot = await _solicitudProvider.loadSolicitudFutureList();
-    var _userPreferences = UserPreferences();
 
     var clubAdminId = _userPreferences.clubAdminId;
     List<SolicitudModel> temp = new List();
     for (var solicitud in querySnapshot) {
-      if (solicitud.club == clubAdminId) {
+      ReservationModel reserva = ReservationModel.fromMap(solicitud.reserva);
+      if (reserva.clubAdminId != null && reserva.clubAdminId == clubAdminId && solicitud.reserva.solicitud == solicitud.id) {
+        temp.add(solicitud);
+      }
+    }
+    _loadingController.sink.add(false);
+
+    return temp;
+  }
+
+  Future<List<SolicitudModel>> loadSolicitudSnapByUser() async {
+    _loadingController.sink.add(true);
+    var querySnapshot = await _solicitudProvider.loadSolicitudFutureList();
+
+    var clubAdminId = _userPreferences.clubAdminId;
+    List<SolicitudModel> temp = new List();
+    for (var solicitud in querySnapshot) {
+      if (_userPreferences.user == solicitud.user) {
         temp.add(solicitud);
       }
     }
@@ -46,9 +63,9 @@ class SolicitudBloc {
     return _solicitudProvider.loadSolicitudStreamListSnap();
   }
 
-  void editSolicitud(SolicitudModel reservationModel) {
+  void editSolicitud(SolicitudModel solicitudModel) {
     _loadingController.sink.add(true);
-    _solicitudProvider.updateData(reservationModel);
+    _solicitudProvider.updateData(solicitudModel);
     _loadingController.sink.add(false);
   }
 
@@ -65,7 +82,7 @@ class SolicitudBloc {
   }
 
   dispose() {
-    _reservationController.close();
+    _solicitudController.close();
     _loadingController.close();
   }
 
@@ -95,7 +112,7 @@ class SolicitudBloc {
     return reservationModel;
   }
 
-  Stream<SolicitudModel> loadReservationStream(String uid) {
+  Stream<SolicitudModel> loadSolicitudStream(String uid) {
     return _solicitudProvider.loadSolicitudStream(uid);
   }
 
