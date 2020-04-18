@@ -10,22 +10,23 @@ String reservationModelToJson(SolicitudModel data) =>
 
 class SolicitudModel {
   String id;
-  Timestamp date;
   var reserva;
   var prestacion;
+  var estado;
   String user;
-  String club;
+  Timestamp date;
 
   SolicitudModel(
-      {this.id, this.reserva, this.prestacion, this.user, this.club, this.date});
+      {this.id, this.reserva, this.prestacion, this.estado, this.user, this.date});
 
-  factory SolicitudModel.fromJson(Map<String, dynamic> json) => SolicitudModel(
-      id: json["id"],
-      date: json["date"],
-      reserva: json["reserva"],
-      prestacion: json["prestacion"],
-      user: json["user"],
-      club: json["club"]);
+  factory SolicitudModel.fromJson(dynamic json) => SolicitudModel(
+        id: json["id"],
+        date: json["date"],
+        reserva: json["reserva"],
+        prestacion: json["prestacion"],
+        user: json["user"],
+        estado: json["estado"],
+      );
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -33,7 +34,7 @@ class SolicitudModel {
         "reserva": reserva,
         "prestacion": prestacion,
         "user": user,
-        "club": club,
+        "estado": estado,
       };
 
   factory SolicitudModel.fromSnapshot(DocumentSnapshot snap) => SolicitudModel(
@@ -42,7 +43,7 @@ class SolicitudModel {
         reserva: snap.data["reserva"],
         prestacion: snap.data["prestacion"],
         user: snap.data["user"],
-        club: snap.data["club"],
+        estado: snap.data["estado"],
       );
 
   factory SolicitudModel.fromQuerySnapshot(QuerySnapshot snap) {
@@ -53,7 +54,7 @@ class SolicitudModel {
       reserva: document.data["reserva"],
       prestacion: document.data["prestacion"],
       user: document.data["user"],
-      club: document.data["club"],
+      estado: document.data["estado"],
     );
   }
 }

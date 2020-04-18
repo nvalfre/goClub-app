@@ -11,7 +11,7 @@ import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
-class RequestPage extends StatelessWidget {
+class RequestListPage extends StatelessWidget {
   final prefs = new UserPreferences();
   ReservationBloc _reservationBloc;
   SolicitudBloc _solicitudBloc;
@@ -46,34 +46,47 @@ class RequestPage extends StatelessWidget {
           )
         ],
       ),
-      body: _getListOfRequests(context),
       drawer: UserDrawer(),
-      floatingActionButton: prefs.role == AccessStatus.USER  ? null : Container(
-        width: 40.0,
-        height: 40.0,
-        child: new RawMaterialButton(
-          fillColor: Colors.blueAccent,
-          shape: new CircleBorder(),
-          elevation: 0.0,
-          child: new Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.pushNamed(context, 'reservasCRUD');
-          },
-        ),
-      ),
+      floatingActionButton: getFloatingActionButton(context),
+      body: _getListOfRequests(context),
     );
   }
 
   Widget _getListOfRequests(BuildContext context) {
-    return StreamBuilder(
-      stream: _solicitudBloc.loadSolicitudSnap(),
+    return prefs.role == AccessStatus.USER  ?
+    FutureBuilder(
+      future: _solicitudBloc.loadSolicitudSnapByUser() ,
       builder: (BuildContext context,
           AsyncSnapshot<List<SolicitudModel>> snapshot) {
         return _getListOffRequestsBuilder(context, snapshot);
       },
+    )
+        :
+     FutureBuilder(
+      future:  _solicitudBloc.loadSolicitudByClub(),
+      builder: (BuildContext context,
+          AsyncSnapshot<List<SolicitudModel>> snapshot) {
+        return _getListOffRequestsBuilder(context, snapshot);
+      },
+    );
+  }
+
+  Container getFloatingActionButton(BuildContext context) {
+    return prefs.role == AccessStatus.USER  ? null : Container(
+      width: 40.0,
+      height: 40.0,
+      child: new RawMaterialButton(
+        fillColor: Colors.blueAccent,
+        shape: new CircleBorder(),
+        elevation: 0.0,
+        child: new Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        onPressed: () {
+          Navigator.pushNamed(context, 'reservasCRUD');
+        },
+      ),
     );
   }
 
@@ -91,8 +104,7 @@ class RequestPage extends StatelessWidget {
 
   Widget _createRequest(BuildContext context, SolicitudModel solicitud) {
     return InkWell(
-        onTap: () => Navigator.pushNamed(context, 'requests',
-            arguments: solicitud),
+        onTap: () => Navigator.pushNamed(context, 'reservasCRUD', arguments: solicitud),
         child: _rowWidgetWithNameAndDescriptions(solicitud, context),
     );
   }
@@ -182,7 +194,7 @@ class RequestPage extends StatelessWidget {
                             Text("Reserva:",
                                 style: Theme.of(context).textTheme.headline),
                             Text(_reservaModel.name,
-                                style: TextStyle(color: Colors.black, fontSize: 20),
+                                style: TextStyle(color: Colors.black, fontSize: 16),
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.justify),
                             SizedBox(
@@ -192,7 +204,7 @@ class RequestPage extends StatelessWidget {
                                 style: Theme.of(context).textTheme.headline),
                             Text(
                               _reservaModel.description,
-                              style: TextStyle(color: Colors.black, fontSize: 20),
+                              style: TextStyle(color: Colors.black, fontSize: 16),
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.justify,
                             ),
@@ -209,7 +221,7 @@ class RequestPage extends StatelessWidget {
                                 ),
                                 Text(
                                   _reservaModel.precio != null ? _reservaModel.precio : "",
-                                  style: TextStyle(color: Colors.black, fontSize: 22),
+                                  style: TextStyle(color: Colors.black, fontSize: 18),
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.justify,
                                 ),

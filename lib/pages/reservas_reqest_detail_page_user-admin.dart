@@ -6,6 +6,8 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_go_club_app/bloc/prestation_bloc.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/bloc/solicitud_bloc.dart';
+import 'package:flutter_go_club_app/models/access_role_model.dart';
+import 'package:flutter_go_club_app/models/admin_model.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/models/solicitud_model.dart';
@@ -15,6 +17,7 @@ import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:uuid/uuid.dart';
 
 class ReservasAddPageUser extends StatefulWidget {
   @override
@@ -30,11 +33,11 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   SolicitudBloc _solicitudBloc;
   PrestacionBloc _prestacionBloc;
   String _role;
-
+  UserPreferences _pref = UserPreferences();
   String _date = "No establecida";
   String _timeDesde = "Desde: No establecida";
   String _timeHasta = "Hasta: No establecida";
-  bool _solicitando = false;
+  bool _workInProgressStatus = false;
   File _photo;
   ReservationModel _reserva = ReservationModel();
   PrestacionModel _prestacion = PrestacionModel();
@@ -81,13 +84,15 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
                   SizedBox(
                     height: 5,
                   ),
-                  _getButtom()
+                  getButtom()
                 ],
               )),
         ),
       ),
     );
   }
+
+  getButtom() => _pref.role == AccessStatus.USER ? _getButtomForUser() : _getButtonForClubAdmin();
 
   FutureBuilder<List<PrestacionModel>> _getPrestacionName() {
 
@@ -136,30 +141,37 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     );
   }
 
-  Row _getDescription() {
+  Widget _getDescription() {
     var type = 'Descripción: ';
-    return Row(
-      children: <Widget>[
-        Container(
-          child: Center(
-            child: Text(
-              type,
-              style: TextStyle(
-                color: Colors.teal,
-                fontWeight: FontWeight.bold,
-                fontSize: 18.0,
+    return Container(
+      padding: EdgeInsets.only(top: 2, bottom: 2),
+        child: Row(
+          children: <Widget>[
+            Container(
+              child: Center(
+                child: Text(
+                  type,
+                  style: TextStyle(
+                    color: Colors.teal,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
+                  ),
+                ),
               ),
             ),
-          ),
+            Flexible(
+                child: Container(
+                  child:  Text(_reserva.description,
+                      style: TextStyle(
+                        color: Colors.teal,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 18.0,
+                      ))
+                )
+            ),
+
+          ],
         ),
-        //TODO set form field with validation.
-        Text(_reserva.description,
-            style: TextStyle(
-              color: Colors.teal,
-              fontWeight: FontWeight.normal,
-              fontSize: 18.0,
-            ))
-      ],
     );
   }
 
@@ -223,28 +235,67 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     }
   }
 
-  _getButtom() {
+  _getButtomForUser() {
     var raisedButton = RaisedButton.icon(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       color: Colors.green,
       textColor: Colors.white,
       label: Text('Solicitar'),
       icon: Icon(Icons.add_box),
-      onPressed: (_solicitando || _reserva.estado == 'Aceptado' || _reserva.estado == 'Solicitado'|| _reserva.estado == 'No Disponible' || _reserva.available == false) ? null : _submitWithFormValidation,
+      onPressed: (_workInProgressStatus
+          || _reserva.estado == 'Aceptado'
+          || _reserva.estado == 'Solicitado'
+          || _reserva.estado == 'No Disponible'
+          || _reserva.available == false
+          ) ? null
+          : _submitWithFormValidation,
     );
 
-    if (_reserva.estado != 'Disponible' && _reserva.estado != '') {
-      _solicitando = true;
-      return Column(
-        children: <Widget>[
-          getStateText(),
-          SizedBox(height: 5,),
-          raisedButton
-        ],
-      );
-    }
-    return raisedButton;
+    return Column(
+      children: <Widget>[
+        getStateText(),
+        SizedBox(height: 5,),
+        raisedButton
+      ],
+    );
 
+  }
+
+  _getButtonForClubAdmin() {
+    var reservaSolicitud = UserPreferences.reservaSolicitud;
+
+    var isValidForActive = (_workInProgressStatus
+          || _reserva.estado != 'Solicitado'
+          || reservaSolicitud == null
+          || _reserva.available == false
+      );
+
+    var raisedButtonAceptar = RaisedButton.icon(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      color: Colors.green,
+      textColor: Colors.white,
+      label: Text('Aceptar'),
+      icon: Icon(Icons.add_box),
+      onPressed: isValidForActive ? null : _submitAcceptWithFormValidation,
+    );
+
+    var raisedButtonRechazar = RaisedButton.icon(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      color: Colors.red,
+      textColor: Colors.white,
+      label: Text('Rechazar'),
+      icon: Icon(Icons.add_box),
+      onPressed: isValidForActive ? null  : _submitRejectWithFormValidation,
+    );
+
+
+    return Column(
+      children: <Widget>[
+        getStateText(),
+        SizedBox(height: 5,),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[raisedButtonAceptar, raisedButtonRechazar],)
+      ],
+    );
   }
 
   Widget getStateText() {
@@ -286,29 +337,93 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
 
     formKey.currentState.save();
     setState(() {
-      _solicitando = true;
+      _workInProgressStatus = true;
     });
 
     _saveForID();
   }
 
+  void _submitAcceptWithFormValidation() async {
+    if (!formKey.currentState.validate()) return;
+
+    formKey.currentState.save();
+    setState(() {
+      _workInProgressStatus = true;
+    });
+
+    _acceptForID();
+  }
+
+  void _submitRejectWithFormValidation() async {
+    if (!formKey.currentState.validate()) return;
+
+    formKey.currentState.save();
+    setState(() {
+      _workInProgressStatus = true;
+    });
+
+    _rejectForID();
+  }
+
   void _saveForID() async{
-    UserPreferences _pref = UserPreferences();
     var loadPrestacion = await _prestacionBloc.loadPrestacion(_reserva.prestacionId);
     if (_reserva.id != null) {
       _reserva.estado = 'Solicitado';
       _reservasBloc.editReservation(_reserva);
-      _solicitudBloc.addSolicitud(SolicitudModel(
-          id: "new-test",
+      var solicitudModel = SolicitudModel(
+          id: "solicitud-" + Uuid().v1(),
           date: Timestamp.now(),
+          estado: _reserva.estado,
           reserva: _reserva.toJson(),
           prestacion: loadPrestacion.toJson(),
           user: _pref.user,
-          club: _reserva.clubAdminId
-      ));
+      );
+      _reserva.solicitud = solicitudModel.toJson();
+      _solicitudBloc.addSolicitud(solicitudModel);
+      _reservasBloc.editReserva(_reserva);
       setState(() {
         _pref.reserva = _reserva;
-        _solicitando = false;
+        _workInProgressStatus = false;
+      });
+      _showSnackbar('Solicitud procesada correctamente.');
+    }
+    Navigator.pop(context);
+  }
+
+  void _acceptForID() {
+    var reservaSolicitud = UserPreferences.reservaSolicitud;
+
+    if (_reserva.id != null) {
+      _reserva.estado = 'Aceptado';
+      _reservasBloc.editReservation(_reserva);
+
+      reservaSolicitud.estado = _reserva.estado;
+
+      _reserva.solicitud = reservaSolicitud.toJson();
+      _solicitudBloc.editSolicitud(reservaSolicitud);
+      _reservasBloc.editReserva(_reserva);
+      setState(() {
+        _pref.reserva = _reserva;
+        _workInProgressStatus = false;
+      });
+      _showSnackbar('Solicitud procesada correctamente.');
+    }
+    Navigator.pop(context);
+  }
+
+  void _rejectForID() {
+    var reservaSolicitud = UserPreferences.reservaSolicitud;
+
+    if (_reserva.id != null) {
+      _reserva.estado = 'Disponible';
+      _reservasBloc.editReservation(_reserva);
+
+      _reserva.solicitud = reservaSolicitud.toJson();
+      _solicitudBloc.editSolicitud(reservaSolicitud);
+      _reservasBloc.editReserva(_reserva);
+      setState(() {
+        _pref.reserva = _reserva;
+        _workInProgressStatus = false;
       });
       _showSnackbar('Solicitud procesada correctamente.');
     }
@@ -365,7 +480,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
         ),
       );
     }
-    if (_reserva.avatar != null) {
+    if (_reserva.avatar != null && _reserva.avatar != "") {
       return InkWell(
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (_) {

@@ -66,7 +66,7 @@ class ReservaClubUserPageByPrestacionState
             color: Colors.white,
           ),
           onPressed: () {
-            Navigator.pushNamed(context, 'reservasCRUD');
+            Navigator.pushNamed(context, 'reservasCRUD', arguments: _reservaModel);
           },
         ),
       ),
@@ -222,20 +222,21 @@ class ReservaClubUserPageByPrestacionState
           if (snapshot.hasData) {
             _reservationList = filterByPrestacionId(snapshot.data);
             return Container(
+              alignment:Alignment.center,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                      padding: EdgeInsets.only(left: 20.0),
+                      padding: EdgeInsets. only(left: 20.0),
                       child: Text('Reservas',
                           style: Theme.of(context).textTheme.subhead)),
                   SizedBox(height: 5.0),
-                  SizedBox(height: 5.0),
-                  ReservasHorizontal(
+                  _reservationList.length > 1 ?  ReservasHorizontal(
                     reservas: _reservationList,
                     siguientePagina: _reservasBloc.loadReservationsSnap,
                     prestacionId: _reservaModel.id,
-                  ),
+                  )
+                      : getSingleReservation(),
                 ],
               ),
             );
@@ -247,6 +248,35 @@ class ReservaClubUserPageByPrestacionState
         },
       ),
     );
+  }
+
+  Widget getSingleReservation() {
+    if (_reservationList.length == 1) {
+      _reservaModel = _reservationList[0];
+      return Container(
+        margin: EdgeInsets.only(left: 22.0),
+        child: Hero(
+              tag: _reservaModel.id,
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15.0),
+                  child: _reservaModel.avatar != null && _reservaModel.avatar != ""
+                      ? FadeInImage(
+                    image: NetworkImage(_reservaModel.avatar),
+                    placeholder: AssetImage('assets/images/no-image.png'),
+                    fit: BoxFit.cover,
+                    height: 80.0,
+                  )
+                      : Image(
+                    image: AssetImage('assets/images/no-image.png'),
+                    height: 80.0,
+                    fit: BoxFit.cover,
+                  )),
+            ),
+      );
+    } else {
+      return Container(child: Text('Sin reservas disponibles',
+          style: Theme.of(context).textTheme.subhead));
+    }
   }
 
   void validateAndLoadArguments(BuildContext context) async {

@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_go_club_app/models/solicitud_model.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/photo_service_impl.dart';
-import 'package:uuid/uuid.dart';
 
 class SolicitudServiceImpl {
   final _pref = new UserPreferences();
@@ -23,8 +22,6 @@ class SolicitudServiceImpl {
   }
 
   Future<void> createSolicitudData(SolicitudModel solicitudModel) async {
-    var uuid = new Uuid();
-    solicitudModel.id = "solicitud-" + uuid.v1();
     var json = solicitudModel.toJson();
 
     return await db.document(solicitudModel.id).setData(json);

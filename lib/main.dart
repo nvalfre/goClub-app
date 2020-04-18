@@ -9,14 +9,15 @@ import 'package:flutter_go_club_app/pages/perfil_club_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
 import 'package:flutter_go_club_app/pages/prestacion_add_page_admin.dart';
 import 'package:flutter_go_club_app/pages/register_page.dart';
-import 'package:flutter_go_club_app/pages/request_admin_detalle_page2.dart';
 import 'package:flutter_go_club_app/pages/reservas_add_page_admin.dart';
 import 'package:flutter_go_club_app/pages/reservas_page_by_prestacion.dart';
-import 'package:flutter_go_club_app/pages/reservas_reqest_detail_page_user.dart';
+import 'package:flutter_go_club_app/pages/reservas_reqest_detail_page_user-admin.dart';
 import 'package:flutter_go_club_app/root_nav_bar.dart';
 import 'package:flutter_go_club_app/splash_page.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
+
+import 'pages/reservas_request_list_page_user-admin.dart';
 
 void main() async {
   final prefs = new UserPreferences();
@@ -68,7 +69,8 @@ class MyApp extends StatelessWidget {
           'prestacionCRUD': (BuildContext context) => PrestacionAddPageAdmin(),
           'reservasCRUD': (BuildContext context) => ReservasAddPageAdmin(),
           'reservasCRUDuser': (BuildContext context) => ReservasAddPageUser(),
-          'requests': (BuildContext context) => RequestPage(),
+          'requests': (BuildContext context) => RequestListPage(),
+          'requestCRUD': (BuildContext context) => ReservasAddPageUser(),
         },
         theme: ThemeData(primaryColor: Colors.green),
       ),
