@@ -561,9 +561,13 @@ class ReservasHorizontal extends StatelessWidget {
         ),
       ),
       onTap: () {
-        var userPreferences = UserPreferences();
-        userPreferences.reserva = reserva;
-        UserPreferences.reservaSolicitud = SolicitudModel.fromJson(reserva.solicitud);
+        try {
+          var userPreferences = UserPreferences();
+          userPreferences.reserva = reserva;
+          UserPreferences.reservaSolicitud = SolicitudModel.fromJson(reserva.solicitud);
+        } catch (e) {
+          print(e);
+        }
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => RootHomeNavBar(1)),
