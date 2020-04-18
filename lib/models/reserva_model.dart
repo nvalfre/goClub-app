@@ -64,6 +64,25 @@ class ReservationModel {
     precio: json["precio"],
   );
 
+  factory ReservationModel.fromMap(dynamic map) => ReservationModel(
+    id: map["id"],
+    name: map["name"],
+    user: map["user"],
+    description: map["description"],
+    telefono: map["telefono"],
+    direccion: map["direccion"],
+    idClub: map["idClub"],
+    available: map["available"],
+    avatar: map["avatar"],
+    prestacionId: map["prestacionId"],
+    timeDesde: map["timeDesde"],
+    timeHasta: map["timeHasta"],
+    estado: map["estado"],
+    date: map["date"],
+    clubAdminId: map["clubAdminId"],
+    precio: map["precio"],
+  );
+
   Map<String, dynamic> toJson() => {
     "id": id,
     "name": name,

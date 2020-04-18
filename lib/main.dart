@@ -68,7 +68,7 @@ class MyApp extends StatelessWidget {
           'prestacionCRUD': (BuildContext context) => PrestacionAddPageAdmin(),
           'reservasCRUD': (BuildContext context) => ReservasAddPageAdmin(),
           'reservasCRUDuser': (BuildContext context) => ReservasAddPageUser(),
-          'requestCRUD': (BuildContext context) => RequestPage(),
+          'requests': (BuildContext context) => RequestPage(),
         },
         theme: ThemeData(primaryColor: Colors.green),
       ),

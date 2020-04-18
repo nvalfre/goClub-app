@@ -1,11 +1,14 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_go_club_app/bloc/prestation_bloc.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
+import 'package:flutter_go_club_app/bloc/solicitud_bloc.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
+import 'package:flutter_go_club_app/models/solicitud_model.dart';
 import 'package:flutter_go_club_app/pages/draw/draw_widget_admin.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
@@ -24,6 +27,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
   ReservationBloc _reservasBloc;
+  SolicitudBloc _solicitudBloc;
   PrestacionBloc _prestacionBloc;
   String _role;
 
@@ -40,6 +44,9 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   @override
   Widget build(BuildContext context) {
     _reservasBloc = Provider.reservationBloc(context);
+    _prestacionBloc = Provider.prestacionBloc(context);
+    _solicitudBloc = Provider.solicitudBloc(context);
+
     validateAndLoadArguments(context);
     return Scaffold(
       key: scaffoldKey,
@@ -83,7 +90,6 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   }
 
   FutureBuilder<List<PrestacionModel>> _getPrestacionName() {
-    _prestacionBloc = Provider.prestacionBloc(context);
 
     return FutureBuilder(
       future: _prestacionBloc.loadPrestaciones(),
@@ -191,13 +197,12 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     return null;
   }
 
-  SwitchListTile _getAvailable() {
+  Widget _getAvailable() {
     return SwitchListTile(
       value: _reserva.available,
-      title: Text('Disponible'),
-      onChanged: (value) => setState(() {
-        _reserva.available = value;
-      }),
+      title: Text('Disponible', style: TextStyle(color: Colors.teal)),
+      inactiveTrackColor: _reserva.available ? Colors.green : Colors.red,
+      onChanged: null,
     );
   }
 
@@ -225,10 +230,10 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       textColor: Colors.white,
       label: Text('Solicitar'),
       icon: Icon(Icons.add_box),
-      onPressed: (_solicitando || _reserva.estado == 'Aceptado') ? null : _submitWithFormValidation,
+      onPressed: (_solicitando || _reserva.estado == 'Aceptado' || _reserva.estado == 'Solicitado'|| _reserva.estado == 'No Disponible' || _reserva.available == false) ? null : _submitWithFormValidation,
     );
 
-    if (_reserva.estado != 'Disponible') {
+    if (_reserva.estado != 'Disponible' && _reserva.estado != '') {
       _solicitando = true;
       return Column(
         children: <Widget>[
@@ -287,17 +292,25 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     _saveForID();
   }
 
-  void _saveForID() {
+  void _saveForID() async{
     UserPreferences _pref = UserPreferences();
-
+    var loadPrestacion = await _prestacionBloc.loadPrestacion(_reserva.prestacionId);
     if (_reserva.id != null) {
+      _reserva.estado = 'Solicitado';
       _reservasBloc.editReservation(_reserva);
+      _solicitudBloc.addSolicitud(SolicitudModel(
+          id: "new-test",
+          date: Timestamp.now(),
+          reserva: _reserva.toJson(),
+          prestacion: loadPrestacion.toJson(),
+          user: _pref.user,
+          club: _reserva.clubAdminId
+      ));
       setState(() {
-        _reserva.estado = 'Solicitado';
         _pref.reserva = _reserva;
         _solicitando = false;
       });
-      _showSnackbar('Registro actualizado correctamente.');
+      _showSnackbar('Solicitud procesada correctamente.');
     }
     Navigator.pop(context);
   }
@@ -376,9 +389,8 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       alignment: Alignment.center,
       decoration: new BoxDecoration(
         image: _reserva.avatar == ""
-            ? Image(
+            ? DecorationImage(
           image: AssetImage('assets/images/no-image.png'),
-          height: 100.0,
           fit: BoxFit.cover,
         )
             : DecorationImage(
