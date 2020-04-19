@@ -89,7 +89,7 @@ class HomePageAdmin extends StatelessWidget {
 
   InkWell _getDescriptionContainer(BuildContext context, ClubModel club) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, 'clubsAdmin', arguments: club),
+      onTap: () => pushClubAndCleanPreviousCache(context, club),
       child: _rowWidgetWithNameAndDescriptions(club, context),
     );
   }
@@ -149,5 +149,11 @@ class HomePageAdmin extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  pushClubAndCleanPreviousCache(BuildContext context, ClubModel club) {
+    UserPreferences.clubUserAsignation = null;
+    UserPreferences.userToAsign= null;
+    Navigator.pushNamed(context, 'clubsAdmin', arguments: club);
   }
 }
