@@ -34,7 +34,7 @@ class SolicitudBloc {
     List<SolicitudModel> temp = new List();
     for (var solicitud in querySnapshot) {
       ReservationModel reserva = ReservationModel.fromMap(solicitud.reserva);
-      if (reserva.clubAdminId != null && reserva.clubAdminId == clubAdminId && solicitud.reserva.solicitud == solicitud.id) {
+      if (reserva.clubAdminId != null && reserva.clubAdminId == clubAdminId && solicitud.reserva != null) {
         temp.add(solicitud);
       }
     }

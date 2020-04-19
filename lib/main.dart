@@ -26,18 +26,6 @@ void main() async {
   runApp(MyApp());
 }
 
-//TODO: Agregar mock data en firebase. Hight priority.
-//TODO: Validaciones perfil. Low priority.
-//TODO: Validaciones reservas. Low priority.
-//TODO: Validaciones prestaciones. Low priority.
-//TODO: Crear club admins - vincular roles cuando el admin crea. Mid priority.
-//TODO: Mostrar home admin - clubes - ver clubes inscriptos. Hight priority.
-//TODO: Mostrar home user - ultimas reservas, noticias de clubes slide. Hight priority.
-//TODO: Mostrar home club - ultimas solicitudes, ver prestaciones. Hight priority.
-//TODO: Mostrar prestaciones y reservas - en el home de usuario y de los clubes como un slide. Hight priority.
-//TODO: Añadir filtro por ultimas creadas o reservadas, relevancia y precio. Hight priority.
-//TODO: Añadir buscador prestaciones / reservas / clubes. Low priority.
-//TODO: Evitar convergencia de dia fecha y hora de misma prestacion para reserva. Low priority. Nice to have.
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
