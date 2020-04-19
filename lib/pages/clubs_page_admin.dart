@@ -1,16 +1,17 @@
 import 'dart:collection';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/user_bloc.dart';
 import 'package:flutter_go_club_app/models/access_role_model.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:flutter_go_club_app/pages/draw/draw_widget_admin.dart';
+import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/root_nav_bar.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
-import 'package:flutter_go_club_app/utils/utils.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ClubsPageAdmin extends StatefulWidget {
@@ -28,8 +29,6 @@ class _ClubPageState extends State<ClubsPageAdmin> {
   ClubsBloc _bloc;
   UserBloc _userBloc;
   List<UserModel> userList = new List();
-  var selectedUserName;
-  var selectedUser;
 
   bool _saving = false;
   File _photo;
@@ -96,10 +95,13 @@ class _ClubPageState extends State<ClubsPageAdmin> {
         .settings
         .arguments; //tambien se puede recibir por constructor.
 
-    if (clubModelDataArg != null) {
+    if(UserPreferences.clubUserAsignation != null){
+      _club = UserPreferences.clubUserAsignation;
+    } else if (clubModelDataArg != null) {
       _club = clubModelDataArg;
     }
-  }
+
+    }
 
   TextFormField _getClubName() {
     var type = 'Nombre del club';
@@ -197,11 +199,12 @@ class _ClubPageState extends State<ClubsPageAdmin> {
       _club.logoUrl = await _bloc.uploadPhoto(_photo);
     }
     UserModel userModel;
-    if (selectedUser != null || selectedUserName != null ) {
-      userModel = selectedUser != null ? selectedUser : GetUserByName(userList, selectedUserName);
+    if (UserPreferences.userToAsign != null) {
+      userModel = UserPreferences.userToAsign;
       userModel.idClub = _club.id;
       userModel.role = AccessStatus.CLUB_ADMIN;
       _club.clubAdminId = userModel.id;
+      UserPreferences.userToAsign = null;
     }
 
     _saveForID(userModel);
@@ -338,12 +341,9 @@ class _ClubPageState extends State<ClubsPageAdmin> {
 
   FutureBuilder<List<UserModel>> _getUser() {
     return FutureBuilder(
-      future: _userBloc.loadAllUsers(),
+      future: _userBloc.loadAllUsersNames(),
       builder: (BuildContext context, AsyncSnapshot<List<UserModel>> snapshot) {
         if (snapshot.hasData) {
-          if (_club != null && _club.clubAdminId != null) {
-            selectedUserName = _club.clubAdminName;
-          }
           return getUserList(snapshot);
         } else {
           return Center(
@@ -355,14 +355,8 @@ class _ClubPageState extends State<ClubsPageAdmin> {
   }
 
   getUserList(AsyncSnapshot<List<UserModel>> snapshot) {
-    List<String> temp = List();
-    final list = snapshot.data;
-    for (var users in list) {
-      if (users.role != AccessStatus.ADMIN) {
-        temp.add(users.name);
-        userList.add(users);
-      }
-    }
+    userList = snapshot.data;
+
     return Container(
       padding: EdgeInsets.only(top: 5),
       child: Row(children: <Widget>[
@@ -374,39 +368,26 @@ class _ClubPageState extends State<ClubsPageAdmin> {
             ),
           ),
         ),
-        getUserLabelOrDropdown(temp)
+        getUserLabelOrDropdown(snapshot.data)
       ]),
     );
   }
 
-  Widget getUserLabelOrDropdown(List<String> temp) {
-    return temp.length > 1
-        ? DropdownButton(
-            items: temp
-                .map((user) => DropdownMenuItem(
-                      child: Text(
-                        user,
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      value: user,
-                    ))
-                .toList(),
-            onChanged: (selectedUserValue) {
-              setState(() {
-                selectedUserName = selectedUserValue;
-                selectedUser = GetUserByName(userList, selectedUserValue);
-                _club.clubAdminName = selectedUserName;
-              });
-            },
-            value: selectedUserName,
-            isExpanded: false,
-            hint: Text(
-              'Seleccionar Administrador de club',
-              style: TextStyle(color: Colors.black),
-            ),
-          )
-        : Container(
-            child: Text(temp.isNotEmpty ? temp[0] : "Vacio"),
-          );
+  Widget getUserLabelOrDropdown(List<UserModel> temp) {
+    UserPreferences.clubUserAsignation = _club;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        Container(
+            padding: EdgeInsets.only(right: 20),
+            child: new Text(_club.clubAdminName != null ? _club.clubAdminName : "",
+            style: TextStyle(color: Colors.black)),),
+        IconButton(
+          icon: Icon(Icons.arrow_right),
+          onPressed: () =>
+          userList.length > 1 ? Navigator.pushNamed(context, 'selectClubAdmin', arguments: _club) : null,
+        )
+      ],);
   }
 }

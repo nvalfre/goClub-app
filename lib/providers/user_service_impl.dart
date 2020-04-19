@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_go_club_app/models/access_role_model.dart';
 import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/photo_service_impl.dart';
@@ -42,6 +43,18 @@ class UserServiceImpl {
     return clubList;
   }
 
+  Future<List<UserModel>> loadUsersNames() async {
+    QuerySnapshot snapshots = await db.getDocuments();
+    List<UserModel> userList = toUserList(snapshots.documents);
+    List<UserModel> temp = List();
+    for (var user in userList) {
+      if (user.role != AccessStatus.ADMIN) {
+        temp.add(user);
+      }
+    }
+    return temp;
+  }
+
   Stream<List<UserModel>> loadUserListSnap() {
     Stream<List<UserModel>> snapshots =
         db.snapshots().map((snap) => toUserList(snap.documents));
@@ -51,8 +64,8 @@ class UserServiceImpl {
   List<UserModel> toUserList(List<DocumentSnapshot> documents) {
     List<UserModel> list = List();
     documents.forEach((document) {
-      UserModel clubModel = UserModel.fromSnapshot(document);
-      list.add(clubModel);
+      UserModel userModel = UserModel.fromSnapshot(document);
+      list.add(userModel);
     });
     return list;
   }
