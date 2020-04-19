@@ -258,7 +258,7 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(left: 10, top: 30),
             child: Text(
-                  data.substring(0,20),
+                  data.length > 20 ? data.substring(0,20) : data,
                   style: TextStyle(
                       fontSize: 30.0,
                       fontWeight: FontWeight.bold,
@@ -318,8 +318,10 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
       AsyncSnapshot<List<ReservationModel>> snapshot,
       ReservationBloc reservationBloc) {
     if (snapshot.hasData) {
-      final reservas = snapshot.data; //TODO Should filter by club id.
-      return Expanded(
+      final reservas = snapshot.data; //
+
+      return reservas.length >= 1 ? // TODO Should filter by club id.
+      Expanded(
         child: Column(
           children: <Widget>[
             getReservaRowWithAction(context, reservas[0], reservationBloc),
@@ -345,7 +347,8 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
                     label: Text("Ver más"))),
           ],
         ),
-      );
+      )
+          : Center(child: Container(child: Text('Sin reservas')),);
     } else {
       return Center(child: CircularProgressIndicator());
     }
