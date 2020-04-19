@@ -153,7 +153,7 @@ class HomePageAdmin extends StatelessWidget {
 
   pushClubAndCleanPreviousCache(BuildContext context, ClubModel club) {
     UserPreferences.clubUserAsignation = null;
-    UserPreferences.userToAsign= null;
+    UserPreferences.userToAsign = null;
     Navigator.pushNamed(context, 'clubsAdmin', arguments: club);
   }
 }

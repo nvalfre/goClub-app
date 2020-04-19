@@ -94,11 +94,12 @@ class _ClubPageState extends State<ClubsPageAdmin> {
     final ClubModel clubModelDataArg = ModalRoute.of(context)
         .settings
         .arguments; //tambien se puede recibir por constructor.
-
-    if(UserPreferences.clubUserAsignation != null){
-      _club = UserPreferences.clubUserAsignation;
-    } else if (clubModelDataArg != null) {
-      _club = clubModelDataArg;
+    if (clubModelDataArg != null ){
+      if(UserPreferences.clubUserAsignation != null){
+        _club = UserPreferences.clubUserAsignation;
+      } else {
+        _club = clubModelDataArg;
+      }
     }
 
     }
