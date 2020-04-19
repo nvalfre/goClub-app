@@ -25,6 +25,14 @@ class UserBloc {
     return querySnapshot;
   }
 
+  Future<List<UserModel>> loadAllUsersNames() async {
+    _loadingController.sink.add(true);
+    var querySnapshot = await _userProvider.loadUsersNames();
+    _loadingController.sink.add(false);
+
+    return querySnapshot;
+  }
+
   Stream<List<UserModel>> loadClubsSnap() {
     return _userProvider.loadUserListSnap();
   }

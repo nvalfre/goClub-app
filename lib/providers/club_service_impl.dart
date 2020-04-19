@@ -20,6 +20,7 @@ class ClubServiceImpl {
   Future<String> createData(ClubModel club) async {
     DocumentReference ref = await db.add(club.toJson());
     print(ref.documentID);
+    UserPreferences.clubUserAsignation = null;
 
     return ref.documentID;
   }
@@ -45,6 +46,7 @@ class ClubServiceImpl {
     return list;
   }
   void updateData(ClubModel club) async {
+    UserPreferences.clubUserAsignation = null;
     await db
         .document(club.id)
         .updateData(club.toJson());

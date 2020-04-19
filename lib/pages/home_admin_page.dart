@@ -10,7 +10,6 @@ class HomePageAdmin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ClubsBloc clubsBloc = Provider.clubsBloc(context);
-
     return buildScaffold(clubsBloc, context);
   }
 
@@ -151,22 +150,4 @@ class HomePageAdmin extends StatelessWidget {
       ),
     );
   }
-
-  Container _largeDescription(ClubModel club, BuildContext context) {
-      var direction = club.direction != null
-          ? club.direction
-          : '-';
-      var telefono = club.telephone != null
-          ? club.telephone
-          : '-';
-      return Container(
-          padding: EdgeInsets.all(10),
-          child: Text(
-            'Direccion: ' + direction
-            + '\nTelefono: ' + telefono,
-            style: Theme.of(context).textTheme.subhead,
-            textAlign: TextAlign.justify,
-          ));
-  }
-
 }

@@ -1,3 +1,4 @@
+import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/models/solicitud_model.dart';
@@ -8,6 +9,8 @@ class UserPreferences {
 
   static final UserPreferences _instance = new UserPreferences._internal();
   static SolicitudModel reservaSolicitud;
+  static ClubModel clubUserAsignation;
+  static UserModel userToAsign;
 
   factory UserPreferences() {
     return _instance;

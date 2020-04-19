@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/pages/clubs_page_admin.dart';
 import 'package:flutter_go_club_app/pages/clases_page_user.dart';
+import 'package:flutter_go_club_app/pages/clubs_page_admin_select.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
 import 'package:flutter_go_club_app/pages/mapas/mapa_page.dart';
 import 'package:flutter_go_club_app/pages/mapas/mapas_page.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
           'search': (BuildContext context) => RootHomeNavBar(0),
           'clubs': (BuildContext context) => ClubsPageAdmin(),
           'clubsAdmin': (BuildContext context) => ClubsPageAdmin(),
+          'selectClubAdmin': (BuildContext context) => SelectClubAdmin(),
           'reservations': (BuildContext context) => ClubsPageAdmin(),
           'reservationsAdmin': (BuildContext context) => ClubsPageAdmin(),
           'reservaDetalle': (BuildContext context) => ReservaClubUserPageByPrestacion(),
