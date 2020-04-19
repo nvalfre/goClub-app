@@ -46,10 +46,10 @@ class ClubServiceImpl {
     return list;
   }
   void updateData(ClubModel club) async {
-    UserPreferences.clubUserAsignation = null;
     await db
         .document(club.id)
         .updateData(club.toJson());
+    UserPreferences.clubUserAsignation = null;
   }
 
   void deleteData(String id) async {
