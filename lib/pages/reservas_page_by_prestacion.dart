@@ -336,7 +336,7 @@ class ReservaClubUserPageByPrestacionState
                   child: Column(
                     children: <Widget>[
                       Text("Reserva:",
-                          style: Theme.of(context).textTheme.headline),
+                          style: Theme.of(context).textTheme.button),
                       Text(_reservaModel.name,
                           style: TextStyle(color: Colors.black, fontSize: 20),
                           overflow: TextOverflow.ellipsis,
@@ -345,7 +345,7 @@ class ReservaClubUserPageByPrestacionState
                         height: 5,
                       ),
                       Text("Descripción:",
-                          style: Theme.of(context).textTheme.headline),
+                          style: Theme.of(context).textTheme.button),
                       Text(
                         _reservaModel.description,
                         style: TextStyle(color: Colors.black, fontSize: 20),

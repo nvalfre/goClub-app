@@ -316,32 +316,28 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
     return Container(
       padding: EdgeInsets.only(right: 5, left: 5),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           _showLogo(),
+          SizedBox(width: 10,),
           Flexible(
-              child: Container(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Column(
-                    children: <Widget>[
-                      Text("Reserva:",
-                          style: Theme.of(context).textTheme.headline),
-                      Text(_reservaModel.name,
-                          style: TextStyle(color: Colors.black, fontSize: 20),
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.justify),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text("Descripcion:",
-                          style: Theme.of(context).textTheme.headline),
-                      Text(
-                        _reservaModel.description,
-                        style: TextStyle(color: Colors.black, fontSize: 20),
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.justify,
-                      ),
-                    ],
-                  )))
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text(_reservaModel.name,
+                    style: Theme.of(context).textTheme.button,
+                    overflow: TextOverflow.ellipsis),
+                Text(_reservaModel.description,
+                    style: Theme.of(context).textTheme.body1,
+                    overflow: TextOverflow.ellipsis),
+                Text(_reservaModel.precio != null && _reservaModel.precio != "" ? r"Precio: $" + _reservaModel.precio : "",
+                    textAlign: TextAlign.start,
+                    style: Theme.of(context).textTheme.body1,
+                    overflow: TextOverflow.ellipsis),
+                _getRichTextState(_reservaModel.estado),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -364,33 +360,34 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
 
       return Column(
         children: <Widget>[
-          _getRichTextState(estado, color),
           _getAceptarButtom()
         ],
       );
-    } else if (estado.contains('-')) {
-      color = Colors.grey;
-      return _getRichTextState(estado, color);
     } else if (estado == aceptado) {
-      color = Colors.greenAccent;
-      return Column(
-        children: <Widget>[_getRichTextState(estado, color), _getEditButton()],
-      );
+      return _getEditButton();
     } else if(estado==solicitado || estado==disponible || estado==empty) {
-      return Column(
-        children: <Widget>[_getRichTextState(estado, color), _getVerSolicitud()],
-      );
+      return _getVerSolicitud();
     }
   }
 
-  RichText _getRichTextState(String estado, Color color) {
+  RichText _getRichTextState(String estado) {
+    Color color = Colors.green;
+
+    String solicitado = 'Solicitado';
+    String noDisponible = 'No Disponible';
+    if (estado == solicitado || estado == noDisponible ) {
+      color = Colors.orange;
+    } else if (estado.contains('-')|| estado==''|| estado==null) {
+      color = Colors.black26;
+    }
+
     return RichText(
       text: TextSpan(
         children: [
           TextSpan(
               text: 'Estado: ' + estado,
               style: TextStyle(
-                  color: color, fontSize: 25, fontWeight: FontWeight.bold)),
+                  color: color, fontSize: 18, fontWeight: FontWeight.bold, fontStyle: FontStyle.normal)),
         ],
       ),
     );
