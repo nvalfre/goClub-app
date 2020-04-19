@@ -112,19 +112,36 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
           ),
           SizedBox(width: 5),
           Flexible(
-            child: Column(
-              children: <Widget>[
-                Text(club.name,
-                    style: Theme.of(context).textTheme.title,
-                    overflow: TextOverflow.ellipsis),
-                Text(club.description,
-                    style: Theme.of(context).textTheme.subhead,
-                    overflow: TextOverflow.ellipsis),
-                Text((club.available) ? 'Disponible' : 'No disponible',
-                    style: Theme.of(context).textTheme.body1,
-                    overflow: TextOverflow.ellipsis),
-              ],
-            ),
+              child: Column(
+                children: <Widget>[
+                  Text(club.name,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .button),
+                  Text(club.description,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .button),
+                  Text(r"Precio: $",
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .button),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    (club.available) ? 'Disponible' : 'No disponible',
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .button,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.justify,
+                  ),
+                ],)
           ),
           Divider(
             thickness: 1,
@@ -364,7 +381,7 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
   Container _rowWidgetWithNameAndDescriptions(
       ReservationModel reserva, BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+      padding: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
       child: Row(
         children: <Widget>[
           Container(
@@ -383,19 +400,25 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
           SizedBox(width: 10),
           Flexible(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Text(reserva.name,
-                    style: Theme.of(context).textTheme.title,
+                    style: Theme.of(context).textTheme.button,
                     overflow: TextOverflow.ellipsis),
                 Text(reserva.description,
-                    style: Theme.of(context).textTheme.subhead,
+                    style: Theme.of(context).textTheme.body1,
                     overflow: TextOverflow.ellipsis),
-                Text(reserva.user,
-                    style: Theme.of(context).textTheme.display1,
+                Text(reserva.precio != null && reserva.precio != "" ? r"Precio: $" + reserva.precio : "",
+                    textAlign: TextAlign.start,
+                    style: Theme.of(context).textTheme.body1,
+                    overflow: TextOverflow.ellipsis),
+                Text("Estado: " + reserva.estado,
+                    textAlign: TextAlign.start,
+                    style: Theme.of(context).textTheme.body1,
                     overflow: TextOverflow.ellipsis),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

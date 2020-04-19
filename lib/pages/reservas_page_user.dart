@@ -311,7 +311,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                   child: Column(
                     children: <Widget>[
                       Text("Reserva:",
-                          style: Theme.of(context).textTheme.headline),
+                          style: Theme.of(context).textTheme.button),
                       Text(_reservaModel.name,
                           style: TextStyle(color: Colors.black, fontSize: 20),
                           overflow: TextOverflow.ellipsis,
@@ -320,7 +320,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                         height: 2,
                       ),
                       Text("Descripcion:",
-                          style: Theme.of(context).textTheme.headline),
+                          style: Theme.of(context).textTheme.button),
                       Text(
                         _reservaModel.description,
                         style: TextStyle(color: Colors.black, fontSize: 20),
@@ -334,7 +334,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                         Text(r"Precio: $",
-                            style: Theme.of(context).textTheme.headline),
+                            style: Theme.of(context).textTheme.button),
                           SizedBox(
                             width: 5,
                           ),

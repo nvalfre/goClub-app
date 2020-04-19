@@ -188,40 +188,41 @@ class RequestListPage extends StatelessWidget {
                 _showLogo(context, _reservaModel),
                 Flexible(
                     child: Container(
-                        padding: EdgeInsets.only(left: 10),
+                        padding: EdgeInsets.only(left: 8),
                         child: Column(
                           children: <Widget>[
-                            Text("Reserva:",
-                                style: Theme.of(context).textTheme.headline),
-                            Text(_reservaModel.name,
-                                style: TextStyle(color: Colors.black, fontSize: 16),
+                            Row(children: <Widget>[
+                              Text("Reserva:",
+                                  style: Theme.of(context).textTheme.button),
+                              Flexible(child: Container(child: Text(_reservaModel.name,
+                                  style: Theme.of(context).textTheme.body1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.justify),),),],),
+                            SizedBox(
+                              height: 1,
+                            ),
+                            Row(children: <Widget>[
+                              Text("Descripcion:",
+                                  style: Theme.of(context).textTheme.button),
+                              Flexible(child: Container(child: Text(
+                                _reservaModel.description,
+                                style:  Theme.of(context).textTheme.body1,
                                 overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.justify),
+                                textAlign: TextAlign.justify,
+                              ),),),],),
                             SizedBox(
-                              height: 2,
-                            ),
-                            Text("Descripcion:",
-                                style: Theme.of(context).textTheme.headline),
-                            Text(
-                              _reservaModel.description,
-                              style: TextStyle(color: Colors.black, fontSize: 16),
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.justify,
-                            ),
-                            SizedBox(
-                              height: 2,
+                              height: 1,
                             ),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Text(r"Precio: $",
-                                    style: Theme.of(context).textTheme.headline),
+                                    style: Theme.of(context).textTheme.button),
                                 SizedBox(
                                   width: 5,
                                 ),
                                 Text(
                                   _reservaModel.precio != null ? _reservaModel.precio : "",
-                                  style: TextStyle(color: Colors.black, fontSize: 18),
+                                  style: Theme.of(context).textTheme.button,
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.justify,
                                 ),

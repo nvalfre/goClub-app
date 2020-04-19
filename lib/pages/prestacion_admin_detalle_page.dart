@@ -188,7 +188,7 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
                   child: Column(
                     children: <Widget>[
                       Text("Prestacion:",
-                          style: Theme.of(context).textTheme.headline),
+                          style: Theme.of(context).textTheme.button),
                       Text(_prestacionModel.name,
                           style: TextStyle(color: Colors.black, fontSize: 20),
                           overflow: TextOverflow.ellipsis,
@@ -197,7 +197,7 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
                         height: 5,
                       ),
                       Text("Descripcion:",
-                          style: Theme.of(context).textTheme.headline),
+                          style: Theme.of(context).textTheme.button),
                       Text(
                         _prestacionModel.description,
                         style: TextStyle(color: Colors.black, fontSize: 20),

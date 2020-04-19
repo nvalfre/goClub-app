@@ -116,21 +116,37 @@ class HomePageAdmin extends StatelessWidget {
           ),
           SizedBox(width: 10),
           Flexible(
-            child: Column(
-              children: <Widget>[
-                Text(club.name,
-                    style: Theme.of(context).textTheme.title,
-                    overflow: TextOverflow.ellipsis),
-                Text(club.description,
-                    style: Theme.of(context).textTheme.subhead,
-                    overflow: TextOverflow.ellipsis),
-                Text((club.available) ? 'Disponible' : 'No disponible',
-                    style: Theme.of(context).textTheme.display1,
-                    overflow: TextOverflow.ellipsis),
-                _largeDescription(club, context),
-              ],
-            ),
-          )
+              child: Column(
+                children: <Widget>[
+                  Text(club.name,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .button),
+                  Text(club.description,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .button),
+                  Text(r"Precio: $",
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .button),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    (club.available) ? 'Disponible' : 'No disponible',
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .button,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.justify,
+                  ),
+                ],)
+          ),
         ],
       ),
     );
