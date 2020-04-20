@@ -60,7 +60,7 @@ class _PrestacionAddPageAdminState extends State<PrestacionAddPageAdmin> {
                   _getDescription(),
                   _getAvailable(),
                   _getIsClass(),
-                  _getButtom()
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[_getButtom(), _getRemoveButtom()],),
                 ],
               )),
         ),
@@ -184,6 +184,35 @@ class _PrestacionAddPageAdminState extends State<PrestacionAddPageAdmin> {
       });
       _showSnackbar('Registro actualizado correctamente.');
     }
+  }
+
+  RaisedButton _getRemoveButtom() {
+    return RaisedButton.icon(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      color: Colors.red,
+      textColor: Colors.white,
+      label: Text('Eliminar'),
+      icon: Icon(Icons.add_box),
+      onPressed: (_saving || _prestacion.id == null) ? null : _submitRemoveWithFormValidation,
+    );
+  }
+  void _submitRemoveWithFormValidation() async {
+    setState(() {
+      _saving = true;
+    });
+    _removeForID();
+    Navigator.pop(context);
+  }
+
+  void _removeForID() {
+    if(_prestacion.id.contains("-poster")){
+      _prestacion.id = _prestacion.id.replaceAll("-poster", "");
+    }
+    _bloc.deletePrestacion(_prestacion.id);
+    setState(() {
+      _saving = false;
+    });
+    _showSnackbar('Registro eliminado correctamente');
   }
 
   void _showSnackbar(String message) {

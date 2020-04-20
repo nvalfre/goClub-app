@@ -83,7 +83,7 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
                   SizedBox(
                     height: 10,
                   ),
-                  _getButtom()
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[_getButtom(), _getRemoveButtom()],),
                 ],
               )),
         ),
@@ -253,6 +253,34 @@ if(_pref.clubAdminId != null){
   }
 }
 
+  }
+
+  RaisedButton _getRemoveButtom() {
+    return RaisedButton.icon(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      color: Colors.red,
+      textColor: Colors.white,
+      label: Text('Eliminar'),
+      icon: Icon(Icons.add_box),
+      onPressed: (_saving || _reserva.id == null) ? null : _submitRemoveWithFormValidation,
+    );
+  }
+  void _submitRemoveWithFormValidation() async {
+    setState(() {
+      _saving = true;
+    });
+    _removeForID();
+    Navigator.pop(context);
+  }
+
+  void _removeForID() {
+    _reserva.clubAdminId = _pref.clubAdminId;
+    _reservasBloc.deleteReserva(_reserva.id);
+    setState(() {
+      _pref.reserva = _reserva;
+      _saving = false;
+    });
+    _showSnackbar('Registro eliminado correctamente');
   }
 
   void _showSnackbar(String message) {

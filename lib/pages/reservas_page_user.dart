@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/models/access_role_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
+import 'package:flutter_go_club_app/models/solicitud_model.dart';
 import 'package:flutter_go_club_app/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
@@ -26,6 +27,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   ReservationModel _reservaModel;
   File _photo;
   ReservationBloc _reservasBloc;
+  UserPreferences _prefs = UserPreferences();
 
   @override
   Widget build(BuildContext context) {
@@ -248,22 +250,21 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   }
 
   void validateAndLoadArguments(BuildContext context) async {
-    var userPreferences = UserPreferences();
-    _role = userPreferences.role;
-    if (userPreferences.reserva != "" && userPreferences.reserva != null) {
+    _role = _prefs.role;
+    if (_prefs.reserva != "" && _prefs.reserva != null) {
       _reservaModel = new ReservationModel();
 
-      _reservaModel.id = userPreferences.reserva != null ? userPreferences.reserva : "";
-      _reservaModel.name = userPreferences.reservaName != null ? userPreferences.reservaName : "";
-      _reservaModel.description = userPreferences.reservaDescription != null ? userPreferences.reservaDescription : "";
-      _reservaModel.avatar = userPreferences.reservaAvatar != null ? userPreferences.reservaAvatar : "";
-      _reservaModel.prestacionId = userPreferences.prestacionId != null ? userPreferences.prestacionId : "";
-      _reservaModel.timeDesde = userPreferences.reservaTimeDesde != null ? userPreferences.reservaTimeDesde : "";
-      _reservaModel.timeHasta = userPreferences.reservaTimeHasta != null ? userPreferences.reservaTimeHasta : "";
-      _reservaModel.date = userPreferences.reservaDate != null ? userPreferences.reservaDate : "";
-      _reservaModel.estado = userPreferences.reservaEstado != null ? userPreferences.reservaEstado : "";
-      _reservaModel.precio = userPreferences.reservaPrecio != null ? userPreferences.reservaPrecio : "";
-      _reservaModel.available = userPreferences.reservaAvailable == "true" || userPreferences.reservaAvailable == true ? true : false;
+      _reservaModel.id = _prefs.reserva != null ? _prefs.reserva : "";
+      _reservaModel.name = _prefs.reservaName != null ? _prefs.reservaName : "";
+      _reservaModel.description = _prefs.reservaDescription != null ? _prefs.reservaDescription : "";
+      _reservaModel.avatar = _prefs.reservaAvatar != null ? _prefs.reservaAvatar : "";
+      _reservaModel.prestacionId = _prefs.prestacionId != null ? _prefs.prestacionId : "";
+      _reservaModel.timeDesde = _prefs.reservaTimeDesde != null ? _prefs.reservaTimeDesde : "";
+      _reservaModel.timeHasta = _prefs.reservaTimeHasta != null ? _prefs.reservaTimeHasta : "";
+      _reservaModel.date = _prefs.reservaDate != null ? _prefs.reservaDate : "";
+      _reservaModel.estado = _prefs.reservaEstado != null ? _prefs.reservaEstado : "";
+      _reservaModel.precio = _prefs.reservaPrecio != null ? _prefs.reservaPrecio : "";
+      _reservaModel.available = _prefs.reservaAvailable == "true" || _prefs.reservaAvailable == true ? true : false;
     } else {
       _reservaModel = new ReservationModel();
     }
@@ -418,8 +419,9 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                 textColor: Colors.white,
                 label: Text('     Ver solicitud      '),
                 icon: Icon(Icons.arrow_forward),
-                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-                    arguments: _reservaModel),
+                onPressed: isReservationValidAndRequestByCurrentUser() ?
+                  () => Navigator.pushNamed(context, 'reservasCRUDuser',
+                    arguments: _reservaModel) : null,
               );
             case 'Sin establecer':
               return RaisedButton.icon(
@@ -450,6 +452,16 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
       }
       return Container();
     }
+  }
+
+  bool isReservationValidAndRequestByCurrentUser() {
+    SolicitudModel solicitudModel;
+    try {
+      solicitudModel = SolicitudModel.fromJson(_reservaModel.solicitud);
+    } catch (e) {
+      print(e);
+    }
+    return _reservaModel.solicitud != null && _reservaModel.solicitud != "" && solicitudModel != null && solicitudModel.user == _prefs.user;
   }
 
   Widget _showLogo() {
@@ -514,6 +526,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
 class ReservasHorizontal extends StatelessWidget {
   final List<ReservationModel> reservas;
   final Function siguientePagina;
+  UserPreferences _prefs = UserPreferences();
 
   ReservasHorizontal({@required this.reservas, @required this.siguientePagina});
 
@@ -530,6 +543,23 @@ class ReservasHorizontal extends StatelessWidget {
       }
     });
 
+    if (reservas.length == 1) {
+      try {
+        _prefs.reserva = reservas[0];
+        UserPreferences.reservaSolicitud = SolicitudModel.fromJson(reservas[0].solicitud);
+      } catch (e) {
+        print(e);
+      }
+      return Container(child: _tarjeta(context, reservas[0]));
+    } else {
+      try {
+        if(_prefs.reserva == null){
+          _prefs.reserva = reservas[0];
+          UserPreferences.reservaSolicitud = SolicitudModel.fromJson(reservas[0].solicitud);
+        }
+      } catch (e) {
+        print(e);
+      }
     return Container(
         height: _screenSize.height * 0.15,
         child: PageView.builder(
@@ -538,6 +568,7 @@ class ReservasHorizontal extends StatelessWidget {
           itemCount: reservas.length,
           itemBuilder: (context, i) => _tarjeta(context, reservas[i]),
         ));
+    }
   }
 
   Widget _tarjeta(BuildContext context, ReservationModel reserva) {
@@ -577,8 +608,13 @@ class ReservasHorizontal extends StatelessWidget {
     return GestureDetector(
       child: tarjeta,
       onTap: () {
-        var userPreferences = UserPreferences();
-        userPreferences.reserva = reserva;
+        try {
+          var userPreferences = UserPreferences();
+          userPreferences.reserva = reserva;
+          UserPreferences.reservaSolicitud = SolicitudModel.fromJson(reserva.solicitud);
+        } catch (e) {
+          print(e);
+        }
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => RootHomeNavBar(1)),

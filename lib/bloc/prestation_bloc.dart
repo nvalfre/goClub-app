@@ -45,7 +45,7 @@ class PrestacionBloc {
     _loadingController.sink.add(false);
   }
 
-  void deleteClub(String id) {
+  void deletePrestacion(String id) {
     _prestacionProvider.deleteData(id);
   }
 
