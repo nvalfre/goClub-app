@@ -455,13 +455,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   }
 
   bool isReservationValidAndRequestByCurrentUser() {
-    SolicitudModel solicitudModel;
-    try {
-      solicitudModel = SolicitudModel.fromJson(_reservaModel.solicitud);
-    } catch (e) {
-      print(e);
-    }
-    return _reservaModel.solicitud != null && _reservaModel.solicitud != "" && solicitudModel != null && solicitudModel.user == _prefs.user;
+    return UserPreferences.reservaSolicitud != null && UserPreferences.reservaSolicitud.user == _prefs.user;
   }
 
   Widget _showLogo() {
