@@ -412,8 +412,8 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
       textColor: Colors.white,
       label: Text('     Ver Solicitud      '),
       icon: Icon(Icons.edit),
-      onPressed: () => Navigator.pushNamed(context, 'reservasCRUD',
-          arguments: _reservaModel),
+      onPressed:  _reservaModel.solicitud != null && _reservaModel.solicitud != "" ? () => Navigator.pushNamed(context, 'reservasCRUD', arguments: _reservaModel)
+          : null,
     );
   }
 
@@ -505,22 +505,36 @@ class ReservasHorizontal extends StatelessWidget {
         siguientePagina();
       }
     });
-
-    return Container(
-        height: _screenSize.height * 0.15,
-        child: PageView.builder(
-          pageSnapping: false,
-          controller: _pageController,
-          itemCount: reservas != null ? reservas.length : 1,
-          itemBuilder: (context, i) => reservas != null
-              ? _tarjeta(context, reservas[i])
-              : Container(
-                  alignment: Alignment.center,
-                  child: new Text('Sin reservas',
-                      style: Theme.of(context).textTheme.title,
-                      overflow: TextOverflow.ellipsis),
-                ),
-        ));
+    if (reservas.length == 1) {
+      try {
+        var userPreferences = UserPreferences();
+        userPreferences.reserva = reservas[0];
+        UserPreferences.reservaSolicitud = SolicitudModel.fromJson(reservas[0].solicitud);
+      } catch (e) {
+        print(e);
+      }
+      return Container(child: _tarjeta(context, reservas[0]));
+    } else {
+      return Container(
+          height: _screenSize.height * 0.15,
+          child: PageView.builder(
+            pageSnapping: false,
+            controller: _pageController,
+            itemCount: reservas != null ? reservas.length : 1,
+            itemBuilder: (context, i) =>
+            reservas != null
+                ? _tarjeta(context, reservas[i])
+                : Container(
+              alignment: Alignment.center,
+              child: new Text('Sin reservas',
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .title,
+                  overflow: TextOverflow.ellipsis),
+            ),
+          ));
+    }
   }
 
   Widget _tarjeta(BuildContext context, ReservationModel reserva) {

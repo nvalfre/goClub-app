@@ -92,6 +92,13 @@ class RequestListPage extends StatelessWidget {
 
   Widget _getListOffRequestsBuilder(BuildContext context, AsyncSnapshot<List<SolicitudModel>> snapshot) {
     if (snapshot.hasData) {
+      if(snapshot.data.length == 0){
+        return Center(child: Container(padding: EdgeInsets.only(top: 30), child: Column(children: <Widget>[Container(child: Text("Aun no tiene solicitudes de reservas.",
+            style: Theme
+                .of(context)
+                .textTheme
+                .button)), Icon(Icons.clear_all, size: 35)],),),);
+      }
       final solicitud = snapshot.data;
       return ListView.builder(
         itemCount: solicitud.length,
