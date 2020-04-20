@@ -27,6 +27,21 @@ class PrestacionBloc {
     return querySnapshot;
   }
 
+  Future<List<PrestacionModel>> loadPrestacionClasses() async {
+    _loadingController.sink.add(true);
+    var querySnapshot = await _prestacionProvider.loadPrestacions();
+    List<PrestacionModel> clasesList = List();
+    for (var prestacion in querySnapshot) {
+      if (prestacion.isClass) {
+        clasesList.add(prestacion);
+      }
+    }
+
+    _loadingController.sink.add(false);
+
+    return clasesList;
+  }
+
   Future<List<PrestacionModel>> loadPrestacionesByClub() async {
     _loadingController.sink.add(true);
     var querySnapshot = await _prestacionProvider.loadPrestacionesByClub();

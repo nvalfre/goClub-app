@@ -4,259 +4,88 @@ import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/prestation_bloc.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
-import 'package:flutter_go_club_app/pages/prestacion_admin_detalle_page.dart';
-import 'package:flutter_go_club_app/root_nav_bar.dart';
+import 'package:flutter_go_club_app/pages/draw/draw_widget_user.dart';
 import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 
-import 'draw/draw_widget_user.dart';
-
-class ClasesPageUser extends StatefulWidget {
-  @override
-  ClasesPageUserState createState() {
-    return ClasesPageUserState();
-  }
-}
-
-class ClasesPageUserState extends State<ClasesPageUser> {
-  PrestacionModel _prestacionModel;
-  File _photo;
+class ClasesPageUser extends StatelessWidget {
+  final prefs = new UserPreferences();
   PrestacionBloc _prestacionBloc;
+  File _photo;
 
   @override
   Widget build(BuildContext context) {
-    validateAndLoadArguments(context);
-
     _prestacionBloc = Provider.prestacionBloc(context);
+
+    return buildScaffold(context);
+  }
+
+  Scaffold buildScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: false,
-        title: Text('Clases'),
-        backgroundColor: Colors.green,
+        title: Text('Reservas solicitadas'),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.search),
+            icon: Icon( Icons.search ),
             onPressed: () {
               showSearch(
                 context: context,
                 delegate: DataSearchReservas(),
               );
             },
-          ),
+          )
         ],
       ),
       drawer: UserDrawer(),
-      floatingActionButton: Container(
-        width: 40.0,
-        height: 40.0,
-        child: new RawMaterialButton(
-          fillColor: Colors.blueAccent,
-          shape: new CircleBorder(),
-          elevation: 0.0,
-          child: new Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.pushNamed(context, 'prestacionCRUD');
-          },
-        ),
-      ),
-      body: SingleChildScrollView(
-          child: Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(1.0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Container(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          _swiperTarjetas(),
-                          _detailsColumn(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )),
+      body: _getListOfRequests(context),
     );
   }
 
-  Widget _swiperTarjetas() {
-    return Container(
-      padding: EdgeInsets.only(top: 10),
-      child: FutureBuilder(
-        future: _prestacionBloc.loadPrestaciones(),
-        builder: (BuildContext context,
-            AsyncSnapshot<List<PrestacionModel>> snapshot) {
-          if (snapshot.hasData) {
-            return Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                      padding: EdgeInsets.only(left: 20.0),
-                      child: Text('Clases',
-                          style: Theme.of(context).textTheme.subhead)),
-                  SizedBox(height: 5.0),
-                  ClasesHorizontal(
-                    prestaciones: snapshot.data,
-                    siguientePagina: _prestacionBloc.loadPrestaciones,
-                  ),
-                ],
-              ),
-            );
-          } else {
-            return Container(
-                height: 100.0,
-                child: Center(child: CircularProgressIndicator()));
-          }
-        },
-      ),
+  Widget _getListOfRequests(BuildContext context) {
+    return FutureBuilder(
+      future: _prestacionBloc.loadPrestacionClasses() ,
+      builder: (BuildContext context,
+          AsyncSnapshot<List<PrestacionModel>> snapshot) {
+        return _getListOffRequestsBuilder(context, snapshot);
+      },
     );
   }
 
-  void validateAndLoadArguments(BuildContext context) async {
-    var userPreferences = UserPreferences();
-
-    if (userPreferences.prestacion != "" && userPreferences.prestacion != null) {
-      _prestacionModel = new PrestacionModel();
-
-      _prestacionModel.id = userPreferences.prestacionName;
-      _prestacionModel.name = userPreferences.prestacionName;
-      _prestacionModel.description = userPreferences.prestacionDescription;
-      _prestacionModel.avatar = userPreferences.prestacionAvatar;
-//      _prestacionModel.reservas = userPreferences.prestacionId;
-      _prestacionModel.available = userPreferences.prestacionAvailable == "true" ? true : false;
+  Widget _getListOffRequestsBuilder(BuildContext context, AsyncSnapshot<List<PrestacionModel>> snapshot) {
+    if (snapshot.hasData) {
+      if(snapshot.data.length == 0){
+        return Center(child: Container(padding: EdgeInsets.only(top: 30), child: Column(children: <Widget>[Container(child: Text("Aun no existen clases.",
+            style: Theme
+                .of(context)
+                .textTheme
+                .button)), Icon(Icons.clear_all, size: 35)],),),);
+      }
+      final clases = snapshot.data;
+      return ListView.builder(
+        itemCount: clases.length,
+        itemBuilder: (context, i) => _createClass(context, clases[i]),
+      );
     } else {
-      _prestacionModel = new PrestacionModel();
+      return Center(child: CircularProgressIndicator());
     }
   }
 
-  Widget _detailsColumn() {
-    return Container(
-      padding: EdgeInsets.only(top: 20),
-      child: Column(
-        children: <Widget>[
-          Divider(
-            thickness: 1,
-            height: 3,
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                _getImageRow(),
-                SizedBox(height: 10.0),
-                _getAvailable(),
-                _getEditButton(),
-              ],
-            ),
-          ),
-        ],
-      ),
+  Widget _createClass(BuildContext context, PrestacionModel clase) {
+    return InkWell(
+      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: clase),
+      child: _rowWidgetWithNameAndDescriptions(clase, context),
     );
   }
 
-  Container _getImageRow() {
-    return Container(
-      padding: EdgeInsets.only(right: 5, left: 5),
-      child: Row(
-        children: <Widget>[
-          _showLogo(),
-          Flexible(
-              child: Container(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Column(
-                    children: <Widget>[
-                      Text("Prestacion:",
-                          style: Theme.of(context).textTheme.button),
-                      Text(_prestacionModel.name,
-                          style: TextStyle(color: Colors.black, fontSize: 20),
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.justify),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text("Descripcion:",
-                          style: Theme.of(context).textTheme.button),
-                      Text(
-                        _prestacionModel.description,
-                        style: TextStyle(color: Colors.black, fontSize: 20),
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.justify,
-                      ),
-                    ],
-                  )))
-        ],
-      ),
-    );
-  }
-
-  _getAvailable() {
-    var estado = _prestacionModel.estado == "" || _prestacionModel.estado == null
-        ? 'Sin establecer'
-        : _prestacionModel.estado;
-    Color color = handleColorState(estado);
-    return Container(
-      padding: EdgeInsets.only(right: 10, left: 10),
-      child: RichText(
-        text: TextSpan(
-          children: [
-            TextSpan(
-                text: 'Estado: ' + estado,
-                style: TextStyle(
-                    color: color, fontSize: 25, fontWeight: FontWeight.bold)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Color handleColorState(String estado) {
-    Color color;
-    String noDispnible = 'No disponible';
-    String Disponible = 'Disponible';
-    if (estado == noDispnible) {
-      color = Colors.red;
-    } else if (estado == Disponible) {
-      color = Colors.green;
-    } else {
-      color = Colors.blueAccent;
-    }
-    return color;
-  }
-
-  Widget _getEditButton() {
-    return RaisedButton.icon(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-      color: Colors.blueAccent,
-      textColor: Colors.white,
-      label: Text('     Editar         '),
-      icon: Icon(Icons.edit),
-      onPressed: () => Navigator.pushNamed(context, 'reservasCRUD',
-          arguments: _prestacionModel),
-    );
-  }
-
-  Widget _showLogo() {
+  Widget _showLogo(BuildContext context, dynamic _reservaModel) {
     if (_photo != null) {
       return Container(
         margin: EdgeInsets.only(right: 10.0),
         child: Column(
           children: <Widget>[
             Hero(
-              tag: _prestacionModel.uniqueId ?? '',
+              tag: _reservaModel.uniqueId ?? '',
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15.0),
                 child: FadeInImage(
@@ -271,18 +100,27 @@ class ClasesPageUserState extends State<ClasesPageUser> {
         ),
       );
     }
-    if (_prestacionModel.avatar != null && _prestacionModel.avatar != "") {
-      return _fadeInImageFromNetworkWithJarHolder();
+    if (_reservaModel.avatar != null && _reservaModel.avatar != "") {
+      return _fadeInImageFromNetworkWithJarHolder(context, _reservaModel);
     } else {
-      return Image(
-        image: AssetImage('assets/images/no-image.png'),
-        height: 50.0,
-        fit: BoxFit.cover,
+      return InkWell(
+        child: new Container(
+          width: 100.0,
+          height: 100.0,
+          alignment: Alignment.center,
+          child: Image(
+            image: AssetImage('assets/images/no-image.png'),
+            height: 50.0,
+            fit: BoxFit.cover,
+          ),
+        ),
+        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
+            arguments: _reservaModel),
       );
     }
   }
 
-  Widget _fadeInImageFromNetworkWithJarHolder() {
+  Widget _fadeInImageFromNetworkWithJarHolder(BuildContext context, dynamic _reservaModel) {
     return InkWell(
       child: new Container(
         width: 100.0,
@@ -290,96 +128,74 @@ class ClasesPageUserState extends State<ClasesPageUser> {
         alignment: Alignment.center,
         decoration: new BoxDecoration(
           image: DecorationImage(
-              image: NetworkImage(_prestacionModel.avatar), fit: BoxFit.fill),
+              image: NetworkImage(_reservaModel.avatar), fit: BoxFit.fill),
         ),
       ),
-      onTap: () => Navigator.pushNamed(context, 'prestacionCRUD',
-          arguments: _prestacionModel),
+      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
+          arguments: _reservaModel),
     );
   }
-}
 
-class ClasesHorizontal extends StatelessWidget {
-  List<PrestacionModel> prestaciones;
-  final Function siguientePagina;
-
-  ClasesHorizontal({@required this.prestaciones, @required this.siguientePagina});
-
-  final _pageController = new PageController(initialPage: 1, viewportFraction: 0.3);
-
-  @override
-  Widget build(BuildContext context) {
-    final _screenSize = MediaQuery.of(context).size;
-    this.prestaciones = filterByClass(prestaciones);
-    _pageController.addListener(() {
-      if (_pageController.position.pixels >=
-          _pageController.position.maxScrollExtent - 200) {
-        siguientePagina();
-      }
-    });
-
-    return Container(
-        height: _screenSize.height * 0.15,
-        child: PageView.builder(
-          pageSnapping: false,
-          controller: _pageController,
-          itemCount: prestaciones.length,
-          itemBuilder: (context, i) => _tarjeta(context, prestaciones[i]),
-        ));
+  Widget getImageUrlWidget(ReservationModel reservation) {
+    return (reservation.avatar == null)
+        ? Image(image: AssetImage('assets/images/no-image.png'))
+        : FadeInImage(
+      image: NetworkImage(reservation.avatar),
+      placeholder: AssetImage('assets/images/jar-loading.jpg'),
+      height: 300.0,
+      width: double.infinity,
+      fit: BoxFit.cover,
+    );
   }
 
-  Widget _tarjeta(BuildContext context, PrestacionModel prestacion) {
-    prestacion.id = '${prestacion.id}-poster';
-
-    final tarjeta = Container(
-      margin: EdgeInsets.only(right: 10.0),
-      child: Column(
+  Container _rowWidgetWithNameAndDescriptions(PrestacionModel clase, BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(right: 5, left: 5),
+      child: Row(
         children: <Widget>[
-          Hero(
-            tag: prestacion.id,
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(15.0),
-                child: prestacion.avatar != null && prestacion.avatar != ""
-                    ? FadeInImage(
-                  image: NetworkImage(prestacion.avatar),
-                  placeholder: AssetImage('assets/images/no-image.png'),
-                  fit: BoxFit.cover,
-                  height: 80.0,
-                )
-                    : Image(
-                  image: AssetImage('assets/images/no-image.png'),
-                  height: 80.0,
-                  fit: BoxFit.cover,
-                )),
-          ),
-          SizedBox(height: 5.0),
-          Text(
-            prestacion.name,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.caption,
-          ),
+          _showLogo(context, clase),
+          Flexible(
+              child: Container(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Column(
+                    children: <Widget>[
+                      Row(children: <Widget>[
+                        Text("Clase:",
+                            style: Theme.of(context).textTheme.button),
+                        Flexible(child: Container(child: Text(clase.name,
+                            style: Theme.of(context).textTheme.body1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.justify),),),],),
+                      SizedBox(
+                        height: 1,
+                      ),
+                      Row(children: <Widget>[
+                        Text("Descripcion:",
+                            style: Theme.of(context).textTheme.button),
+                        Flexible(child: Container(child: Text(
+                          clase.description,
+                          style:  Theme.of(context).textTheme.body1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.justify,
+                        ),),),],),
+                    ],
+                  )))
         ],
       ),
     );
-
-    return GestureDetector(
-      child: tarjeta,
-      onTap: () {
-        var userPreferences = UserPreferences();
-        userPreferences.prestacion = prestacion;
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => RootHomeNavBar(2)),
-        );
-      },
-    );
   }
 
-  List<PrestacionModel> filterByClass(List<PrestacionModel> prestaciones) {
-    List<PrestacionModel> filteredList = new List();
-    prestaciones.forEach((prestacion) {
-        if(prestacion.isClass) filteredList.add(prestacion);
-      });
-    return filteredList;
+  Container _largeDescription(
+      ReservationModel reservation, BuildContext context) {
+    var direction =
+    reservation.description != null ? reservation.description : '-';
+    var telefono = reservation.user != null ? reservation.user : '-';
+    return Container(
+        padding: EdgeInsets.all(10),
+        child: Text(
+          'Direccion: ' + direction + '\nTelefono: ' + telefono,
+          style: Theme.of(context).textTheme.subhead,
+          textAlign: TextAlign.justify,
+        ));
   }
 }
