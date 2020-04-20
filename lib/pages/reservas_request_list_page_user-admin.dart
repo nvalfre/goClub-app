@@ -15,7 +15,7 @@ class RequestListPage extends StatelessWidget {
   final prefs = new UserPreferences();
   ReservationBloc _reservationBloc;
   SolicitudBloc _solicitudBloc;
-
+  ReservationModel _reservaModel;
   String _role;
   String _date;
   String _timeDesde;
@@ -110,8 +110,9 @@ class RequestListPage extends StatelessWidget {
   }
 
   Widget _createRequest(BuildContext context, SolicitudModel solicitud) {
+    _reservaModel = ReservationModel.fromMap(solicitud.reserva);
     return InkWell(
-        onTap: () => Navigator.pushNamed(context, 'reservasCRUD', arguments: solicitud),
+        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
         child: _rowWidgetWithNameAndDescriptions(solicitud, context),
     );
   }
@@ -187,7 +188,6 @@ class RequestListPage extends StatelessWidget {
   }
 
   Container _rowWidgetWithNameAndDescriptions(SolicitudModel solicitud, BuildContext context) {
-          ReservationModel _reservaModel = ReservationModel.fromMap(solicitud.reserva);
           return Container(
             padding: EdgeInsets.only(right: 5, left: 5),
             child: Row(
