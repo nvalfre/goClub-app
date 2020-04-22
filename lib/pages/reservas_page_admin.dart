@@ -23,6 +23,7 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
   String _timeDesde;
   String _timeHasta;
   ReservationModel _reservaModel;
+  List<ReservationModel> _reservaModelList;
   UserPreferences _userPreferences;
   File _photo;
   ReservationBloc _reservasBloc;
@@ -230,7 +231,7 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
         builder: (BuildContext context,
             AsyncSnapshot<List<ReservationModel>> snapshot) {
           if (snapshot.hasData) {
-            var reservas = snapshot.data;
+            _reservaModelList = snapshot.data;
 //            var reservas = filterReservasByClub(snapshot.data);
 
             return Container(
@@ -243,7 +244,7 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
                           style: Theme.of(context).textTheme.subhead)),
                   SizedBox(height: 5.0),
                   ReservasHorizontal(
-                    reservas: reservas,
+                    reservas: _reservaModelList,
                     siguientePagina: _reservasBloc.loadReservationsByClub,
                   ),
                 ],
@@ -281,7 +282,8 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
   }
 
   Widget _detailsColumn() {
-    return Container(
+    return _reservaModel.id == '' || _reservaModel == null ? _reservaModelList != null ? Text('Seleccionar reserva') : Text('Aun no tienes reservas'):
+    Container(
       padding: EdgeInsets.only(top: 20),
       child: Column(
         children: <Widget>[
@@ -328,11 +330,11 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
                     style: Theme.of(context).textTheme.button,
                     overflow: TextOverflow.ellipsis),
                 Text(_reservaModel.description,
-                    style: Theme.of(context).textTheme.body1,
+                    style: Theme.of(context).textTheme.button,
                     overflow: TextOverflow.ellipsis),
                 Text(_reservaModel.precio != null && _reservaModel.precio != "" ? r"Precio: $" + _reservaModel.precio : "",
                     textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme.body1,
+                    style: Theme.of(context).textTheme.button,
                     overflow: TextOverflow.ellipsis),
                 _getRichTextState(_reservaModel.estado),
               ],
@@ -347,6 +349,7 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
     String solicitado = 'Solicitado';
     String aceptado = 'Aceptado';
     String disponible = 'Disponible';
+    String rechazado = 'Rechazado';
     String empty = "";
 
     var estado = _reservaModel.estado == "" || _reservaModel.estado == null
@@ -365,7 +368,7 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
       );
     } else if (estado == aceptado) {
       return _getEditButton();
-    } else if(estado==solicitado || estado==disponible || estado==empty) {
+    } else if(estado==solicitado || estado==disponible || estado==rechazado || estado==empty) {
       return _getVerSolicitud();
     }
   }
@@ -375,7 +378,10 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
 
     String solicitado = 'Solicitado';
     String noDisponible = 'No Disponible';
-    if (estado == solicitado || estado == noDisponible ) {
+    String rechazado = 'Rechazado';
+    if (estado == rechazado){
+      color = Colors.red;
+    } else if (estado == solicitado || estado == noDisponible ) {
       color = Colors.orange;
     } else if (estado.contains('-')|| estado==''|| estado==null) {
       color = Colors.black26;

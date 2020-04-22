@@ -1,7 +1,9 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/pages/clubs_page_admin.dart';
 import 'package:flutter_go_club_app/pages/clases_page_user.dart';
 import 'package:flutter_go_club_app/pages/clubs_page_admin_select.dart';
+import 'package:flutter_go_club_app/pages/clubs_page_user.dart';
 import 'package:flutter_go_club_app/pages/login_page.dart';
 import 'package:flutter_go_club_app/pages/mapas/mapa_page.dart';
 import 'package:flutter_go_club_app/pages/mapas/mapas_page.dart';
@@ -9,9 +11,11 @@ import 'package:flutter_go_club_app/pages/perfil_admin_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_club_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
 import 'package:flutter_go_club_app/pages/prestacion_add_page_admin.dart';
+import 'package:flutter_go_club_app/pages/prestacion_page_user_by_club.dart';
 import 'package:flutter_go_club_app/pages/register_page.dart';
 import 'package:flutter_go_club_app/pages/reservas_add_page_admin.dart';
 import 'package:flutter_go_club_app/pages/reservas_page_by_prestacion.dart';
+import 'package:flutter_go_club_app/pages/reservas_page_user_by_club.dart';
 import 'package:flutter_go_club_app/pages/reservas_reqest_detail_page_user-admin.dart';
 import 'package:flutter_go_club_app/root_nav_bar.dart';
 import 'package:flutter_go_club_app/splash_page.dart';
@@ -44,7 +48,7 @@ class MyApp extends StatelessWidget {
           'clubMapListHome': (BuildContext context) => ClubMapListPage(),
           'detalle': (BuildContext context) => ClasesPageUser(),
           'search': (BuildContext context) => RootHomeNavBar(0),
-          'clubs': (BuildContext context) => ClubsPageAdmin(),
+          'clubs': (BuildContext context) => ClubsPageUser(),
           'clubsAdmin': (BuildContext context) => ClubsPageAdmin(),
           'selectClubAdmin': (BuildContext context) => SelectClubAdmin(),
           'reservations': (BuildContext context) => ClubsPageAdmin(),
@@ -56,7 +60,9 @@ class MyApp extends StatelessWidget {
           'profileAdmin': (BuildContext context) => ProfileAdmin(),
           'profileClub': (BuildContext context) => ProfileClub(),
           'prestacion': (BuildContext context) => ClubsPageAdmin(),
+          'prestacionByClub': (BuildContext context) => PrestacionPageUserByClub(),
           'prestacionCRUD': (BuildContext context) => PrestacionAddPageAdmin(),
+          'reservasByClub': (BuildContext context) => ReservaClubUserPageByClub(),
           'reservasCRUD': (BuildContext context) => ReservasAddPageAdmin(),
           'reservasCRUDuser': (BuildContext context) => ReservasAddPageUser(),
           'requests': (BuildContext context) => RequestListPage(),

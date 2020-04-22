@@ -19,6 +19,7 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
   PrestacionBloc _prestacionBloc;
 
   PrestacionModel _prestacionModel;
+  List<PrestacionModel> _prestacionModelList;
 
   File _photo;
 
@@ -95,7 +96,7 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
         builder: (BuildContext context,
             AsyncSnapshot<List<PrestacionModel>> snapshot) {
           if (snapshot.hasData) {
-            var prestaciones = filterPrestacionesByClub(snapshot.data);
+            _prestacionModelList = filterPrestacionesByClub(snapshot.data);
             return Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +107,7 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
                           style: Theme.of(context).textTheme.subhead)),
                   SizedBox(height: 5.0),
                   PrestacionHorizontal(
-                    prestaciones: prestaciones,
+                    prestaciones: _prestacionModelList,
                     siguientePagina: _prestacionBloc.loadPrestacionesSnap,
                   ),
                 ],
@@ -140,7 +141,8 @@ class _PrestacionPageAdminState extends State<PrestacionPageAdmin> {
   }
 
   Widget _detailsColumn() {
-    return Container(
+    return _prestacionModel.id == '' || _prestacionModel == null ? _prestacionModelList != null ? Text('Seleccionar prestacion') : Text('Aun no tienes prestaciones'):
+     Container(
       padding: EdgeInsets.only(top: 20),
       child: Column(
         children: <Widget>[

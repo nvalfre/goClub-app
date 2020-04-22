@@ -304,8 +304,8 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
   }
 
   Widget _getListOfReservas(ReservationBloc reservationBloc) {
-    return StreamBuilder(
-      stream: reservationBloc.loadReservationsSnap(),
+    return FutureBuilder(
+      future: reservationBloc.loadPrestacionesByClubId(prefs.clubAdminId),
       builder: (BuildContext context,
           AsyncSnapshot<List<ReservationModel>> snapshot) {
         return _getListOffreservaBuilder(context, snapshot, reservationBloc);
@@ -324,9 +324,24 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
       Expanded(
         child: Column(
           children: <Widget>[
-            getReservaRowWithAction(context, reservas[0], reservationBloc),
-            getReservaRowWithAction(context, reservas[1], reservationBloc),
-            getReservaRowWithAction(context, reservas[2], reservationBloc),
+            reservas.length == 1 ? Stack(
+              children: <Widget>[
+                getReservaRowWithAction(context, reservas[0], reservationBloc),
+              ],)
+                : reservas.length == 2 ? Stack( children: <Widget>[
+                getReservaRowWithAction(context, reservas[0], reservationBloc),
+                getReservaRowWithAction(context, reservas[1], reservationBloc),
+              ],)
+                : reservas.length == 3 ? Stack( children: <Widget>[
+                getReservaRowWithAction(context, reservas[0], reservationBloc),
+                getReservaRowWithAction(context, reservas[1], reservationBloc),
+                getReservaRowWithAction(context, reservas[2], reservationBloc),
+              ],)
+                : Stack( children: <Widget>[
+                getReservaRowWithAction(context, reservas[0], reservationBloc),
+                getReservaRowWithAction(context, reservas[1], reservationBloc),
+                getReservaRowWithAction(context, reservas[2], reservationBloc),
+              ],),
             GestureDetector(
                 child: RaisedButton.icon(
                     shape: RoundedRectangleBorder(

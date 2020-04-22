@@ -30,6 +30,28 @@ class ReservationServiceImpl {
     return await db.document(reservationModel.id).setData(json);
   }
 
+  Future<List<ReservationModel>> loadRservationsByClubId(String clubId) async {
+    QuerySnapshot snapshots = await db.getDocuments();
+    List<ReservationModel> reservatin = toReservationList(snapshots.documents);
+
+    List<ReservationModel> temp = List();
+    for (var reserva in reservatin) {
+      if(reserva.clubAdminId == clubId){
+        temp.add(reserva);
+      }
+    }
+
+    return temp;
+  }
+
+  List<ReservationModel> toReservationList(List<DocumentSnapshot> documents) {
+    List<ReservationModel> list = List();
+    documents.forEach((document) {
+      ReservationModel clubModel = ReservationModel.fromSnapshot(document);
+      list.add(clubModel);
+    });
+    return list;
+  }
   Future<List<ReservationModel>> loadReservations() async {
     QuerySnapshot snapshots = await db.getDocuments();
     List<ReservationModel> clubList = loadReservationList(snapshots.documents);

@@ -265,10 +265,10 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     var reservaSolicitud = UserPreferences.reservaSolicitud;
 
     var isValidForActive = (_workInProgressStatus
-          || _reserva.estado != 'Solicitado'
-          || reservaSolicitud == null
-          || _reserva.available == false
-      );
+        || _reserva.estado != 'Solicitado'
+        || reservaSolicitud == null
+        || _reserva.available == false
+    );
 
     var raisedButtonAceptar = RaisedButton.icon(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
@@ -369,7 +369,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     var loadPrestacion = await _prestacionBloc.loadPrestacion(_reserva.prestacionId);
     if (_reserva.id != null) {
       _reserva.estado = 'Solicitado';
-      _reservasBloc.editReservation(_reserva);
+      _reservasBloc.editReserva(_reserva);
       var solicitudModel = SolicitudModel(
           id: "solicitud-" + Uuid().v1(),
           date: Timestamp.now(),
@@ -395,7 +395,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
 
     if (_reserva.id != null) {
       _reserva.estado = 'Aceptado';
-      _reservasBloc.editReservation(_reserva);
+      _reservasBloc.editReserva(_reserva);
 
       reservaSolicitud.estado = _reserva.estado;
 
@@ -415,11 +415,12 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     var reservaSolicitud = UserPreferences.reservaSolicitud;
 
     if (_reserva.id != null) {
-      _reserva.estado = 'Disponible';
-      _reservasBloc.editReservation(_reserva);
-
       _reserva.solicitud = reservaSolicitud.toJson();
+      reservaSolicitud.estado = 'Rechazado';
+      reservaSolicitud.reserva = _reserva;
       _solicitudBloc.editSolicitud(reservaSolicitud);
+      _reserva.estado = 'Disponible';
+      _reserva.clubAdminId = reservaSolicitud.reserva.clubadminId;
       _reservasBloc.editReserva(_reserva);
       setState(() {
         _pref.reserva = _reserva;
@@ -518,7 +519,8 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     return RaisedButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
       elevation: 4.0,
-      onPressed: () {
+      disabledColor: Colors.white,
+      onPressed:  _pref.role == AccessStatus.USER ? null : () {
         DatePicker.showTimePicker(context,
             theme: DatePickerTheme(
               containerHeight: 210.0,
@@ -571,7 +573,8 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     return RaisedButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
       elevation: 4.0,
-      onPressed: () {
+      disabledColor: Colors.white,
+      onPressed:  _pref.role == AccessStatus.USER ? null : () {
         DatePicker.showTimePicker(context,
             theme: DatePickerTheme(
               containerHeight: 210.0,
@@ -624,7 +627,8 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     return RaisedButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
       elevation: 4.0,
-      onPressed: () {
+      disabledColor: Colors.white,
+      onPressed:  _pref.role == AccessStatus.USER ? null : () {
         DatePicker.showDatePicker(context,
             theme: DatePickerTheme(
               containerHeight: 210.0,

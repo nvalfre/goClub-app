@@ -11,6 +11,7 @@ class UserPreferences {
   static SolicitudModel reservaSolicitud;
   static ClubModel clubUserAsignation;
   static UserModel userToAsign;
+  static ClubModel clubDetailsForPrestacionesAndReservas;
 
   factory UserPreferences() {
     return _instance;
@@ -74,11 +75,17 @@ class UserPreferences {
   get prestacionName {
     return _prefs.getString('prestacionName') ?? '';
   }
+  get prestacionIdClub {
+    return _prefs.getString('prestacionIdClub') ?? '';
+  }
   get prestacionDescription {
     return _prefs.getString('prestacionDescription') ?? '';
   }
   get prestacionAvatar {
     return _prefs.getString('prestacionAvatar') ?? '';
+  }
+  get prestacionEstado {
+    return _prefs.getString('prestacionEstado') ?? '';
   }
   get prestacionAvailable {
     return _prefs.getString('prestacionAvailable') ?? '';
@@ -90,8 +97,10 @@ class UserPreferences {
   set prestacion ( PrestacionModel prestacionModel ) {
     _prefs.setString('prestacion', prestacionModel.id);
     _prefs.setString('prestacionId', prestacionModel.id);
+    _prefs.setString('prestacionIdClub', prestacionModel.idClub);
     _prefs.setString('prestacionName', prestacionModel.name);
     _prefs.setString('prestacionDescription', prestacionModel.description);
+    _prefs.setString('prestacionEstado', prestacionModel.estado);
     _prefs.setString('prestacionAvatar', prestacionModel.avatar);
     _prefs.setString('prestacionAvailable', prestacionModel.available ? "true" : "false");
     _prefs.setString('prestacionIsClass', prestacionModel.isClass ? "true" : "false");

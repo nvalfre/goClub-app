@@ -26,6 +26,14 @@ class ReservationBloc {
     return querySnapshot;
   }
 
+  Future<List<ReservationModel>> loadPrestacionesByClubId(String id) async {
+    _loadingController.sink.add(true);
+    var querySnapshot = await _reservationProvider.loadRservationsByClubId(id);
+    _loadingController.sink.add(false);
+
+    return querySnapshot;
+  }
+
   Future<List<ReservationModel>> loadReservationsByClub() async {
     _loadingController.sink.add(true);
     var querySnapshot = await _reservationProvider.loadReservations();
@@ -105,12 +113,6 @@ class ReservationBloc {
   void addReserva(ReservationModel reservaModel) async {
     _loadingController.sink.add(true);
     await _reservationProvider.createReservationData(reservaModel);
-    _loadingController.sink.add(false);
-  }
-
-  void editReservation(ReservationModel reservaModel) {
-    _loadingController.sink.add(true);
-    _reservationProvider.updateData(reservaModel);
     _loadingController.sink.add(false);
   }
 }

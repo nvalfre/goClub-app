@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/user_bloc.dart';
+import 'package:flutter_go_club_app/models/perstacion_model.dart';
+import 'package:flutter_go_club_app/models/reserva_model.dart';
+import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/root_nav_bar.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
 import 'package:flutter_go_club_app/utils/utils.dart' as utils;
@@ -248,6 +251,9 @@ class LoginPage extends StatelessWidget {
       if (info != null) {
         //TODO IMPLEMENT USER RETRIEVE.
         await setRoleUserPref(info);
+        UserPreferences _prefs = UserPreferences();
+        _prefs.prestacion = PrestacionModel();
+        _prefs.reserva = ReservationModel();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => RootHomeNavBar(0)),

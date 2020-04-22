@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/models/access_role_model.dart';
+import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/models/solicitud_model.dart';
 import 'package:flutter_go_club_app/root_nav_bar.dart';
@@ -27,6 +28,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   ReservationModel _reservaModel;
   File _photo;
   ReservationBloc _reservasBloc;
+  ClubsBloc _clubBloc;
   UserPreferences _prefs = UserPreferences();
 
   @override
@@ -34,6 +36,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
     validateAndLoadArguments(context);
 
     _reservasBloc = Provider.reservationBloc(context);
+    _clubBloc = Provider.clubsBloc(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -290,7 +293,6 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                 SizedBox(height: 10.0),
                 _getTimeDesde(context),
                 _getTimeHasta(context),
-                _getAvailable(),
                 _getReservaSolicitudButton(),
               ],
             ),
@@ -311,41 +313,34 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                   padding: EdgeInsets.only(left: 10),
                   child: Column(
                     children: <Widget>[
-                      Text("Reserva:",
-                          style: Theme.of(context).textTheme.button),
-                      Text(_reservaModel.name,
-                          style: TextStyle(color: Colors.black, fontSize: 20),
+                      StreamBuilder(
+                        stream: _clubBloc.loadClubStream(_reservaModel.clubAdminId),
+                          builder: (BuildContext context, AsyncSnapshot<ClubModel> snapshot) {
+                            return  snapshot.hasData ?  Text("CLUB: ${snapshot.data.name}",
+                                style: Theme.of(context).textTheme.title,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.justify) : Text("CLUB: ");
+                          }
+                      )
+                     ,
+                      Text("Reserva: ${_reservaModel.name}",
+                           style: Theme.of(context).textTheme.button,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.justify),
                       SizedBox(
                         height: 2,
                       ),
-                      Text("Descripcion:",
-                          style: Theme.of(context).textTheme.button),
-                      Text(
-                        _reservaModel.description,
-                        style: TextStyle(color: Colors.black, fontSize: 20),
+                      Text("Descripcion: ${_reservaModel.description}",
+                         style: Theme.of(context).textTheme.button,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.justify,
                       ),
                       SizedBox(
                         height: 2,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                        Text(r"Precio: $",
-                            style: Theme.of(context).textTheme.button),
-                          SizedBox(
-                            width: 5,
-                          ),
-                        Text(
-                          _reservaModel.precio != null ? _reservaModel.precio : "",
-                          style: TextStyle(color: Colors.black, fontSize: 22),
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.justify,
-                        ),
-                      ],)
+                      Text(r"Precio: $" + (_reservaModel.precio != null ? _reservaModel.precio : ""),
+                          style: Theme.of(context).textTheme.button),
+                      _getAvailable(),
                     ],
                   )))
         ],
@@ -365,8 +360,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
           children: [
             TextSpan(
                 text: 'Estado: ' + estado,
-                style: TextStyle(
-                    color: color, fontSize: 25, fontWeight: FontWeight.bold)),
+                style: Theme.of(context).textTheme.button),
           ],
         ),
       ),
