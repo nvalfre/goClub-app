@@ -330,8 +330,7 @@ class ReservaDetalleUserState extends State<ReservaDetalleUser> {
                 textColor: Colors.white,
                 label: Text('     Ver solicitud      '),
                 icon: Icon(Icons.arrow_forward),
-                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-                    arguments: _reservaModel)
+                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel)
               );
             case 'Sin establecer':
               return RaisedButton.icon(
@@ -340,8 +339,7 @@ class ReservaDetalleUserState extends State<ReservaDetalleUser> {
                 textColor: Colors.white,
                 label: Text('  Solicitar Reserva  '),
                 icon: Icon(Icons.edit),
-                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-                    arguments: _reservaModel),
+                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
               );
               break;
             case 'Disponible':
@@ -351,8 +349,7 @@ class ReservaDetalleUserState extends State<ReservaDetalleUser> {
                 textColor: Colors.white,
                 label: Text('  Solicitar Reserva  '),
                 icon: Icon(Icons.edit),
-                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-                    arguments: _reservaModel),
+                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
               );
               break;
             case 'No disponible':
@@ -403,8 +400,7 @@ class ReservaDetalleUserState extends State<ReservaDetalleUser> {
             fit: BoxFit.cover,
           ),
         ),
-        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-            arguments: _reservaModel),
+        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
       );
     }
   }
@@ -420,8 +416,7 @@ class ReservaDetalleUserState extends State<ReservaDetalleUser> {
               image: NetworkImage(_reservaModel.avatar), fit: BoxFit.fill),
         ),
       ),
-      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-          arguments: _reservaModel),
+      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
     );
   }
 }

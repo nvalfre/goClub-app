@@ -11,18 +11,20 @@ String reservationModelToJson(SolicitudModel data) =>
 class SolicitudModel {
   String id;
   var reserva;
+  var reservaId;
   var prestacion;
   var estado;
   String user;
   Timestamp date;
 
   SolicitudModel(
-      {this.id, this.reserva, this.prestacion, this.estado, this.user, this.date});
+      {this.id, this.reserva, this.prestacion, this.estado, this.user, this.date, this.reservaId});
 
   factory SolicitudModel.fromJson(dynamic json) => SolicitudModel(
         id: json["id"],
         date: json["date"],
         reserva: json["reserva"],
+        reservaId: json["reservaId"],
         prestacion: json["prestacion"],
         user: json["user"],
         estado: json["estado"],
@@ -32,6 +34,7 @@ class SolicitudModel {
         "id": id,
         "date": date,
         "reserva": reserva,
+        "reservaId": reservaId,
         "prestacion": prestacion,
         "user": user,
         "estado": estado,
@@ -41,6 +44,7 @@ class SolicitudModel {
         id: snap.documentID,
         date: snap.data["date"],
         reserva: snap.data["reserva"],
+        reservaId: snap.data["reservaId"],
         prestacion: snap.data["prestacion"],
         user: snap.data["user"],
         estado: snap.data["estado"],
@@ -52,6 +56,7 @@ class SolicitudModel {
       id: document.data['id'],
       date: document.data["date"],
       reserva: document.data["reserva"],
+      reservaId: document.data["reservaId"],
       prestacion: document.data["prestacion"],
       user: document.data["user"],
       estado: document.data["estado"],

@@ -112,6 +112,14 @@ class SolicitudBloc {
     return reservationModel;
   }
 
+  Future<SolicitudModel> loadSolicitudByReservaId(String uid) async {
+    _loadingController.sink.add(true);
+    SolicitudModel reservationModel = await _solicitudProvider.loadSolicitudReservaFuture(uid);
+    _loadingController.sink.add(false);
+
+    return reservationModel;
+  }
+
   Stream<SolicitudModel> loadSolicitudStream(String uid) {
     return _solicitudProvider.loadSolicitudStream(uid);
   }

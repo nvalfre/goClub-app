@@ -73,19 +73,19 @@ class ClasesPageUser extends StatelessWidget {
 
   Widget _createClass(BuildContext context, PrestacionModel clase) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: clase),
+      onTap: () => Navigator.pushNamed(context, 'prestacionDetalle', arguments: clase),
       child: _rowWidgetWithNameAndDescriptions(clase, context),
     );
   }
 
-  Widget _showLogo(BuildContext context, dynamic _reservaModel) {
+  Widget _showLogo(BuildContext context, PrestacionModel clase) {
     if (_photo != null) {
       return Container(
         margin: EdgeInsets.only(right: 10.0),
         child: Column(
           children: <Widget>[
             Hero(
-              tag: _reservaModel.uniqueId ?? '',
+              tag: clase.uniqueId ?? '',
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15.0),
                 child: FadeInImage(
@@ -100,8 +100,8 @@ class ClasesPageUser extends StatelessWidget {
         ),
       );
     }
-    if (_reservaModel.avatar != null && _reservaModel.avatar != "") {
-      return _fadeInImageFromNetworkWithJarHolder(context, _reservaModel);
+    if (clase.avatar != null && clase.avatar != "") {
+      return _fadeInImageFromNetworkWithJarHolder(context, clase);
     } else {
       return InkWell(
         child: new Container(
@@ -114,13 +114,12 @@ class ClasesPageUser extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-            arguments: _reservaModel),
+        onTap: () => Navigator.pushNamed(context, 'prestacionDetalle', arguments: clase),
       );
     }
   }
 
-  Widget _fadeInImageFromNetworkWithJarHolder(BuildContext context, dynamic _reservaModel) {
+  Widget _fadeInImageFromNetworkWithJarHolder(BuildContext context, PrestacionModel clase) {
     return InkWell(
       child: new Container(
         width: 100.0,
@@ -128,11 +127,10 @@ class ClasesPageUser extends StatelessWidget {
         alignment: Alignment.center,
         decoration: new BoxDecoration(
           image: DecorationImage(
-              image: NetworkImage(_reservaModel.avatar), fit: BoxFit.fill),
+              image: NetworkImage(clase.avatar), fit: BoxFit.fill),
         ),
       ),
-      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-          arguments: _reservaModel),
+      onTap: () => Navigator.pushNamed(context, 'prestacionDetalle', arguments: clase),
     );
   }
 

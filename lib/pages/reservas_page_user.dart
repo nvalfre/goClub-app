@@ -393,8 +393,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                 textColor: Colors.white,
                 label: Text('     Ver solicitud      '),
                 icon: Icon(Icons.edit),
-                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-                    arguments: _reservaModel),
+                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
               );
             case '':
               break;
@@ -414,29 +413,28 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
                 label: Text('     Ver solicitud      '),
                 icon: Icon(Icons.arrow_forward),
                 onPressed: isReservationValidAndRequestByCurrentUser() ?
-                  () => Navigator.pushNamed(context, 'reservasCRUDuser',
-                    arguments: _reservaModel) : null,
+                  () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel) : null,
               );
             case 'Sin establecer':
+              UserPreferences.action = "Solicitar Reserva";
               return RaisedButton.icon(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
                 color: Colors.blueAccent,
                 textColor: Colors.white,
                 label: Text('  Solicitar Reserva  '),
                 icon: Icon(Icons.edit),
-                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-                    arguments: _reservaModel),
+                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
               );
               break;
             case 'Disponible':
+              UserPreferences.action = "Solicitar Reserva";
               return RaisedButton.icon(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
                 color: Colors.blueAccent,
                 textColor: Colors.white,
                 label: Text('  Solicitar Reserva  '),
                 icon: Icon(Icons.edit),
-                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-                    arguments: _reservaModel),
+                onPressed: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
               );
               break;
             case 'No disponible':
@@ -488,8 +486,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
             fit: BoxFit.cover,
           ),
         ),
-        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-            arguments: _reservaModel),
+        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
       );
     }
   }
@@ -505,8 +502,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
               image: NetworkImage(_reservaModel.avatar), fit: BoxFit.fill),
         ),
       ),
-      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-          arguments: _reservaModel),
+      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
     );
   }
 }

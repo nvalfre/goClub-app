@@ -111,10 +111,20 @@ class RequestListPage extends StatelessWidget {
 
   Widget _createRequest(BuildContext context, SolicitudModel solicitud) {
     UserPreferences.reservaSolicitud = solicitud;
-    _reservaModel = ReservationModel.fromMap(solicitud.reserva);
-    return InkWell(
-        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: solicitud),
-        child: _rowWidgetWithNameAndDescriptions(solicitud, context),
+    return FutureBuilder(
+      future: _reservationBloc.loadReservation(solicitud.reservaId) ,
+      builder: (BuildContext context,
+          AsyncSnapshot<ReservationModel> snapshot) {
+        if(snapshot.hasData){
+          _reservaModel = snapshot.data;
+          return InkWell(
+            onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
+            child: _rowWidgetWithNameAndDescriptions(solicitud, context),
+          );
+        }else{
+          return Center(child:CircularProgressIndicator());
+        }
+      },
     );
   }
 
@@ -154,8 +164,7 @@ class RequestListPage extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-            arguments: _reservaModel),
+        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
       );
     }
   }
@@ -171,8 +180,7 @@ class RequestListPage extends StatelessWidget {
               image: NetworkImage(_reservaModel.avatar), fit: BoxFit.fill),
         ),
       ),
-      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-          arguments: _reservaModel),
+      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
     );
   }
 

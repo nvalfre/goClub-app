@@ -12,6 +12,7 @@ class UserPreferences {
   static ClubModel clubUserAsignation;
   static UserModel userToAsign;
   static ClubModel clubDetailsForPrestacionesAndReservas;
+  static String action;
 
   factory UserPreferences() {
     return _instance;

@@ -33,6 +33,17 @@ class SolicitudServiceImpl {
     return clubList;
   }
 
+  Future<SolicitudModel> loadSolicitudReservaFuture(String uid) async {
+    QuerySnapshot snapshots = await db.getDocuments();
+    List<SolicitudModel> solicitudList = loadSolicitudList(snapshots.documents);
+    for (SolicitudModel solicitud in solicitudList) {
+      if(solicitud.reservaId == uid){
+        return solicitud;
+      }
+    }
+    return null;
+  }
+
   Stream<List<SolicitudModel>> loadSolicitudStreamListSnap() {
     Stream<List<SolicitudModel>> snapshots =
         db.snapshots().map((snap) => loadSolicitudList(snap.documents));

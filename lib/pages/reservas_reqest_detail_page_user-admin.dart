@@ -63,48 +63,58 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       ),
       drawer: UserDrawerAdmin(),
       body: SingleChildScrollView(
-          child: FutureBuilder(
-              future:_reservasBloc.loadReservation(ReservationModel.fromMap(_solicitud.reserva).id),
-              builder: (BuildContext context, AsyncSnapshot<ReservationModel> snapshot) {
+          child: (UserPreferences.action == "Solicitar Reserva") ? buildContainerwithReservaDetails(context) :
+          FutureBuilder(
+              future:_solicitudBloc.loadSolicitudByReservaId(_reserva.id),
+              builder: (BuildContext context, AsyncSnapshot<SolicitudModel> snapshot) {
                 if (snapshot.hasData) {
-                  _reserva = snapshot.data;
+                  _solicitud = snapshot.data;
                   _timeDesde = _reserva.timeDesde;
                   _timeHasta = _reserva.timeHasta;
                   _date = _reserva.date;
                   _prestacionValue = _reserva.name;
-                  return Container(
-                    padding: EdgeInsets.all(7.0),
-                    child: Form(
-                        key: formKey,
-                        child: Column(
-                          children: <Widget>[
-                            _showLogo(),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            _getPrestacionName(),
-                            _getDescription(),
-                            _getPrecio(),
-                            _getAvailable(),
-                            _dateSelector(context),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            _hourSelectorDesde(context),
-                            _hourSelectorHasta(context),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            getButtom()
-                          ],
-                        )),
-                  );
+                  return buildContainerwithReservaDetails(context);
+                } else {
+                  return Center(child: Text("Reserva sin solicitud"),);
                 }
-                return Center(child: CircularProgressIndicator(),);
               }
           )
       ),
     );
+  }
+
+  Container buildContainerwithReservaDetails(BuildContext context) {
+    _timeDesde = _reserva.timeDesde;
+    _timeHasta = _reserva.timeHasta;
+    _date = _reserva.date;
+    _prestacionValue = _reserva.name;
+    return Container(
+                  padding: EdgeInsets.all(7.0),
+                  child: Form(
+                      key: formKey,
+                      child: Column(
+                        children: <Widget>[
+                          _showLogo(),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          _getPrestacionName(),
+                          _getDescription(),
+                          _getPrecio(),
+                          _getAvailable(),
+                          _dateSelector(context),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          _hourSelectorDesde(context),
+                          _hourSelectorHasta(context),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          getButtom()
+                        ],
+                      )),
+                );
   }
 
   getButtom() => _pref.role == AccessStatus.USER ? _getButtomForUser() : _getButtonForClubAdmin();
@@ -234,12 +244,13 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   }
 
   void validateAndLoadArguments(BuildContext context) async {
-    final SolicitudModel solicitud = ModalRoute.of(context)
+    final ReservationModel reserva = ModalRoute.of(context)
         .settings
-        .arguments;
+        .arguments; //tambien se puede recibir por construct
 
-    if (solicitud != null && solicitud.reserva != null) {
-      _solicitud = solicitud;
+    if (reserva != null ) {
+      _reserva = reserva;
+      _reserva.id = reserva.id.replaceAll("-poster", "");
     }
   }
 
@@ -254,7 +265,6 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
           || _reserva.estado == 'Aceptado'
           || _reserva.estado == 'Solicitado'
           || _reserva.estado == 'No Disponible'
-          || _reserva.available == false
           ) ? null
           : _submitWithFormValidation,
     );
@@ -377,12 +387,12 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     var loadPrestacion = await _prestacionBloc.loadPrestacion(_reserva.prestacionId);
     if (_reserva.id != null) {
       _reserva.estado = 'Solicitado';
-      _reservasBloc.editReserva(_reserva);
       var solicitudModel = SolicitudModel(
           id: "solicitud-" + Uuid().v1(),
           date: Timestamp.now(),
           estado: _reserva.estado,
           reserva: _reserva.toJson(),
+          reservaId: _reserva.id,
           prestacion: loadPrestacion.toJson(),
           user: _pref.user,
       );
