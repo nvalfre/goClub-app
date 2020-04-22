@@ -32,7 +32,7 @@ class HomePageAdmin extends StatelessWidget {
             color: Colors.white,
           ),
           onPressed: (){
-            Navigator.pushNamed(context, 'clubs');
+            Navigator.pushNamed(context, 'clubsAdmin');
           },
         ),),
     );

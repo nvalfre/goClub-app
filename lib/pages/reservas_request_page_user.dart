@@ -227,7 +227,7 @@ class _ReservasAddPageUserState
       });
       _showSnackbar('Nuevo registro guardado exitosamente.');
     } else {
-      _reservasBloc.editReservation(_reserva);
+      _reservasBloc.editReserva(_reserva);
       setState(() {
         _pref.reserva = _reserva;
         _saving = false;

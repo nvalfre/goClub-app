@@ -164,6 +164,8 @@ class _PrestacionAddPageAdminState extends State<PrestacionAddPageAdmin> {
 
     print(_prestacion.avatar);
     _prestacion.idClub = _pref.clubAdminId;
+    _prestacion.estado = _prestacion.available ? 'Disponible' : 'No disponible';
+
     if (_prestacion.id == null) {
       _bloc.addPrestacion(_prestacion);
       setState(() {

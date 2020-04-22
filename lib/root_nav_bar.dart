@@ -4,7 +4,7 @@ import 'package:flutter_go_club_app/pages/home_admin_page.dart';
 import 'package:flutter_go_club_app/pages/home_user_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
 import 'package:flutter_go_club_app/pages/prestacion_admin_detalle_page.dart';
-import 'package:flutter_go_club_app/pages/prestacion_user_detalle_page.dart';
+import 'package:flutter_go_club_app/pages/prestacion_page_user.dart';
 import 'package:flutter_go_club_app/pages/reservas_request_list_page_user-admin.dart';
 import 'package:flutter_go_club_app/pages/reservas_page_user.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
@@ -123,18 +123,6 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
           icon: Icon(Icons.home),
           title: Container(height: 0.0),
           activeIcon: Icon(Icons.home, size: 35)),
-//            BottomNavigationBarItem(
-//              icon: IconButton(
-//                icon: Icon(Icons.search),
-//                onPressed: () {
-//                  showSearch(
-//                    context: context,
-//                    delegate: DataSearchClubs(),
-//                  );
-//                },
-//              ),
-//              title: Container(height: 0.0),
-//            ),
       BottomNavigationBarItem(
           icon: Icon(Icons.schedule),
           title: Container(height: 0.0),

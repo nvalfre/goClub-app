@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/prestation_bloc.dart';
+import 'package:flutter_go_club_app/models/access_role_model.dart';
+import 'package:flutter_go_club_app/models/club_model.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
-import 'package:flutter_go_club_app/models/reserva_model.dart';
-import 'package:flutter_go_club_app/pages/prestacion_admin_detalle_page.dart';
-import 'package:flutter_go_club_app/root_nav_bar.dart';
 import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
+import 'package:flutter_go_club_app/root_nav_bar.dart';
 
 import 'draw/draw_widget_user.dart';
 
@@ -23,12 +23,15 @@ class PrestacionClubUserPageState extends State<PrestacionPageUser> {
   PrestacionModel _prestacionModel;
   File _photo;
   PrestacionBloc _prestacionBloc;
+  ClubsBloc _clubBloc;
+  UserPreferences _prefs = UserPreferences();
 
   @override
   Widget build(BuildContext context) {
     validateAndLoadArguments(context);
 
     _prestacionBloc = Provider.prestacionBloc(context);
+    _clubBloc = Provider.clubsBloc(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -94,7 +97,7 @@ class PrestacionClubUserPageState extends State<PrestacionPageUser> {
     return Container(
       padding: EdgeInsets.only(top: 10),
       child: FutureBuilder(
-        future: _prestacionBloc.loadPrestaciones(),
+        future: _prestacionBloc.loadPrestaciones(),//loadbyclub
         builder: (BuildContext context,
             AsyncSnapshot<List<PrestacionModel>> snapshot) {
           if (snapshot.hasData) {
@@ -127,18 +130,22 @@ class PrestacionClubUserPageState extends State<PrestacionPageUser> {
   void validateAndLoadArguments(BuildContext context) async {
     var userPreferences = UserPreferences();
 
-    if (userPreferences.prestacion != "" && userPreferences.prestacion != null) {
+    if (userPreferences.prestacion != "" &&
+        userPreferences.prestacion != null) {
       _prestacionModel = new PrestacionModel();
 
-      _prestacionModel.id = userPreferences.prestacionName;
+      _prestacionModel.id = userPreferences.prestacion;
+      _prestacionModel.idClub = userPreferences.prestacionIdClub;
       _prestacionModel.name = userPreferences.prestacionName;
       _prestacionModel.description = userPreferences.prestacionDescription;
       _prestacionModel.avatar = userPreferences.prestacionAvatar;
 //      _prestacionModel.reservas = userPreferences.prestacionId;
+      _prestacionModel.estado = userPreferences.prestacionEstado;
       _prestacionModel.available = userPreferences.prestacionAvailable == "true" ? true : false;
     } else {
       _prestacionModel = new PrestacionModel();
     }
+
   }
 
   Widget _detailsColumn() {
@@ -158,8 +165,7 @@ class PrestacionClubUserPageState extends State<PrestacionPageUser> {
               children: <Widget>[
                 _getImageRow(),
                 SizedBox(height: 10.0),
-                _getAvailable(),
-                _getEditButton(),
+                _prefs.role == AccessStatus.USER ? Container() :_getEditButton(),
               ],
             ),
           ),
@@ -178,24 +184,26 @@ class PrestacionClubUserPageState extends State<PrestacionPageUser> {
               child: Container(
                   padding: EdgeInsets.only(left: 10),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Text("Prestacion:",
+                      StreamBuilder(
+                          stream: _clubBloc.loadClubStream(_prestacionModel.idClub),
+                          builder: (BuildContext context, AsyncSnapshot<ClubModel> snapshot) {
+                            return  snapshot.hasData ?  Text("CLUB: ${snapshot.data.name}",
+                                style: Theme.of(context).textTheme.title,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.justify) : Text("CLUB: ");
+                          }
+                      )
+                      ,
+                      Text("Prestacion: ${_prestacionModel.name}",
                           style: Theme.of(context).textTheme.button),
-                      Text(_prestacionModel.name,
-                          style: TextStyle(color: Colors.black, fontSize: 20),
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.justify),
                       SizedBox(
                         height: 5,
                       ),
-                      Text("Descripcion:",
+                      Text("Descripcion: ${_prestacionModel.description}",
                           style: Theme.of(context).textTheme.button),
-                      Text(
-                        _prestacionModel.description,
-                        style: TextStyle(color: Colors.black, fontSize: 20),
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.justify,
-                      ),
+                      _getAvailable()
                     ],
                   )))
         ],
@@ -215,8 +223,7 @@ class PrestacionClubUserPageState extends State<PrestacionPageUser> {
           children: [
             TextSpan(
                 text: 'Estado: ' + estado,
-                style: TextStyle(
-                    color: color, fontSize: 25, fontWeight: FontWeight.bold)),
+                style: Theme.of(context).textTheme.button),
           ],
         ),
       ),
@@ -350,6 +357,7 @@ class PrestacionHorizontal extends StatelessWidget {
                   image: AssetImage('assets/images/no-image.png'),
                   height: 80.0,
                   fit: BoxFit.cover,
+
                 )),
           ),
           SizedBox(height: 5.0),
@@ -365,8 +373,8 @@ class PrestacionHorizontal extends StatelessWidget {
     return GestureDetector(
       child: tarjeta,
       onTap: () {
-        var userPreferences = UserPreferences();
-        userPreferences.prestacion = prestacion;
+        UserPreferences _prefs = UserPreferences();
+        _prefs.prestacion = prestacion;
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => RootHomeNavBar(2)),

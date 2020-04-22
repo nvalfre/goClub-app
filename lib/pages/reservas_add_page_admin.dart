@@ -231,27 +231,30 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
     Navigator.pop(context);
   }
 
-  void _saveForID() {
-if(_pref.clubAdminId != null){
-  if (_reserva.id == null ) {
-    _reserva.estado = 'Disponible';
-    _reserva.clubAdminId = _pref.clubAdminId;
-    _reservasBloc.addReserva(_reserva);
-    setState(() {
-      _pref.reserva = _reserva;
-      _saving = false;
-    });
-    _showSnackbar('Nuevo registro guardado exitosamente.');
-  } else {
-    _reserva.clubAdminId = _pref.clubAdminId;
-    _reservasBloc.editReservation(_reserva);
-    setState(() {
-      _pref.reserva = _reserva;
-      _saving = false;
-    });
-    _showSnackbar('Registro actualizado correctamente.');
-  }
-}
+  void _saveForID() async {
+    if (_pref.clubAdminId != null) {
+      if (_reserva.id == null) {
+        _reserva.estado = 'Disponible';
+        _reserva.clubAdminId = _pref.clubAdminId;
+        _reservasBloc.addReserva(_reserva);
+        setState(() {
+          _pref.reserva = _reserva;
+          _saving = false;
+        });
+        _showSnackbar('Nuevo registro guardado exitosamente.');
+      } else {
+        _reserva.clubAdminId = _pref.clubAdminId;
+        _reservasBloc.editReserva(_reserva);
+        setState(() {
+          _pref.reserva = _reserva;
+          _saving = false;
+        });
+        _showSnackbar('Registro actualizado correctamente.');
+      }
+      var prestacion = await _prestacionBloc.loadPrestacion(_reserva.prestacionId);
+      prestacion.estado = _reserva.estado;
+      _prestacionBloc.editPrestacion(prestacion);
+    }
 
   }
 

@@ -36,7 +36,6 @@ class PrestacionServiceImpl {
     return clubList;
   }
 
-
   Future<List<PrestacionModel>> loadPrestacionesByClub() async {
     QuerySnapshot snapshots = await db.getDocuments();
     List<PrestacionModel> clubList = toPrestacionList(snapshots.documents);
@@ -44,6 +43,20 @@ class PrestacionServiceImpl {
     List<PrestacionModel> temp = List();
     for (var prestacion in clubList) {
       if(prestacion.idClub == _prefs.clubAdminId){
+        temp.add(prestacion);
+      }
+    }
+
+    return temp;
+  }
+
+  Future<List<PrestacionModel>> loadPrestacionesByClubId(String clubId) async {
+    QuerySnapshot snapshots = await db.getDocuments();
+    List<PrestacionModel> prestacionList = toPrestacionList(snapshots.documents);
+
+    List<PrestacionModel> temp = List();
+    for (var prestacion in prestacionList) {
+      if(prestacion.idClub == clubId){
         temp.add(prestacion);
       }
     }
