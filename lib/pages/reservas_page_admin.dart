@@ -269,6 +269,7 @@ class ReservaClubAdminPageState extends State<ReservaClubAdminPage> {
       _reservaModel.description = _userPreferences.reservaDescription;
       _reservaModel.avatar = _userPreferences.reservaAvatar;
       _reservaModel.prestacionId = _userPreferences.prestacionId;
+      _reservaModel.precio = _userPreferences.reservaPrecio;
       _reservaModel.timeDesde = _userPreferences.reservaTimeDesde;
       _reservaModel.timeHasta = _userPreferences.reservaTimeHasta;
       _reservaModel.date = _userPreferences.reservaDate;

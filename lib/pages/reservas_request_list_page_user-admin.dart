@@ -110,9 +110,10 @@ class RequestListPage extends StatelessWidget {
   }
 
   Widget _createRequest(BuildContext context, SolicitudModel solicitud) {
+    UserPreferences.reservaSolicitud = solicitud;
     _reservaModel = ReservationModel.fromMap(solicitud.reserva);
     return InkWell(
-        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
+        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: solicitud),
         child: _rowWidgetWithNameAndDescriptions(solicitud, context),
     );
   }
