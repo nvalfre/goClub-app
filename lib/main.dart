@@ -11,9 +11,11 @@ import 'package:flutter_go_club_app/pages/perfil_admin_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_club_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
 import 'package:flutter_go_club_app/pages/prestacion_add_page_admin.dart';
+import 'package:flutter_go_club_app/pages/prestacion_detalle_user.dart';
 import 'package:flutter_go_club_app/pages/prestacion_page_user_by_club.dart';
 import 'package:flutter_go_club_app/pages/register_page.dart';
 import 'package:flutter_go_club_app/pages/reservas_add_page_admin.dart';
+import 'package:flutter_go_club_app/pages/reservas_detalle_user.dart';
 import 'package:flutter_go_club_app/pages/reservas_page_by_prestacion.dart';
 import 'package:flutter_go_club_app/pages/reservas_page_user_by_club.dart';
 import 'package:flutter_go_club_app/pages/reservas_reqest_detail_page_user-admin.dart';
@@ -54,6 +56,8 @@ class MyApp extends StatelessWidget {
           'reservations': (BuildContext context) => ClubsPageAdmin(),
           'reservationsAdmin': (BuildContext context) => ClubsPageAdmin(),
           'reservaDetalle': (BuildContext context) => ReservaClubUserPageByPrestacion(),
+          'prestacionDetalle': (BuildContext context) => PrestacionDetalleUser(),
+          'reservaDetalleSingle': (BuildContext context) => ReservaDetalleUser(),
           'class': (BuildContext context) => ClubsPageAdmin(),
           'classAdmin': (BuildContext context) => ClubsPageAdmin(),
           'profileUser': (BuildContext context) => ProfileUser(),

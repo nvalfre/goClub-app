@@ -33,7 +33,7 @@ class ReservaClubUserPageByClub extends StatelessWidget {
   Scaffold buildScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reservas solicitadas'),
+        title: Text('Reservas club: ${clubModel.name}'),
         actions: <Widget>[
           IconButton(
             icon: Icon( Icons.search ),
@@ -46,8 +46,6 @@ class ReservaClubUserPageByClub extends StatelessWidget {
           )
         ],
       ),
-      drawer: UserDrawer(),
-      floatingActionButton: getFloatingActionButton(context),
       body: _getListOfReservasByClub(context),
     );
   }
@@ -58,25 +56,6 @@ class ReservaClubUserPageByClub extends StatelessWidget {
       builder: (BuildContext context,  AsyncSnapshot<List<ReservationModel>> snapshot) {
         return _getListOffReservasBuilder(context, snapshot);
       },
-    );
-  }
-
-  Container getFloatingActionButton(BuildContext context) {
-    return prefs.role == AccessStatus.USER  ? null : Container(
-      width: 40.0,
-      height: 40.0,
-      child: new RawMaterialButton(
-        fillColor: Colors.blueAccent,
-        shape: new CircleBorder(),
-        elevation: 0.0,
-        child: new Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-        onPressed: () {
-          Navigator.pushNamed(context, 'reservasCRUD');
-        },
-      ),
     );
   }
 
@@ -101,7 +80,7 @@ class ReservaClubUserPageByClub extends StatelessWidget {
 
   Widget _createRequest(BuildContext context, ReservationModel reserva) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: reserva),
+      onTap: () => Navigator.pushNamed(context, 'reservaDetalleSingle', arguments: reserva),
       child: _rowWidgetWithNameAndDescriptions(reserva, context),
     );
   }
@@ -142,7 +121,7 @@ class ReservaClubUserPageByClub extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
+        onTap: () => Navigator.pushNamed(context, 'reservaDetalleSingle',
             arguments: _reservaModel),
       );
     }
@@ -159,7 +138,7 @@ class ReservaClubUserPageByClub extends StatelessWidget {
               image: NetworkImage(_reservaModel.avatar), fit: BoxFit.fill),
         ),
       ),
-      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
+      onTap: () => Navigator.pushNamed(context, 'reservaDetalleSingle',
           arguments: _reservaModel),
     );
   }
@@ -228,19 +207,5 @@ class ReservaClubUserPageByClub extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Container _largeDescription(
-      ReservationModel reservation, BuildContext context) {
-    var direction =
-    reservation.description != null ? reservation.description : '-';
-    var telefono = reservation.user != null ? reservation.user : '-';
-    return Container(
-        padding: EdgeInsets.all(10),
-        child: Text(
-          'Direccion: ' + direction + '\nTelefono: ' + telefono,
-          style: Theme.of(context).textTheme.subhead,
-          textAlign: TextAlign.justify,
-        ));
   }
 }

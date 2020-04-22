@@ -34,7 +34,7 @@ class PrestacionPageUserByClub extends StatelessWidget {
   Scaffold buildScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reservas solicitadas'),
+        title: Text('Prestaciones club: ${clubModel.name}'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
@@ -47,8 +47,6 @@ class PrestacionPageUserByClub extends StatelessWidget {
           )
         ],
       ),
-      drawer: UserDrawer(),
-      floatingActionButton: getFloatingActionButton(context),
       body: _getListOfReservasByClub(context),
     );
   }
@@ -61,27 +59,6 @@ class PrestacionPageUserByClub extends StatelessWidget {
         return _getListOffReservasBuilder(context, snapshot);
       },
     );
-  }
-
-  Container getFloatingActionButton(BuildContext context) {
-    return prefs.role == AccessStatus.USER
-        ? null
-        : Container(
-            width: 40.0,
-            height: 40.0,
-            child: new RawMaterialButton(
-              fillColor: Colors.blueAccent,
-              shape: new CircleBorder(),
-              elevation: 0.0,
-              child: new Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Navigator.pushNamed(context, 'reservasCRUD');
-              },
-            ),
-          );
   }
 
   Widget _getListOffReservasBuilder(
@@ -102,21 +79,21 @@ class PrestacionPageUserByClub extends StatelessWidget {
           ),
         );
       }
-      final reserva = snapshot.data;
+      final prestacion = snapshot.data;
       return ListView.builder(
-        itemCount: reserva.length,
-        itemBuilder: (context, i) => _createRequest(context, reserva[i]),
+        itemCount: prestacion.length,
+        itemBuilder: (context, i) => _createPrestacion(context, prestacion[i]),
       );
     } else {
       return Center(child: CircularProgressIndicator());
     }
   }
 
-  Widget _createRequest(BuildContext context, PrestacionModel reserva) {
+  Widget _createPrestacion(BuildContext context, PrestacionModel prestacion) {
     return InkWell(
       onTap: () =>
-          Navigator.pushNamed(context, 'reservasCRUDuser', arguments: reserva),
-      child: _rowWidgetWithNameAndDescriptions(reserva, context),
+          Navigator.pushNamed(context, 'prestacionDetalle', arguments: prestacion),
+      child: _rowWidgetWithNameAndDescriptions(prestacion, context),
     );
   }
 
@@ -156,14 +133,14 @@ class PrestacionPageUserByClub extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
+        onTap: () => Navigator.pushNamed(context, 'prestacionDetalle',
             arguments: _reservaModel),
       );
     }
   }
 
   Widget _fadeInImageFromNetworkWithJarHolder(
-      BuildContext context, dynamic _reservaModel) {
+      BuildContext context, ReservationModel _reservaModel) {
     return InkWell(
       child: new Container(
         width: 100.0,
@@ -174,8 +151,7 @@ class PrestacionPageUserByClub extends StatelessWidget {
               image: NetworkImage(_reservaModel.avatar), fit: BoxFit.fill),
         ),
       ),
-      onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser',
-          arguments: _reservaModel),
+      onTap: () => Navigator.pushNamed(context, 'prestacionDetalle', arguments: _reservaModel),
     );
   }
 

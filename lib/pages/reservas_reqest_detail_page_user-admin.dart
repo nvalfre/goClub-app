@@ -236,7 +236,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   void validateAndLoadArguments(BuildContext context) async {
     final SolicitudModel solicitud = ModalRoute.of(context)
         .settings
-        .arguments; //tambien se puede recibir por constructor.
+        .arguments;
 
     if (solicitud != null && solicitud.reserva != null) {
       _solicitud = solicitud;
