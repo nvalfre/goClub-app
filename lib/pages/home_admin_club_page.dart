@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/models/club_model.dart';
@@ -322,51 +323,57 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
 
       return reservas.length >= 1 ? // TODO Should filter by club id.
       Expanded(
-        child: Column(
+        child:
+        reservas.length == 1 ? Column(
           children: <Widget>[
-            reservas.length == 1 ? Stack(
-              children: <Widget>[
                 getReservaRowWithAction(context, reservas[0], reservationBloc),
-              ],)
-                : reservas.length == 2 ? Stack( children: <Widget>[
-                getReservaRowWithAction(context, reservas[0], reservationBloc),
-                getReservaRowWithAction(context, reservas[1], reservationBloc),
-              ],)
-                : reservas.length == 3 ? Stack( children: <Widget>[
+                buttonWithGestDetector(context),
+
+          ],)
+                : reservas.length == 2 ? Column( children: <Widget>[
                 getReservaRowWithAction(context, reservas[0], reservationBloc),
                 getReservaRowWithAction(context, reservas[1], reservationBloc),
-                getReservaRowWithAction(context, reservas[2], reservationBloc),
+                buttonWithGestDetector(context),
               ],)
-                : Stack( children: <Widget>[
+                : reservas.length == 3 ? Column( children: <Widget>[
                 getReservaRowWithAction(context, reservas[0], reservationBloc),
                 getReservaRowWithAction(context, reservas[1], reservationBloc),
                 getReservaRowWithAction(context, reservas[2], reservationBloc),
+                buttonWithGestDetector(context),
+              ],)
+                : Column( children: <Widget>[
+                getReservaRowWithAction(context, reservas[0], reservationBloc),
+                getReservaRowWithAction(context, reservas[1], reservationBloc),
+                getReservaRowWithAction(context, reservas[2], reservationBloc),
+                buttonWithGestDetector(context),
               ],),
-            GestureDetector(
-                child: RaisedButton.icon(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0)),
-                    color: Colors.green,
-                    textColor: Colors.white,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RootHomeNavBar(3)),
-                      );
-                    },
-                    icon: new Icon(
-                      Icons.subdirectory_arrow_right,
-                      color: Colors.white,
-                    ),
-                    label: Text("Ver más"))),
-          ],
-        ),
-      )
+        )
+
           : Center(child: Container(child: Text('Sin reservas')),);
     } else {
       return Center(child: CircularProgressIndicator());
     }
+  }
+
+  GestureDetector buttonWithGestDetector(BuildContext context) {
+    return GestureDetector(
+              child: RaisedButton.icon(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0)),
+                  color: Colors.green,
+                  textColor: Colors.white,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RootHomeNavBar(3)),
+                    );
+                  },
+                  icon: new Icon(
+                    Icons.subdirectory_arrow_right,
+                    color: Colors.white,
+                  ),
+                  label: Text("Ver más")));
   }
 
   GestureDetector getReservaRowWithAction(BuildContext context,
@@ -408,7 +415,7 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Image(
-                  image: (reserva.avatar == null)
+                  image: (reserva.avatar == null || reserva.avatar == "")
                       ? AssetImage('assets/images/no-image.png')
                       : NetworkImage(reserva.avatar),
                   height: 100,

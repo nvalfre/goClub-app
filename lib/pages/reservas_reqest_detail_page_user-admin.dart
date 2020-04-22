@@ -44,6 +44,8 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
 
   String _prestacionValue = '';
 
+  SolicitudModel _solicitud;
+
   @override
   Widget build(BuildContext context) {
     _reservasBloc = Provider.reservationBloc(context);
@@ -61,33 +63,46 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       ),
       drawer: UserDrawerAdmin(),
       body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(7.0),
-          child: Form(
-              key: formKey,
-              child: Column(
-                children: <Widget>[
-                  _showLogo(),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  _getPrestacionName(),
-                  _getDescription(),
-                  _getPrecio(),
-                  _getAvailable(),
-                  _dateSelector(context),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  _hourSelectorDesde(context),
-                  _hourSelectorHasta(context),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  getButtom()
-                ],
-              )),
-        ),
+          child: FutureBuilder(
+              future:_reservasBloc.loadReservation(ReservationModel.fromMap(_solicitud.reserva).id),
+              builder: (BuildContext context, AsyncSnapshot<ReservationModel> snapshot) {
+                if (snapshot.hasData) {
+                  _reserva = snapshot.data;
+                  _timeDesde = _reserva.timeDesde;
+                  _timeHasta = _reserva.timeHasta;
+                  _date = _reserva.date;
+                  _prestacionValue = _reserva.name;
+                  return Container(
+                    padding: EdgeInsets.all(7.0),
+                    child: Form(
+                        key: formKey,
+                        child: Column(
+                          children: <Widget>[
+                            _showLogo(),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            _getPrestacionName(),
+                            _getDescription(),
+                            _getPrecio(),
+                            _getAvailable(),
+                            _dateSelector(context),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            _hourSelectorDesde(context),
+                            _hourSelectorHasta(context),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            getButtom()
+                          ],
+                        )),
+                  );
+                }
+                return Center(child: CircularProgressIndicator(),);
+              }
+          )
       ),
     );
   }
@@ -219,19 +234,12 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   }
 
   void validateAndLoadArguments(BuildContext context) async {
-    final ReservationModel reserva = ModalRoute.of(context)
+    final SolicitudModel solicitud = ModalRoute.of(context)
         .settings
         .arguments; //tambien se puede recibir por constructor.
 
-    if (reserva != null) {
-      if (reserva.id.contains('-poster')) {
-        reserva.id = reserva.id.replaceAll('-poster', '');
-      }
-      _reserva = reserva;
-      _timeDesde = reserva.timeDesde;
-      _timeHasta = reserva.timeHasta;
-      _date = reserva.date;
-      _prestacionValue = reserva.name;
+    if (solicitud != null && solicitud.reserva != null) {
+      _solicitud = solicitud;
     }
   }
 
@@ -411,14 +419,15 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     Navigator.pop(context);
   }
 
-  void _rejectForID() {
+  void _rejectForID(){
     var reservaSolicitud = UserPreferences.reservaSolicitud;
 
     if (_reserva.id != null) {
-      _reserva.solicitud = reservaSolicitud.toJson();
       reservaSolicitud.estado = 'Rechazado';
       reservaSolicitud.reserva = _reserva;
       _solicitudBloc.editSolicitud(reservaSolicitud);
+
+      _reserva.solicitud = reservaSolicitud.toJson();
       _reserva.estado = 'Disponible';
       _reserva.clubAdminId = reservaSolicitud.reserva.clubadminId;
       _reservasBloc.editReserva(_reserva);
