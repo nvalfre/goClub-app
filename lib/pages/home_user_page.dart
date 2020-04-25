@@ -115,14 +115,6 @@ class HomePage extends StatelessWidget {
                           .of(context)
                           .textTheme
                           .button),
-                  Text(r"Precio: $",
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .button),
-                  SizedBox(
-                    width: 5,
-                  ),
                   Text(
                     (club.available) ? 'Disponible' : 'No disponible',
                     style: Theme

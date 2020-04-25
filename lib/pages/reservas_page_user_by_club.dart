@@ -52,7 +52,7 @@ class ReservaClubUserPageByClub extends StatelessWidget {
 
   Widget _getListOfReservasByClub(BuildContext context) {
     return FutureBuilder(
-      future: _reservationBloc.loadPrestacionesByClubId(clubModel.id) ,
+      future: _reservationBloc.loadReservasByClubId(clubModel.id) ,
       builder: (BuildContext context,  AsyncSnapshot<List<ReservationModel>> snapshot) {
         return _getListOffReservasBuilder(context, snapshot);
       },
@@ -157,7 +157,7 @@ class ReservaClubUserPageByClub extends StatelessWidget {
 
   Container _rowWidgetWithNameAndDescriptions(ReservationModel reserva, BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(right: 5, left: 5),
+      padding: EdgeInsets.only(right: 5, left: 5, top:5),
       child: Row(
         children: <Widget>[
           _showLogo(context, reserva),

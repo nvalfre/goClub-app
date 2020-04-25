@@ -50,22 +50,6 @@ class PrestacionClubUserPageState extends State<PrestacionPageUser> {
         ],
       ),
       drawer: UserDrawer(),
-      floatingActionButton: Container(
-        width: 40.0,
-        height: 40.0,
-        child: new RawMaterialButton(
-          fillColor: Colors.blueAccent,
-          shape: new CircleBorder(),
-          elevation: 0.0,
-          child: new Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.pushNamed(context, 'prestacionCRUD');
-          },
-        ),
-      ),
       body: SingleChildScrollView(
           child: Container(
             child: Column(

@@ -285,7 +285,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     var isValidForActive = (_workInProgressStatus
         || _reserva.estado != 'Solicitado'
         || reservaSolicitud == null
-        || _reserva.available == false
+//        || _reserva.available == false
     );
 
     var raisedButtonAceptar = RaisedButton.icon(
@@ -294,7 +294,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       textColor: Colors.white,
       label: Text('Aceptar'),
       icon: Icon(Icons.add_box),
-      onPressed: isValidForActive ? null : _submitAcceptWithFormValidation,
+      onPressed: !isValidForActive ? null : _submitAcceptWithFormValidation,
     );
 
     var raisedButtonRechazar = RaisedButton.icon(
@@ -303,7 +303,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       textColor: Colors.white,
       label: Text('Rechazar'),
       icon: Icon(Icons.add_box),
-      onPressed: isValidForActive ? null  : _submitRejectWithFormValidation,
+      onPressed: !isValidForActive ? null  : _submitRejectWithFormValidation,
     );
 
 

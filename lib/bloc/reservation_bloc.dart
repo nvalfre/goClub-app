@@ -26,7 +26,7 @@ class ReservationBloc {
     return querySnapshot;
   }
 
-  Future<List<ReservationModel>> loadPrestacionesByClubId(String id) async {
+  Future<List<ReservationModel>> loadReservasByClubId(String id) async {
     _loadingController.sink.add(true);
     var querySnapshot = await _reservationProvider.loadRservationsByClubId(id);
     _loadingController.sink.add(false);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/login_bloc.dart';
+import 'package:flutter_go_club_app/models/access_role_model.dart';
 import 'package:flutter_go_club_app/pages/clubs_page_admin.dart';
 import 'package:flutter_go_club_app/pages/home_user_page.dart';
 import 'package:flutter_go_club_app/pages/perfil_user_page.dart';
@@ -113,10 +114,10 @@ class UserDrawer extends StatelessWidget {
                 ),
               }
           ),
+          UserPreferences().role == AccessStatus.USER ?
           ListTile(
             title: Row(
               children: <Widget>[
-                Icon(Icons.supervised_user_circle, color: Colors.green),
                 Padding(
                   padding: EdgeInsets.only(left: 8.0),
                   child: Text('Clubes'),
@@ -130,7 +131,7 @@ class UserDrawer extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => RootHomeNavBar(4)),
                 ),
               }
-          ),
+          ) : Container(),
           SizedBox(
             height: 50,
           ),

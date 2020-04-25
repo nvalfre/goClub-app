@@ -24,7 +24,7 @@ class ClasesPageUser extends StatelessWidget {
   Scaffold buildScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reservas solicitadas'),
+        title: Text('Clases'),
         actions: <Widget>[
           IconButton(
             icon: Icon( Icons.search ),
@@ -130,7 +130,8 @@ class ClasesPageUser extends StatelessWidget {
               image: NetworkImage(clase.avatar), fit: BoxFit.fill),
         ),
       ),
-      onTap: () => Navigator.pushNamed(context, 'prestacionDetalle', arguments: clase),
+      //TODO HACER PAGINA: recibe prestacion, muestra detalle de la clase.
+      onTap: () => Navigator.pushNamed(context, 'claseDetalle', arguments: clase),
     );
   }
 

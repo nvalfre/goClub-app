@@ -138,7 +138,7 @@ class _RootHomeNavBarState extends State<RootHomeNavBar> {
       BottomNavigationBarItem(
           icon: Icon(Icons.collections_bookmark),
           title: Container(height: 0.0),
-          activeIcon: Icon(Icons.collections_bookmark, size: 35)),
+          activeIcon: Icon(Icons.account_circle, size: 35)),
     ];
   }
 

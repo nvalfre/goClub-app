@@ -35,17 +35,6 @@ class PrestacionPageUserByClub extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Prestaciones club: ${clubModel.name}'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: DataSearchReservas(),
-              );
-            },
-          )
-        ],
       ),
       body: _getListOfReservasByClub(context),
     );
@@ -56,13 +45,12 @@ class PrestacionPageUserByClub extends StatelessWidget {
       future: _prestacionBloc.loadPrestacionesByClubId(clubModel.id),
       builder: (BuildContext context,
           AsyncSnapshot<List<PrestacionModel>> snapshot) {
-        return _getListOffReservasBuilder(context, snapshot);
+        return _getListOffPrestacionesBuilder(context, snapshot);
       },
     );
   }
 
-  Widget _getListOffReservasBuilder(
-      BuildContext context, AsyncSnapshot<List<PrestacionModel>> snapshot) {
+  Widget _getListOffPrestacionesBuilder(BuildContext context, AsyncSnapshot<List<PrestacionModel>> snapshot) {
     if (snapshot.hasData) {
       if (snapshot.data.length == 0) {
         return Center(
@@ -139,8 +127,7 @@ class PrestacionPageUserByClub extends StatelessWidget {
     }
   }
 
-  Widget _fadeInImageFromNetworkWithJarHolder(
-      BuildContext context, ReservationModel _reservaModel) {
+  Widget _fadeInImageFromNetworkWithJarHolder(BuildContext context, PrestacionModel _reservaModel) {
     return InkWell(
       child: new Container(
         width: 100.0,
@@ -170,7 +157,7 @@ class PrestacionPageUserByClub extends StatelessWidget {
   Container _rowWidgetWithNameAndDescriptions(
       PrestacionModel reserva, BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(right: 5, left: 5),
+      padding: EdgeInsets.only(right: 5, left: 5, top:5),
       child: Row(
         children: <Widget>[
           _showLogo(context, reserva),

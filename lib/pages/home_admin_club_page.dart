@@ -306,7 +306,7 @@ class _HomePageAdminClubState extends State<HomePageAdminClub> {
 
   Widget _getListOfReservas(ReservationBloc reservationBloc) {
     return FutureBuilder(
-      future: reservationBloc.loadPrestacionesByClubId(prefs.clubAdminId),
+      future: reservationBloc.loadReservasByClubId(prefs.clubAdminId),
       builder: (BuildContext context,
           AsyncSnapshot<List<ReservationModel>> snapshot) {
         return _getListOffreservaBuilder(context, snapshot, reservationBloc);

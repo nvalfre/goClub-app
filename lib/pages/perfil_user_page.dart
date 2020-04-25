@@ -157,7 +157,6 @@ class MapScreenState extends State<ProfileUser>
                 _getLastName(),
                 _getUserDirection(),
                 _getUserTel(),
-                _getUserClubs(),
                 !_status
                     ? Container(
                   padding: EdgeInsets.only(top: 5),
@@ -243,24 +242,6 @@ class MapScreenState extends State<ProfileUser>
       }),
       validator: (value) {
         return _validateLenghtOf(value, type, 10);
-      },
-    );
-  }
-
-  _getUserClubs() {
-    //TODO DEBERIA SER UN BOTON QUE TE LLEVE A LA PAGINA DE CLUBES DEL USUARIO SINO HAY MUCHA INFORMACION
-    var type = 'Club Deportivo';
-    return TextFormField(
-      initialValue: _user.lastName,
-      enabled: !_status,
-      decoration: InputDecoration(labelText: type),
-      textCapitalization: TextCapitalization.sentences,
-      keyboardType: TextInputType.text,
-      onSaved: (value) => setState(() {
-        _user.lastName = value;
-      }),
-      validator: (value) {
-        return _validateLenghtOf(value, type, 3);
       },
     );
   }
