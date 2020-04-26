@@ -42,11 +42,11 @@ class MapScreenState extends State<ProfileUser>
     );
   }
 
-  StreamBuilder _getPerfilPhotoAndUser( ) {
+  StreamBuilder _getPerfilPhotoAndUser() {
     return StreamBuilder(
       stream: _bloc.loadUserStream(_pref.user),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if(snapshot.hasData){
+        if (snapshot.hasData) {
           _user = snapshot.data;
           return Column(
             children: <Widget>[
@@ -54,12 +54,13 @@ class MapScreenState extends State<ProfileUser>
               _perfilBody(),
             ],
           );
-        }else{
+        } else {
           return CircularProgressIndicator();
         }
       },
     );
   }
+
   Column _perfilPhotoAndUser() {
     return Column(
       children: <Widget>[
@@ -105,7 +106,7 @@ class MapScreenState extends State<ProfileUser>
           child: Column(
             children: <Widget>[
               Text(
-                _user.name + ' ' +_user.lastName,
+                _user.name + ' ' + _user.lastName,
                 style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
@@ -133,7 +134,6 @@ class MapScreenState extends State<ProfileUser>
         fit: BoxFit.cover,
       );
     }
-
   }
 
   AppBar perfilAppBar() {
@@ -159,23 +159,23 @@ class MapScreenState extends State<ProfileUser>
                 _getUserTel(),
                 !_status
                     ? Container(
-                  padding: EdgeInsets.only(top: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _getSubmitButtom(),
-                      SizedBox(
-                        width: 30,
-                      ),
-                      _getCancelButtom()
-                    ],
-                  ),
-                )
+                        padding: EdgeInsets.only(top: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            _getSubmitButtom(),
+                            SizedBox(
+                              width: 30,
+                            ),
+                            _getCancelButtom()
+                          ],
+                        ),
+                      )
                     : new Container(),
               ],
             ))
 //      getPaddingBody(),
-    );
+        );
   }
 
   TextFormField _getUserName() {
@@ -293,7 +293,7 @@ class MapScreenState extends State<ProfileUser>
       uploadPhoto = await _bloc.uploadPhoto(_photo);
     }
 
-    if (uploadPhoto != null){
+    if (uploadPhoto != null) {
       _user.avatar = uploadPhoto;
       _saveForID();
       Navigator.pop(context);

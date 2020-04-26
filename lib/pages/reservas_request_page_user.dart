@@ -70,7 +70,6 @@ class _ReservasAddPageUserState
                   _showLogo(),
                   _getPrestacionName(),
                   _getDescription(),
-                  _getAvailable(),
                   _dateSelector(context),
                   SizedBox(
                     height: 10,
@@ -162,16 +161,6 @@ class _ReservasAddPageUserState
     return null;
   }
 
-  SwitchListTile _getAvailable() {
-    return SwitchListTile(
-      value: _reserva.available,
-      title: Text('Disponible'),
-      onChanged: (value) => setState(() {
-        _reserva.available = value;
-      }),
-    );
-  }
-
   void validateAndLoadArguments(BuildContext context) async {
     final ReservationModel reserva = ModalRoute.of(context)
         .settings
@@ -220,6 +209,7 @@ class _ReservasAddPageUserState
     UserPreferences _pref = UserPreferences();
 
     if (_reserva.id == null) {
+      _reserva.estado = 'Disponible';
       _reservasBloc.addReserva(_reserva);
       setState(() {
         _pref.reserva = _reserva;

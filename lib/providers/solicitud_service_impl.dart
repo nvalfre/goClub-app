@@ -29,13 +29,13 @@ class SolicitudServiceImpl {
 
   Future<List<SolicitudModel>> loadSolicitudFutureList() async {
     QuerySnapshot snapshots = await db.getDocuments();
-    List<SolicitudModel> clubList = loadSolicitudList(snapshots.documents);
-    return clubList;
+    List<SolicitudModel> requestList = loadSolicitudListAvailables(snapshots.documents);
+    return requestList;
   }
 
   Future<SolicitudModel> loadSolicitudReservaFuture(String uid) async {
     QuerySnapshot snapshots = await db.getDocuments();
-    List<SolicitudModel> solicitudList = loadSolicitudList(snapshots.documents);
+    List<SolicitudModel> solicitudList = loadSolicitudListAvailables(snapshots.documents);
     for (SolicitudModel solicitud in solicitudList) {
       if(solicitud.reservaId == uid){
         return solicitud;
@@ -46,15 +46,17 @@ class SolicitudServiceImpl {
 
   Stream<List<SolicitudModel>> loadSolicitudStreamListSnap() {
     Stream<List<SolicitudModel>> snapshots =
-        db.snapshots().map((snap) => loadSolicitudList(snap.documents));
+        db.snapshots().map((snap) => loadSolicitudListAvailables(snap.documents));
     return snapshots;
   }
 
-  List<SolicitudModel> loadSolicitudList(List<DocumentSnapshot> documents) {
+  List<SolicitudModel> loadSolicitudListAvailables(List<DocumentSnapshot> documents) {
     List<SolicitudModel> list = List();
     documents.forEach((document) {
-      SolicitudModel clubModel = SolicitudModel.fromSnapshot(document);
-      list.add(clubModel);
+      SolicitudModel solicitudModel = SolicitudModel.fromSnapshot(document);
+      if(solicitudModel.estado != 'Rechazado'){
+        list.add(solicitudModel);
+      }
     });
     return list;
   }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
+import 'package:flutter_go_club_app/models/access_role_model.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/root_nav_bar.dart';
@@ -42,17 +43,6 @@ class ReservaClubUserPageByPrestacionState
         centerTitle: false,
         title: Text('Reservas - ${prestacionName}'),
         backgroundColor: Colors.green,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: DataSearchReservas(),
-              );
-            },
-          ),
-        ],
       ),
       floatingActionButton: Container(
         width: 40.0,
@@ -79,16 +69,29 @@ class ReservaClubUserPageByPrestacionState
                 padding: EdgeInsets.all(1.0),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Container(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        _swiperTarjetas(),
-                        _detailsColumn(),
-                        _getBackButton(),
-                      ],
-                    ),
+                  child: StreamBuilder(
+                    stream: _reservasBloc.loadReservationsSnap(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<ReservationModel>> snapshot) {
+                      if (snapshot.hasData) {
+                        _reservationList = filterByPrestacionId(snapshot.data);
+                        return Container(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              _swiperTarjetas(),
+                              _detailsColumn(),
+                              _getBackButton(),
+                            ],
+                          ),
+                        );
+                      } else {
+                        return Container(
+                            height: 100.0,
+                            child: Center(child: CircularProgressIndicator()));
+                      }
+                    },
                   ),
                 ),
               ),
@@ -176,8 +179,7 @@ class ReservaClubUserPageByPrestacionState
   }
 
   _getDate(BuildContext context) {
-    _date =
-        _reservaModel.date == "" || _reservaModel.date == null ? 'Desde: No establecido' : _reservaModel.date;
+    _date = _reservaModel.date == "" || _reservaModel.date == null ? 'Desde: No establecido' : _reservaModel.date;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -215,37 +217,24 @@ class ReservaClubUserPageByPrestacionState
   Widget _swiperTarjetas() {
     return Container(
       padding: EdgeInsets.only(top: 10),
-      child: StreamBuilder(
-        stream: _reservasBloc.loadReservationsSnap(),
-        builder: (BuildContext context,
-            AsyncSnapshot<List<ReservationModel>> snapshot) {
-          if (snapshot.hasData) {
-            _reservationList = filterByPrestacionId(snapshot.data);
-            return Container(
-              alignment:Alignment.center,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                      padding: EdgeInsets. only(left: 20.0),
-                      child: Text('Reservas',
-                          style: Theme.of(context).textTheme.subhead)),
-                  SizedBox(height: 5.0),
-                  _reservationList.length > 1 ?  ReservasHorizontal(
-                    reservas: _reservationList,
-                    siguientePagina: _reservasBloc.loadReservationsSnap,
-                    prestacionId: _reservaModel.id,
-                  )
-                      : getSingleReservation(),
-                ],
-              ),
-            );
-          } else {
-            return Container(
-                height: 100.0,
-                child: Center(child: CircularProgressIndicator()));
-          }
-        },
+      child: Container(
+        alignment:Alignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+                padding: EdgeInsets. only(left: 20.0),
+                child: Text('Reservas',
+                    style: Theme.of(context).textTheme.subhead)),
+            SizedBox(height: 5.0),
+            _reservationList.length > 1 ?  ReservasHorizontal(
+              reservas: _reservationList,
+              siguientePagina: _reservasBloc.loadReservationsSnap,
+              prestacionId: _reservaModel.id,
+            )
+                : getSingleReservation(),
+          ],
+        ),
       ),
     );
   }
@@ -394,7 +383,7 @@ class ReservaClubUserPageByPrestacionState
   }
 
   Widget _getEditButton() {
-    return RaisedButton.icon(
+    return UserPreferences().role == AccessStatus.USER ? Container() : RaisedButton.icon(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       color: Colors.blueAccent,
       textColor: Colors.white,

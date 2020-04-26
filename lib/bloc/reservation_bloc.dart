@@ -85,7 +85,8 @@ class ReservationBloc {
     try {
       for (var reservation in reservationDocuments) {
             if (reservationList.length < 6 && reservation.name.length > 0 &&
-                reservation.name.toLowerCase().substring(0, query.length) == query) {
+                ((reservation.name.toLowerCase().substring(0, query.length) == query.toLowerCase())
+                || (reservation.description.toLowerCase().contains(query.toLowerCase())))) {
               reservationList.add(reservation);
             }
           }

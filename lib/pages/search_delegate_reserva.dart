@@ -91,7 +91,7 @@ class DataSearchReservas extends SearchDelegate {
 
   InkWell _getDescriptionContainer(BuildContext context, ReservationModel reservation) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, 'reservations', arguments: reservation),
+      onTap: () => Navigator.pushNamed(context, 'reservaDetalle', arguments: reservation),
       child: _rowWidgetWithNameAndDescriptions(reservation, context),
     );
   }
@@ -125,19 +125,19 @@ class DataSearchReservas extends SearchDelegate {
                     style: Theme
                         .of(context)
                         .textTheme
-                        .subhead,
+                        .button,
                     overflow: TextOverflow.ellipsis),
                 Text(reservation.name,
                     style: Theme
                         .of(context)
                         .textTheme
-                        .subhead,
+                        .button,
                     overflow: TextOverflow.ellipsis),
                 Text(reservation.estado ?? '',
                     style: Theme
                         .of(context)
                         .textTheme
-                        .subhead,
+                        .button,
                     overflow: TextOverflow.ellipsis),
                 _largeDescription(reservation, context),
               ],
@@ -152,39 +152,11 @@ class DataSearchReservas extends SearchDelegate {
       Container(
           padding: EdgeInsets.all(10),
           child: Text(
-            reservation.description +
-                ' +  +++++ +++++ +++++ +++ +++ ++ + ' +
-                reservation.description,
+            reservation.description,
             style: Theme
                 .of(context)
                 .textTheme
-                .subhead,
+                .button,
             textAlign: TextAlign.justify,
           ));
 }
-// @override
-// Widget buildSuggestions(BuildContext context) {
-//   // Son las sugerencias que aparecen cuando la persona escribe
-
-//   final listaSugerida = ( query.isEmpty )
-//                           ? peliculasRecientes
-//                           : peliculas.where(
-//                             (p)=> p.toLowerCase().startsWith(query.toLowerCase())
-//                           ).toList();
-
-
-//   return ListView.builder(
-//     itemCount: listaSugerida.length,
-//     itemBuilder: (context, i) {
-//       return ListTile(
-//         leading: Icon(Icons.movie),
-//         title: Text(listaSugerida[i]),
-//         onTap: (){
-//           seleccion = listaSugerida[i];
-//           showResults( context );
-//         },
-//       );
-//     },
-//   );
-// }
-

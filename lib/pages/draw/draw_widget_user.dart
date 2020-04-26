@@ -118,6 +118,7 @@ class UserDrawer extends StatelessWidget {
           ListTile(
             title: Row(
               children: <Widget>[
+                Icon(Icons.collections_bookmark, color: Colors.green),
                 Padding(
                   padding: EdgeInsets.only(left: 8.0),
                   child: Text('Clubes'),

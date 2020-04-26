@@ -24,7 +24,7 @@ class ReservasAddPageUser extends StatefulWidget {
   _ReservasAddPageUserState createState() => _ReservasAddPageUserState();
 }
 
-const String RESERVA_HEADER = 'Detalles Reservas';
+const String RESERVA_HEADER = 'Detalles Reserva';
 
 class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -101,7 +101,6 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
                           _getPrestacionName(),
                           _getDescription(),
                           _getPrecio(),
-                          _getAvailable(),
                           _dateSelector(context),
                           SizedBox(
                             height: 5,
@@ -227,13 +226,6 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     );
   }
 
-  String _validateLenghtOf(String value, String type, int lenght) {
-    if (!utils.hasMoreLenghtThan(value, lenght)) {
-      return 'Deberia tener más de ${lenght} caracteres para la ${type}.';
-    }
-    return null;
-  }
-
   Widget _getAvailable() {
     return SwitchListTile(
       value: _reserva.available,
@@ -249,8 +241,8 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
         .arguments; //tambien se puede recibir por construct
 
     if (reserva != null ) {
-      _reserva = reserva;
       _reserva.id = reserva.id.replaceAll("-poster", "");
+      _reserva = await _reservasBloc.loadReservation(_reserva.id);
     }
   }
 
@@ -294,7 +286,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       textColor: Colors.white,
       label: Text('Aceptar'),
       icon: Icon(Icons.add_box),
-      onPressed: !isValidForActive ? null : _submitAcceptWithFormValidation,
+      onPressed: !isValidForActive || _reserva.estado == 'Disponible'  ? null : _submitAcceptWithFormValidation,
     );
 
     var raisedButtonRechazar = RaisedButton.icon(
@@ -303,7 +295,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       textColor: Colors.white,
       label: Text('Rechazar'),
       icon: Icon(Icons.add_box),
-      onPressed: !isValidForActive ? null  : _submitRejectWithFormValidation,
+      onPressed: !isValidForActive || _reserva.estado == 'Disponible'  ? null  : _submitRejectWithFormValidation,
     );
 
 
@@ -320,6 +312,8 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     var color;
     var icon = Icons.donut_large;
 
+    var solicitudModel = SolicitudModel.fromJson(_reserva.solicitud);
+    var isRechazada = solicitudModel.estado == 'Rechazado';
     switch (_reserva.estado) {
       case 'Solicitado':
         color=Colors.lightBlue;
@@ -343,9 +337,9 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     }
     return RaisedButton.icon(
       color: Colors.white,
-      textColor: color,
-      label: Text(_reserva.estado),
-      icon: Icon(icon),
+      textColor: isRechazada ? Colors.red : color,
+      label: Text(isRechazada ? solicitudModel.estado : _reserva.estado),
+      icon:  Icon(isRechazada ? Icons.clear :icon),
       onPressed: () =>{},
     );
   }
@@ -433,13 +427,13 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     var reservaSolicitud = UserPreferences.reservaSolicitud;
 
     if (_reserva.id != null) {
+      _reserva.estado = 'Disponible';
+      _reservasBloc.editReserva(_reserva);
+
       reservaSolicitud.estado = 'Rechazado';
-      reservaSolicitud.reserva = _reserva;
-      _solicitudBloc.editSolicitud(reservaSolicitud);
 
       _reserva.solicitud = reservaSolicitud.toJson();
-      _reserva.estado = 'Disponible';
-      _reserva.clubAdminId = reservaSolicitud.reserva.clubadminId;
+      _solicitudBloc.editSolicitud(reservaSolicitud);
       _reservasBloc.editReserva(_reserva);
       setState(() {
         _pref.reserva = _reserva;
