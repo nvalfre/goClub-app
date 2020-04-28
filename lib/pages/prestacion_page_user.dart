@@ -163,7 +163,14 @@ class PrestacionClubUserPageState extends State<PrestacionPageUser> {
       padding: EdgeInsets.only(right: 5, left: 5),
       child: Row(
         children: <Widget>[
-          _showLogo(),
+          GestureDetector(
+              child: _showLogo(),
+              onTap: () =>
+              _prefs.role == AccessStatus.USER ? Navigator.pushNamed(
+                  context, 'prestacionDetalle', arguments: _prestacionModel)
+                  : Navigator.pushNamed(
+                  context, 'prestacionCRUD', arguments: _prestacionModel)
+          ),
           Flexible(
               child: Container(
                   padding: EdgeInsets.only(left: 10),
@@ -284,8 +291,8 @@ class PrestacionClubUserPageState extends State<PrestacionPageUser> {
               image: NetworkImage(_prestacionModel.avatar), fit: BoxFit.fill),
         ),
       ),
-      onTap: () => Navigator.pushNamed(context, 'prestacionCRUD',
-          arguments: _prestacionModel),
+      onTap: () => _prefs.role == AccessStatus.USER ?  Navigator.pushNamed(context, 'prestacionDetalle', arguments: _prestacionModel)
+          : Navigator.pushNamed(context, 'prestacionCRUD', arguments: _prestacionModel),
     );
   }
 }

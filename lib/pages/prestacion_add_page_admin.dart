@@ -195,9 +195,27 @@ class _PrestacionAddPageAdminState extends State<PrestacionAddPageAdmin> {
       textColor: Colors.white,
       label: Text('Eliminar'),
       icon: Icon(Icons.add_box),
-      onPressed: (_saving || _prestacion.id == null) ? null : _submitRemoveWithFormValidation,
+      onPressed: (_saving || _prestacion.id == null) ? null : showConfirmDialog,
     );
   }
+
+  void showConfirmDialog() {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('¿Estas seguro?'),
+          content: Text('¿Seguro que quiere eliminar esta prestación?'),
+          actions: <Widget>[
+            FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text('No')),
+            FlatButton(
+                onPressed: () => {_submitRemoveWithFormValidation()},
+                child: Text('Si'))
+          ],
+        ));
+  }
+
   void _submitRemoveWithFormValidation() async {
     setState(() {
       _saving = true;

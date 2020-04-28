@@ -31,10 +31,11 @@ class HomePageAdmin extends StatelessWidget {
             Icons.add,
             color: Colors.white,
           ),
-          onPressed: (){
+          onPressed: () {
             Navigator.pushNamed(context, 'clubsAdmin');
           },
-        ),),
+        ),
+      ),
     );
   }
 
@@ -69,10 +70,28 @@ class HomePageAdmin extends StatelessWidget {
         color: Colors.redAccent,
       ),
       onDismissed: (direction) {
-        clubsBloc.deleteClub(club.id);
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text('¿Estas seguro?'),
+                  content: Text('¿Seguro que quiere eliminar este club?'),
+                  actions: <Widget>[
+                    FlatButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text('No')),
+                    FlatButton(
+                        onPressed: () => {deleteClub(context, clubsBloc, club)},
+                        child: Text('Si'))
+                  ],
+                ));
       },
       child: _getDescriptionContainer(context, club),
     );
+  }
+
+  void deleteClub(BuildContext context, ClubsBloc clubsBloc, ClubModel club) {
+    clubsBloc.deleteClub(club.id);
+    Navigator.of(context).pop();
   }
 
   Widget getImageUrlWidget(ClubModel club) {
@@ -116,36 +135,20 @@ class HomePageAdmin extends StatelessWidget {
           SizedBox(width: 10),
           Flexible(
               child: Column(
-                children: <Widget>[
-                  Text(club.name,
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .button),
-                  Text(club.description,
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .button),
-                  Text(r"Precio: $",
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .button),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    (club.available) ? 'Disponible' : 'No disponible',
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .button,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.justify,
-                  ),
-                ],)
-          ),
+            children: <Widget>[
+              Text(club.name, style: Theme.of(context).textTheme.button),
+              Text(club.description, style: Theme.of(context).textTheme.button),
+              SizedBox(
+                width: 5,
+              ),
+              Text(
+                (club.available) ? 'Disponible' : 'No disponible',
+                style: Theme.of(context).textTheme.button,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.justify,
+              ),
+            ],
+          )),
         ],
       ),
     );

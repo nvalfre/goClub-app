@@ -52,19 +52,6 @@ class UserDrawerAdmin extends StatelessWidget {
             trailing: Icon(Icons.arrow_forward_ios),
             onTap: () => Navigator.pushNamed(context, 'profileAdmin'),
           ),
-          ListTile(
-            title: Row(
-              children: <Widget>[
-                Icon(Icons.collections_bookmark, color: Colors.green),
-                Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Text('Clubes'),
-                )
-              ],
-            ),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.pushNamed(context, 'clubs'),
-          ),
           SizedBox(
             height: 150,
           ),
