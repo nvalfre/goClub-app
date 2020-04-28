@@ -6,11 +6,13 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_go_club_app/bloc/prestation_bloc.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/bloc/solicitud_bloc.dart';
+import 'package:flutter_go_club_app/bloc/user_bloc.dart';
 import 'package:flutter_go_club_app/models/access_role_model.dart';
 import 'package:flutter_go_club_app/models/admin_model.dart';
 import 'package:flutter_go_club_app/models/perstacion_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/models/solicitud_model.dart';
+import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:flutter_go_club_app/pages/draw/draw_widget_admin.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
 import 'package:flutter_go_club_app/providers/provider_impl.dart';
@@ -30,6 +32,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
   ReservationBloc _reservasBloc;
+  UserBloc _userBloc;
   SolicitudBloc _solicitudBloc;
   PrestacionBloc _prestacionBloc;
   String _role;
@@ -41,7 +44,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   File _photo;
   ReservationModel _reserva = ReservationModel();
   PrestacionModel _prestacion = PrestacionModel();
-
+  UserModel _user;
   String _prestacionValue = '';
 
   SolicitudModel _solicitud;
@@ -51,6 +54,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     _reservasBloc = Provider.reservationBloc(context);
     _prestacionBloc = Provider.prestacionBloc(context);
     _solicitudBloc = Provider.solicitudBloc(context);
+    _userBloc = Provider.userBloc(context);
 
     validateAndLoadArguments(context);
     return Scaffold(
@@ -101,6 +105,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
                           _getPrestacionName(),
                           _getDescription(),
                           _getPrecio(),
+                          _getUser(),
                           _dateSelector(context),
                           SizedBox(
                             height: 5,
@@ -224,6 +229,47 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
             ))
       ],
     );
+  }
+
+  Widget _getUser() {
+    var type = 'Usuario: ';
+    return FutureBuilder(
+        future: _userBloc.loadUserByIdForClub(_solicitud.user),
+        builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
+          if (snapshot.hasData) {
+            _user = snapshot.data;
+            return Row(
+              children: <Widget>[
+                Container(
+                  child: Center(
+                    child: Text(
+                      type,
+                      style: TextStyle(
+                        color: Colors.teal,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18.0,
+                      ),
+                    ),
+                  ),
+                ), Text(_user.name != null ?  _user.name : "",
+
+                    style: TextStyle(
+                      color: Colors.teal,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 18.0,
+                    ))
+              ],
+            );
+          } else {
+            return Text("Cargando...",
+
+                style: TextStyle(
+                  color: Colors.teal,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 18.0,
+                ));
+          }
+        });
   }
 
   Widget _getAvailable() {
@@ -381,6 +427,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     var loadPrestacion = await _prestacionBloc.loadPrestacion(_reserva.prestacionId);
     if (_reserva.id != null) {
       _reserva.estado = 'Solicitado';
+      _reserva.user = _pref.user;
       var solicitudModel = SolicitudModel(
           id: "solicitud-" + Uuid().v1(),
           date: Timestamp.now(),

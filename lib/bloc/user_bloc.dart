@@ -76,6 +76,14 @@ class UserBloc {
 
     return user;
   }
+
+  Future<UserModel> loadUserByIdForClub(String id) async {
+    _loadingController.sink.add(true);
+    UserModel user = await _userProvider.loadUserById(id);
+    _loadingController.sink.add(false);
+
+    return user;
+  }
   Stream<UserModel> loadUserStream(String uid)  {
     return _userProvider.loadUserStream(uid);
 

@@ -91,6 +91,12 @@ class UserServiceImpl {
     return UserModel.fromQuerySnapshot(
         await db.where('name', isEqualTo: name).getDocuments());
   }
+
+  Future<UserModel> loadUserById(String name) async {
+    return UserModel.fromQuerySnapshot(
+        await db.where('id', isEqualTo: name).getDocuments());
+  }
+
   Stream<UserModel> loadUserStream(String uid)  {
     return getUserSnap(uid).map((user) => UserModel.fromQuerySnapshot(user));
   }
