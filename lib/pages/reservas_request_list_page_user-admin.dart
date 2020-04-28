@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_go_club_app/bloc/reservation_bloc.dart';
 import 'package:flutter_go_club_app/bloc/solicitud_bloc.dart';
+import 'package:flutter_go_club_app/bloc/user_bloc.dart';
 import 'package:flutter_go_club_app/models/access_role_model.dart';
 import 'package:flutter_go_club_app/models/reserva_model.dart';
 import 'package:flutter_go_club_app/models/solicitud_model.dart';
+import 'package:flutter_go_club_app/models/user_model.dart';
 import 'package:flutter_go_club_app/pages/draw/draw_widget_user.dart';
 import 'package:flutter_go_club_app/pages/search_delegate_reserva.dart';
 import 'package:flutter_go_club_app/preferencias_usuario/user_preferences.dart';
@@ -15,7 +17,9 @@ class RequestListPage extends StatelessWidget {
   final prefs = new UserPreferences();
   ReservationBloc _reservationBloc;
   SolicitudBloc _solicitudBloc;
+  UserBloc _userBloc;
   ReservationModel _reservaModel;
+  UserModel _user;
   String _role;
   String _date;
   String _timeDesde;
@@ -26,6 +30,7 @@ class RequestListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     _reservationBloc = Provider.reservationBloc(context);
     _solicitudBloc = Provider.solicitudBloc(context);
+    _userBloc = Provider.userBloc(context);
 
     return buildScaffold(context);
   }
@@ -238,11 +243,12 @@ class RequestListPage extends StatelessWidget {
                                 ),
                                 Text(
                                   _reservaModel.precio != null ? _reservaModel.precio : "",
-                                  style: Theme.of(context).textTheme.button,
+                                  style: Theme.of(context).textTheme.body1,
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.justify,
                                 ),
-                              ],)
+                              ],),
+                            _reservaModel.solicitud != null || _reservaModel.solicitud == "" ? _getUser(SolicitudModel.fromJson(_reservaModel.solicitud)) : Container()
                           ],
                         )))
               ],
@@ -250,6 +256,38 @@ class RequestListPage extends StatelessWidget {
           );
   }
 
+  Widget _getUser(_solicitud) {
+    var type = 'Usuario: ';
+    return FutureBuilder(
+        future: _userBloc.loadUserByIdForClub(_solicitud.user),
+        builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
+          if (snapshot.hasData) {
+            _user = snapshot.data;
+            return Row(
+              children: <Widget>[
+                Container(
+                  child: Center(
+                    child: Text(
+                      type,
+                      style: Theme.of(context).textTheme.button,
+                    ),
+                  ),
+                ), Text(_user.name != null ?  _user.name : "",
+
+                    style: Theme.of(context).textTheme.body1)
+              ],
+            );
+          } else {
+            return Text("...",
+
+                style: TextStyle(
+                  color: Colors.teal,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 10.0,
+                ));
+          }
+        });
+  }
   Container _largeDescription(
       ReservationModel reservation, BuildContext context) {
     var direction =
