@@ -52,7 +52,6 @@ class RequestListPage extends StatelessWidget {
         ],
       ),
       drawer: UserDrawer(),
-      floatingActionButton: getFloatingActionButton(context),
       body: _getListOfRequests(context),
     );
   }

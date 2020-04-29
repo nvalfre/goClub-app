@@ -21,7 +21,7 @@ class ReservasAddPageUser extends StatefulWidget {
 
 class _ReservasAddPageUserState
     extends State<ReservasAddPageUser> {
-  String RESERVA_HEADER = 'Reservas Admin';
+  String RESERVA_HEADER = 'Reservas';
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
   ReservationBloc _reservasBloc;

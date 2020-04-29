@@ -18,7 +18,7 @@ class ReservasAddPageAdmin extends StatefulWidget {
   _ReservasAddPageAdminState createState() => _ReservasAddPageAdminState();
 }
 
-const String RESERVA_HEADER = 'Reservas Admin';
+const String RESERVA_HEADER = 'Reservas';
 
 class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -73,12 +73,17 @@ class _ReservasAddPageAdminState extends State<ReservasAddPageAdmin> {
                   _getPrestacionName(),
                   _getDescription(),
                   _getPrice(),
-                  _getAvailable(),
+                  SizedBox(
+                    height: 3,
+                  ),
                   _dateSelector(context),
                   SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
                   _hourSelectorDesde(context),
+                  SizedBox(
+                    height: 3,
+                  ),
                   _hourSelectorHasta(context),
                   SizedBox(
                     height: 10,
