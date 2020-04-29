@@ -479,8 +479,8 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       reservaSolicitud.estado = _reserva.estado;
 
       _reserva.solicitud = reservaSolicitud.toJson();
-      _solicitudBloc.editSolicitud(reservaSolicitud);
       _reservasBloc.editReserva(_reserva);
+      _solicitudBloc.editSolicitud(reservaSolicitud);
       setState(() {
         _pref.reserva = _reserva;
         _workInProgressStatus = false;
