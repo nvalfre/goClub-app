@@ -107,7 +107,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   }
 
   _getTimeDesde(BuildContext context) {
-    _timeDesde = _reservaModel.timeDesde == ""
+    _timeDesde = _reservaModel.timeDesde == "" || _reservaModel.timeDesde == null
         ? 'Desde: No establecido'
         : _reservaModel.timeDesde;
     return Container(
@@ -145,7 +145,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   }
 
   _getTimeHasta(BuildContext context) {
-    _timeHasta = _reservaModel.timeHasta == ""
+    _timeHasta = _reservaModel.timeHasta == "" || _reservaModel.timeHasta == null
         ? 'Hasta: No establecido'
         : _reservaModel.timeHasta;
     return Container(
@@ -183,7 +183,7 @@ class ReservaClubUserPageState extends State<ReservaClubUserPage> {
   }
 
   _getDate(BuildContext context) {
-    _date = _reservaModel.date == "" ? 'Desde: No establecido' : _reservaModel.date;
+    _date = _reservaModel.date == "" || _reservaModel.date == null ? 'Desde: No establecido' : _reservaModel.date;
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
