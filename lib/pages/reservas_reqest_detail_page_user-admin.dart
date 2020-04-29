@@ -87,38 +87,58 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     );
   }
 
-  Container buildContainerwithReservaDetails(BuildContext context) {
+  Widget buildContainerwithReservaDetails(BuildContext context) {
     _timeDesde = _reserva.timeDesde;
     _timeHasta = _reserva.timeHasta;
     _date = _reserva.date;
     _prestacionValue = _reserva.name;
+    if(_solicitud == null){
+      return FutureBuilder(
+          future:_reservasBloc.loadReservation(_reserva.id),
+          builder: (BuildContext context, AsyncSnapshot<ReservationModel> snapshot) {
+                  if(snapshot.hasData){
+                    _reserva = snapshot.data;
+                    _timeDesde = _reserva.timeDesde;
+                    _timeHasta = _reserva.timeHasta;
+                    _date = _reserva.date;
+                    _prestacionValue = _reserva.name;
+                    return detailsContainer(context);
+                  }
+                  return Center(child: CircularProgressIndicator(),);
+          });
+    }else {
+      return detailsContainer(context);
+    }
+  }
+
+  Container detailsContainer(BuildContext context) {
     return Container(
-                  padding: EdgeInsets.all(7.0),
-                  child: Form(
-                      key: formKey,
-                      child: Column(
-                        children: <Widget>[
-                          _showLogo(),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          _getPrestacionName(),
-                          _getDescription(),
-                          _getPrecio(),
-                          _getUser(),
-                          _dateSelector(context),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          _hourSelectorDesde(context),
-                          _hourSelectorHasta(context),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          getButtom()
-                        ],
-                      )),
-                );
+      padding: EdgeInsets.all(7.0),
+      child: Form(
+          key: formKey,
+          child: Column(
+            children: <Widget>[
+              _showLogo(),
+              SizedBox(
+                height: 5,
+              ),
+              _getPrestacionName(),
+              _getDescription(),
+              _getPrecio(),
+              _getUser(),
+              _dateSelector(context),
+              SizedBox(
+                height: 5,
+              ),
+              _hourSelectorDesde(context),
+              _hourSelectorHasta(context),
+              SizedBox(
+                height: 5,
+              ),
+              getButtom()
+            ],
+          )),
+    );
   }
 
   getButtom() => _pref.role == AccessStatus.USER ? _getButtomForUser() : _getButtonForClubAdmin();
@@ -233,7 +253,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
 
   Widget _getUser() {
     var type = 'Usuario: ';
-    return FutureBuilder(
+    return _solicitud == null || _solicitud.user == null || _solicitud.user == "" ?  Container() : FutureBuilder(
         future: _userBloc.loadUserByIdForClub(_solicitud.user),
         builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
           if (snapshot.hasData) {
@@ -320,7 +340,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
   _getButtonForClubAdmin() {
     var reservaSolicitud = UserPreferences.reservaSolicitud;
 
-    var isValidForActive = (_workInProgressStatus
+    var isNotValidForActive = (_workInProgressStatus
         || _reserva.estado != 'Solicitado'
         || reservaSolicitud == null
 //        || _reserva.available == false
@@ -332,7 +352,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       textColor: Colors.white,
       label: Text('Aceptar'),
       icon: Icon(Icons.add_box),
-      onPressed: !isValidForActive || _reserva.estado == 'Disponible'  ? null : _submitAcceptWithFormValidation,
+      onPressed: isNotValidForActive || _reserva.estado == 'Disponible'  ? null : _submitAcceptWithFormValidation,
     );
 
     var raisedButtonRechazar = RaisedButton.icon(
@@ -341,7 +361,7 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
       textColor: Colors.white,
       label: Text('Rechazar'),
       icon: Icon(Icons.add_box),
-      onPressed: !isValidForActive || _reserva.estado == 'Disponible'  ? null  : _submitRejectWithFormValidation,
+      onPressed: isNotValidForActive || _reserva.estado == 'Disponible'  ? null  : _submitRejectWithFormValidation,
     );
 
 
@@ -358,8 +378,8 @@ class _ReservasAddPageUserState extends State<ReservasAddPageUser> {
     var color;
     var icon = Icons.donut_large;
 
-    var solicitudModel = SolicitudModel.fromJson(_reserva.solicitud);
-    var isRechazada = solicitudModel.estado == 'Rechazado';
+    var solicitudModel = _reserva.solicitud == null ? null : SolicitudModel.fromJson(_reserva.solicitud);
+    var isRechazada = solicitudModel == null ? false : solicitudModel.estado == 'Rechazado';
     switch (_reserva.estado) {
       case 'Solicitado':
         color=Colors.lightBlue;

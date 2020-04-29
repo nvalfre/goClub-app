@@ -122,7 +122,7 @@ class RequestListPage extends StatelessWidget {
         if(snapshot.hasData){
           _reservaModel = snapshot.data;
           return InkWell(
-            onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: _reservaModel),
+            onTap: () => Navigator.pushNamed(context, 'reservasCRUDuser', arguments: snapshot.data),
             child: _rowWidgetWithNameAndDescriptions(solicitud, context),
           );
         }else{
